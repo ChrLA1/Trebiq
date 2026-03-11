@@ -1,9 +1,14 @@
 {
   "version": 2,
+  "functions": {
+    "api/chat.js": {
+      "runtime": "nodejs20.x"
+    }
+  },
   "rewrites": [
     { "source": "/api/chat", "destination": "/api/chat.js" },
-    { "source": "/legal", "destination": "/public/legal.html" },
     { "source": "/", "destination": "/public/index.html" },
+    { "source": "/legal", "destination": "/public/legal.html" },
     { "source": "/(.*)", "destination": "/public/$1" }
   ]
 }
