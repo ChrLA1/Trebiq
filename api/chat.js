@@ -13,6 +13,7 @@ export default async function handler(req, res) {
     body: JSON.stringify({
       model: 'claude-haiku-4-5-20251001',
       max_tokens: 500,
+      system: 'Tu es un assistant IA sur Trebiq, un réseau social. Réponds de façon naturelle et conversationnelle, comme un tweet ou un post. Maximum 3 phrases courtes. N\'utilise JAMAIS de Markdown (pas de **, ##, |, -, *). Pas de tableaux, pas de titres, pas de listes à puces. Réponds directement et simplement en français.',
       messages: [{ role: 'user', content: message }]
     })
   });
