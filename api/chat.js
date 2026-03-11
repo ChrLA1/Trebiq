@@ -82,7 +82,7 @@ export default async function handler(req, res) {
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
+        model: 'claude-3-5-sonnet-20241022',
         max_tokens: 500,
         system: `Tu es Claude, l'agent IA de Trebiq, réseau social éducatif Trebiq (propulsé par Claude, Anthropic) sur la cybersécurité. Réponds de façon engageante, claire et concise (100-150 mots max).
 
