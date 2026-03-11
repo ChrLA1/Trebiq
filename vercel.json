@@ -7,8 +7,6 @@
   },
   "rewrites": [
     { "source": "/api/chat", "destination": "/api/chat.js" },
-    { "source": "/", "destination": "/public/index.html" },
-    { "source": "/legal", "destination": "/public/legal.html" },
-    { "source": "/(.*)", "destination": "/public/$1" }
+    { "source": "/(.*)", "destination": "/$1" }
   ]
 }
