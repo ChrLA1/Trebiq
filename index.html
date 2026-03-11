@@ -285,6 +285,9 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
   .bottom-nav{padding-bottom:env(safe-area-inset-bottom,8px);}
 }
 </style>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#7b5ea7">
+  <link rel="apple-touch-icon" href="/icon-192.png">
 </head>
 <body>
 
@@ -781,5 +784,10 @@ updateRate();
     </button>
   </div>
 </nav>
+<script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/sw.js").then(() => console.log("PWA ready"));
+}
+</script>
 </body>
 </html>
