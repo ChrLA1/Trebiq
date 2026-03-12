@@ -135,11 +135,15 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .prof-actions{display:flex;justify-content:flex-end;gap:8px;margin-bottom:12px;}
 .btn-edit{background:transparent;border:1px solid var(--border2);border-radius:20px;padding:8px 18px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;}
 .btn-edit:hover{background:var(--s2);}
+.btn-follow{background:linear-gradient(135deg,var(--accent),#9b87ff);border:none;border-radius:20px;padding:8px 20px;color:#fff;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;}
+.btn-follow:hover{transform:translateY(-1px);box-shadow:0 4px 14px var(--ag);}
+.btn-follow.following{background:transparent;border:1px solid var(--accent);color:var(--accent);}
+.btn-follow.following:hover{border-color:var(--red);color:var(--red);background:rgba(248,113,113,0.06);}
 .prof-name{font-size:20px;font-weight:700;color:var(--white);}
 .prof-handle{font-size:14px;color:var(--t3);margin-bottom:8px;}
 .prof-bio{font-size:15px;color:var(--t2);line-height:1.6;margin-bottom:12px;}
 .prof-bio-empty{font-size:14px;color:var(--t3);font-style:italic;margin-bottom:12px;}
-.prof-stats{display:flex;gap:20px;padding-bottom:14px;border-bottom:1px solid var(--border);}
+.prof-stats{display:flex;gap:20px;padding-bottom:14px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
 .pstat{font-size:14px;color:var(--t3);}
 .pstat strong{color:var(--white);font-weight:700;}
 .prof-tabs{display:flex;border-bottom:1px solid var(--border);}
@@ -156,8 +160,6 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .uci-name{font-weight:700;font-size:15px;color:var(--white);}
 .uci-handle{font-size:13px;color:var(--t3);}
 .uci-bio{font-size:13px;color:var(--t2);margin-top:2px;}
-
-/* SETTINGS PAGE */
 .settings-section{padding:24px 20px;border-bottom:1px solid var(--border);}
 .settings-title{font-size:16px;font-weight:700;margin-bottom:16px;color:var(--white);}
 .settings-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);}
@@ -173,8 +175,6 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .btn-danger:hover{background:rgba(248,113,113,0.1);}
 .btn-save-s{background:linear-gradient(135deg,var(--accent),#9b87ff);border:none;border-radius:10px;padding:10px 20px;color:#fff;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;}
 .btn-save-s:hover{transform:translateY(-1px);}
-
-/* MODAL */
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:100;align-items:center;justify-content:center;padding:20px;}
 .modal-bg.on{display:flex;}
 .modal{background:var(--s1);border:1px solid var(--border);border-radius:20px;padding:28px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;}
@@ -189,15 +189,12 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .modal-btns{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;}
 .btn-cancel{background:transparent;border:1px solid var(--border2);border-radius:10px;padding:10px 20px;color:var(--t2);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;}
 .btn-save{background:linear-gradient(135deg,var(--accent),#9b87ff);border:none;border-radius:10px;padding:10px 20px;color:#fff;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;}
-
-/* AVATAR UPLOAD */
 .avatar-upload{display:flex;align-items:center;gap:16px;margin-bottom:20px;}
 .avatar-preview{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:26px;color:#fff;overflow:hidden;flex-shrink:0;}
 .avatar-preview img{width:100%;height:100%;object-fit:cover;}
 .avatar-upload-btn{background:var(--s2);border:1px solid var(--border2);border-radius:10px;padding:10px 16px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s;}
 .avatar-upload-btn:hover{background:var(--s3);}
 #avatar-file{display:none;}
-
 .rnav{padding:20px 16px;border-left:1px solid var(--border);}
 .rw{background:var(--s1);border:1px solid var(--border);border-radius:18px;padding:20px;margin-bottom:14px;}
 .rwt{font-size:16px;font-weight:700;margin-bottom:16px;}
@@ -268,7 +265,6 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
     </nav>
 
     <main class="feed">
-      <!-- HOME -->
       <div class="page on" id="page-home">
         <div class="ptop"><div class="ptitle">Accueil</div></div>
         <div class="compose">
@@ -292,20 +288,17 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
         <div id="fp"><div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div></div>
       </div>
 
-      <!-- EXPLORE -->
       <div class="page" id="page-explore">
         <div class="ptop"><div class="ptitle">Explorer</div></div>
         <div class="search-bar"><input class="search-input" id="search-input" placeholder="Rechercher des utilisateurs..." oninput="searchUsers()" type="text"></div>
         <div id="explore-results"><div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div></div>
       </div>
 
-      <!-- NOTIFS -->
       <div class="page" id="page-notifs">
         <div class="ptop"><div class="ptitle">Notifications</div></div>
         <div id="notifs-list"><div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div></div>
       </div>
 
-      <!-- PROFILE -->
       <div class="page" id="page-profile">
         <div class="ptop">
           <button class="ptop-back" id="prof-back" onclick="goBack()" style="display:none">←</button>
@@ -315,7 +308,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
         <div class="prof-info">
           <div class="prof-av-wrap" style="display:flex;align-items:center;justify-content:space-between;padding:16px 0 8px;">
             <div class="prof-av" id="prof-av">?</div>
-            <button class="btn-edit" id="prof-edit-btn" onclick="openEdit()">✏️ Modifier</button>
+            <div style="display:flex;gap:8px;">
+              <button class="btn-edit" id="prof-edit-btn" onclick="openEdit()">✏️ Modifier</button>
+              <button class="btn-follow" id="prof-follow-btn" onclick="toggleFollow()" style="display:none">Suivre</button>
+            </div>
           </div>
           <div class="prof-name" id="prof-name">...</div>
           <div class="prof-handle" id="prof-handle">@...</div>
@@ -323,6 +319,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
           <div class="prof-stats">
             <div class="pstat"><strong id="prof-posts-count">0</strong> Posts</div>
             <div class="pstat"><strong id="prof-likes-count">0</strong> Likes reçus</div>
+            <div class="pstat"><strong id="prof-followers-count">0</strong> Abonnés</div>
+            <div class="pstat"><strong id="prof-following-count">0</strong> Abonnements</div>
           </div>
         </div>
         <div class="prof-tabs">
@@ -332,7 +330,6 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
         <div id="prof-posts-list"><div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div></div>
       </div>
 
-      <!-- SETTINGS -->
       <div class="page" id="page-settings">
         <div class="ptop"><div class="ptitle">Paramètres</div></div>
         <div class="settings-section">
@@ -376,7 +373,6 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
   </div>
 </div>
 
-<!-- EDIT PROFILE MODAL -->
 <div class="modal-bg" id="edit-modal">
   <div class="modal">
     <button class="modal-close" onclick="closeEdit()">×</button>
@@ -399,7 +395,6 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
   </div>
 </div>
 
-<!-- CONFIRM DELETE MODAL -->
 <div class="modal-bg" id="delete-modal">
   <div class="modal" style="max-width:380px;">
     <div class="modal-title">Supprimer ce post ?</div>
@@ -470,11 +465,6 @@ function logout(){me=null;myP=null;document.getElementById('app').style.display=
 function serr(m){document.getElementById('aerr').textContent=m;}
 async function loadMe(){const p=await sb(`/profiles?id=eq.${me.id}`,{tok:me.tok});myP=p?.[0];}
 
-function avHtml(avatarUrl,initial,size=40){
-  if(avatarUrl)return`<img src="${avatarUrl}" alt="">`;
-  return initial;
-}
-
 function showApp(){
   document.getElementById('auth').style.display='none';
   document.getElementById('app').style.display='block';
@@ -483,16 +473,11 @@ function showApp(){
   document.getElementById('nav-h').textContent='@'+(myP?.username||'...');
   goPage('home');
 }
-
 function updateNavAvatar(){
   const i=(myP?.display_name||'U')[0].toUpperCase();
   const url=myP?.avatar_url;
-  ['nav-av','cav'].forEach(id=>{
-    const el=document.getElementById(id);
-    el.innerHTML=url?`<img src="${url}" alt="">`:`${i}`;
-  });
+  ['nav-av','cav'].forEach(id=>{const el=document.getElementById(id);el.innerHTML=url?`<img src="${url}" alt="">`:`${i}`;});
 }
-
 function goPage(page,userId=null){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
@@ -529,7 +514,6 @@ async function loadFeed(){
     posts.forEach(p=>{llc(p.id);lrc(p.id);lrpc(p.id);});
   }catch(e){c.innerHTML=`<div class="empty"><div class="empty-t">Erreur: ${e.message}</div></div>`;}
 }
-
 function rp(p,prof,liked,reposted){
   const i=(prof?.display_name||'U')[0].toUpperCase();
   const url=prof?.avatar_url;
@@ -537,29 +521,8 @@ function rp(p,prof,liked,reposted){
   const txt=esc(p.content).replace(/@askClaude/gi,'<span class="men">@askClaude</span>');
   const uid=prof?.id||'';
   const isOwn=p.user_id===me.id;
-  return`<div class="post" id="p-${p.id}">
-    <div class="prow">
-      <div class="pav" onclick="goUserProfile('${uid}')">${avContent}</div>
-      <div class="pb">
-        <div class="pm">
-          <span class="pname" onclick="goUserProfile('${uid}')">${esc(prof?.display_name||'Utilisateur')}</span>
-          <span class="phdl">@${esc(prof?.username||'...')}</span>
-          <span class="ptm">· ${ago(p.created_at)}</span>
-        </div>
-        <div class="ptxt">${txt}</div>
-        ${p.ai_reply?`<div class="airep"><div class="aih"><div class="aidot"></div><span class="ailbl">askClaude</span></div><div class="aitxt">${esc(p.ai_reply)}</div></div>`:''}
-        <div class="pacts">
-          <button class="pa ${liked?'lkd':''}" onclick="tl('${p.id}',${liked})">${liked?'❤️':'🤍'} <span id="lc-${p.id}">0</span></button>
-          <button class="pa" onclick="toggleReplies('${p.id}')">💬 <span id="rc-${p.id}">0</span></button>
-          <button class="pa ${reposted?'rptd':''}" onclick="tr2('${p.id}',${reposted})">🔁 <span id="rpc-${p.id}">0</span></button>
-          ${isOwn?`<button class="pa del" onclick="askDelete('${p.id}')">🗑️</button>`:''}
-        </div>
-        <div id="replies-${p.id}" style="display:none"></div>
-      </div>
-    </div>
-  </div>`;
+  return`<div class="post" id="p-${p.id}"><div class="prow"><div class="pav" onclick="goUserProfile('${uid}')">${avContent}</div><div class="pb"><div class="pm"><span class="pname" onclick="goUserProfile('${uid}')">${esc(prof?.display_name||'Utilisateur')}</span><span class="phdl">@${esc(prof?.username||'...')}</span><span class="ptm">· ${ago(p.created_at)}</span></div><div class="ptxt">${txt}</div>${p.ai_reply?`<div class="airep"><div class="aih"><div class="aidot"></div><span class="ailbl">askClaude</span></div><div class="aitxt">${esc(p.ai_reply)}</div></div>`:''}<div class="pacts"><button class="pa ${liked?'lkd':''}" onclick="tl('${p.id}',${liked})">${liked?'❤️':'🤍'} <span id="lc-${p.id}">0</span></button><button class="pa" onclick="toggleReplies('${p.id}')">💬 <span id="rc-${p.id}">0</span></button><button class="pa ${reposted?'rptd':''}" onclick="tr2('${p.id}',${reposted})">🔁 <span id="rpc-${p.id}">0</span></button>${isOwn?`<button class="pa del" onclick="askDelete('${p.id}')">🗑️</button>`:''}</div><div id="replies-${p.id}" style="display:none"></div></div></div></div>`;
 }
-
 async function llc(id){try{const r=await fetch(`${SU}/rest/v1/likes?post_id=eq.${id}&select=id`,{headers:{'apikey':SK,'Authorization':`Bearer ${SK}`,'Prefer':'count=exact'}});const c=r.headers.get('content-range')?.split('/')[1]||'0';const el=document.getElementById('lc-'+id);if(el)el.textContent=c;}catch(e){}}
 async function lrc(id){try{const r=await fetch(`${SU}/rest/v1/replies?post_id=eq.${id}&select=id`,{headers:{'apikey':SK,'Authorization':`Bearer ${SK}`,'Prefer':'count=exact'}});const c=r.headers.get('content-range')?.split('/')[1]||'0';const el=document.getElementById('rc-'+id);if(el)el.textContent=c;}catch(e){}}
 async function lrpc(id){try{const r=await fetch(`${SU}/rest/v1/reposts?post_id=eq.${id}&select=id`,{headers:{'apikey':SK,'Authorization':`Bearer ${SK}`,'Prefer':'count=exact'}});const c=r.headers.get('content-range')?.split('/')[1]||'0';const el=document.getElementById('rpc-'+id);if(el)el.textContent=c;}catch(e){}}
@@ -580,7 +543,6 @@ async function pub(){
   }catch(e){toast('Erreur: '+e.message,'err');}
   btn.disabled=false;btn.textContent='Publier';
 }
-
 async function tl(pid,isLiked){
   try{
     if(isLiked)await sb(`/likes?post_id=eq.${pid}&user_id=eq.${me.id}`,{method:'DELETE',tok:me.tok});
@@ -595,19 +557,13 @@ async function tr2(pid,isReposted){
     loadFeed();toast(isReposted?'Repost annulé':'Reposté ! 🔁','ok');
   }catch(e){}
 }
-
-// DELETE POST
 function askDelete(pid){deletePostId=pid;document.getElementById('delete-modal').classList.add('on');}
 function closeDelete(){deletePostId=null;document.getElementById('delete-modal').classList.remove('on');}
 async function confirmDelete(){
   if(!deletePostId)return;
-  try{
-    await sb(`/posts?id=eq.${deletePostId}`,{method:'DELETE',tok:me.tok});
-    closeDelete();loadFeed();toast('Post supprimé','ok');
-  }catch(e){toast('Erreur suppression','err');}
+  try{await sb(`/posts?id=eq.${deletePostId}`,{method:'DELETE',tok:me.tok});closeDelete();loadFeed();toast('Post supprimé','ok');}
+  catch(e){toast('Erreur suppression','err');}
 }
-
-// REPLIES
 async function toggleReplies(pid){
   const el=document.getElementById('replies-'+pid);
   if(el.style.display==='none'){el.style.display='block';loadReplies(pid);}else el.style.display='none';
@@ -633,8 +589,6 @@ async function sendReply(pid){
   const inp=document.getElementById('ri-'+pid);const content=inp.value.trim();if(!content)return;
   try{await sb('/replies',{method:'POST',tok:me.tok,body:{post_id:pid,user_id:me.id,content}});inp.value='';loadReplies(pid);lrc(pid);toast('Réponse publiée !','ok');}catch(e){toast('Erreur réponse','err');}
 }
-
-// EXPLORE
 async function loadExplore(){
   const c=document.getElementById('explore-results');
   c.innerHTML='<div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div>';
@@ -655,8 +609,6 @@ async function searchUsers(){
   if(!q){loadExplore();return;}
   try{const users=await sb(`/profiles?or=(username.ilike.*${q}*,display_name.ilike.*${q}*)&limit=20`,{tok:me.tok});renderUsers(users,c);}catch(e){}
 }
-
-// NOTIFS
 async function loadNotifs(){
   const c=document.getElementById('notifs-list');
   try{
@@ -671,27 +623,49 @@ async function loadNotifs(){
     const allUids=[...new Set([...myLikes.map(l=>l.user_id),...myReplies.map(r=>r.user_id)])];
     const profs=allUids.length?await sb(`/profiles?id=in.(${allUids.join(',')})`,{tok:me.tok}):[];
     const pm={};(profs||[]).forEach(p=>pm[p.id]=p);
-    const all=[
-      ...myLikes.map(l=>({type:'like',uid:l.user_id,time:l.created_at})),
-      ...myReplies.map(r=>({type:'reply',uid:r.user_id,content:r.content,time:r.created_at}))
-    ].sort((a,b)=>new Date(b.time)-new Date(a.time));
+    const all=[...myLikes.map(l=>({type:'like',uid:l.user_id,time:l.created_at})),...myReplies.map(r=>({type:'reply',uid:r.user_id,content:r.content,time:r.created_at}))].sort((a,b)=>new Date(b.time)-new Date(a.time));
     if(!all.length){c.innerHTML='<div class="empty"><div class="empty-ico">🔔</div><div class="empty-t">Aucune notification</div><div class="empty-s">Tu seras notifié quand quelqu\'un like ou répond à tes posts.</div></div>';return;}
     c.innerHTML=all.map(n=>{
       const prof=pm[n.uid]||{};const ini=(prof.display_name||'U')[0].toUpperCase();
       const avC=prof.avatar_url?`<img src="${prof.avatar_url}" alt="">`:`${ini}`;
-      return`<div class="post" style="display:flex;align-items:center;gap:12px;">
-        <div class="pav" style="cursor:default">${avC}</div>
-        <div style="flex:1">
-          <span style="font-weight:700">${esc(prof.display_name||'Quelqu\'un')}</span>
-          ${n.type==='like'?` ❤️ a aimé ton post`:`💬 a répondu : <em style="color:var(--t2)">"${esc(n.content?.slice(0,60))}${n.content?.length>60?'...':''}"</em>`}
-          <span style="font-size:12px;color:var(--t3);margin-left:8px">${ago(n.time)}</span>
-        </div>
-      </div>`;
+      return`<div class="post" style="display:flex;align-items:center;gap:12px;"><div class="pav" style="cursor:default">${avC}</div><div style="flex:1"><span style="font-weight:700">${esc(prof.display_name||'Quelqu\'un')}</span>${n.type==='like'?` ❤️ a aimé ton post`:`💬 a répondu : <em style="color:var(--t2)">"${esc(n.content?.slice(0,60))}${n.content?.length>60?'...':''}"</em>`}<span style="font-size:12px;color:var(--t3);margin-left:8px">${ago(n.time)}</span></div></div>`;
     }).join('');
   }catch(e){c.innerHTML=`<div class="empty"><div class="empty-t">Erreur: ${e.message}</div></div>`;}
 }
 
-// PROFILE
+// ===== SYSTEME FOLLOW =====
+async function loadFollowCounts(userId){
+  try{
+    const r1=await fetch(`${SU}/rest/v1/follows?following_id=eq.${userId}&select=id`,{headers:{'apikey':SK,'Authorization':`Bearer ${SK}`,'Prefer':'count=exact'}});
+    const followers=r1.headers.get('content-range')?.split('/')[1]||'0';
+    const r2=await fetch(`${SU}/rest/v1/follows?follower_id=eq.${userId}&select=id`,{headers:{'apikey':SK,'Authorization':`Bearer ${SK}`,'Prefer':'count=exact'}});
+    const following=r2.headers.get('content-range')?.split('/')[1]||'0';
+    const el1=document.getElementById('prof-followers-count');
+    const el2=document.getElementById('prof-following-count');
+    if(el1)el1.textContent=followers;
+    if(el2)el2.textContent=following;
+  }catch(e){}
+}
+async function checkFollowing(userId){
+  try{const r=await sb(`/follows?follower_id=eq.${me.id}&following_id=eq.${userId}`,{tok:me.tok});return r&&r.length>0;}
+  catch(e){return false;}
+}
+async function toggleFollow(){
+  const btn=document.getElementById('prof-follow-btn');
+  const isFollowing=btn.classList.contains('following');
+  try{
+    if(isFollowing){
+      await sb(`/follows?follower_id=eq.${me.id}&following_id=eq.${viewingUserId}`,{method:'DELETE',tok:me.tok});
+      btn.classList.remove('following');btn.textContent='Suivre';toast('Abonnement annulé','ok');
+    }else{
+      await sb('/follows',{method:'POST',tok:me.tok,body:{follower_id:me.id,following_id:viewingUserId}});
+      btn.classList.add('following');btn.textContent='Abonné ✓';toast('Abonné ! 🎉','ok');
+    }
+    loadFollowCounts(viewingUserId);
+  }catch(e){toast('Erreur: '+e.message,'err');}
+}
+// ==========================
+
 async function loadProfile(userId){
   const isOwn=userId===me.id;
   let prof=isOwn?myP:null;
@@ -705,6 +679,16 @@ async function loadProfile(userId){
   document.getElementById('prof-page-name').textContent=prof.display_name||'Utilisateur';
   const bioWrap=document.getElementById('prof-bio-wrap');
   bioWrap.innerHTML=prof.bio?`<div class="prof-bio">${esc(prof.bio)}</div>`:`<div class="prof-bio-empty">${isOwn?'Ajoute une bio...':'Pas de bio.'}</div>`;
+  const followBtn=document.getElementById('prof-follow-btn');
+  if(!isOwn){
+    followBtn.style.display='block';
+    const already=await checkFollowing(userId);
+    followBtn.classList.toggle('following',already);
+    followBtn.textContent=already?'Abonné ✓':'Suivre';
+  }else{
+    followBtn.style.display='none';
+  }
+  loadFollowCounts(userId);
   const posts=await sb(`/posts?user_id=eq.${userId}&order=created_at.desc`,{tok:me.tok});
   document.getElementById('prof-posts-count').textContent=posts?.length||0;
   document.getElementById('prof-page-posts').textContent=`${posts?.length||0} posts`;
@@ -740,8 +724,6 @@ async function loadLikedPosts(){
     (posts||[]).forEach(p=>{llc(p.id);lrc(p.id);lrpc(p.id);});
   }catch(e){c.innerHTML=`<div class="empty"><div class="empty-t">Erreur: ${e.message}</div></div>`;}
 }
-
-// EDIT PROFILE
 function openEdit(){
   const ini=(myP?.display_name||'U')[0].toUpperCase();
   const prev=document.getElementById('edit-av-preview');
@@ -752,7 +734,6 @@ function openEdit(){
   document.getElementById('edit-modal').classList.add('on');
 }
 function closeEdit(){document.getElementById('edit-modal').classList.remove('on');editAvatarFile=null;}
-
 function previewAvatar(e){
   const file=e.target.files[0];if(!file)return;
   if(file.size>2*1024*1024){toast('Image trop lourde (max 2MB)','err');return;}
@@ -761,7 +742,6 @@ function previewAvatar(e){
   reader.onload=ev=>{document.getElementById('edit-av-preview').innerHTML=`<img src="${ev.target.result}" alt="">`;};
   reader.readAsDataURL(file);
 }
-
 async function saveProfile(){
   const name=document.getElementById('edit-name').value.trim();
   const bio=document.getElementById('edit-bio').value.trim();
@@ -769,14 +749,9 @@ async function saveProfile(){
   try{
     let avatarUrl=myP?.avatar_url||null;
     if(editAvatarFile){
-      // Upload to Supabase Storage
       const ext=editAvatarFile.name.split('.').pop();
       const path=`avatars/${me.id}.${ext}`;
-      const uploadRes=await fetch(`${SU}/storage/v1/object/${path}`,{
-        method:'POST',
-        headers:{'apikey':SK,'Authorization':`Bearer ${me.tok}`,'Content-Type':editAvatarFile.type,'x-upsert':'true'},
-        body:editAvatarFile
-      });
+      const uploadRes=await fetch(`${SU}/storage/v1/object/${path}`,{method:'POST',headers:{'apikey':SK,'Authorization':`Bearer ${me.tok}`,'Content-Type':editAvatarFile.type,'x-upsert':'true'},body:editAvatarFile});
       if(uploadRes.ok)avatarUrl=`${SU}/storage/v1/object/public/${path}?t=${Date.now()}`;
       else toast('Erreur upload photo, profil mis à jour sans photo','err');
     }
@@ -787,8 +762,6 @@ async function saveProfile(){
     closeEdit();loadProfile(me.id);toast('Profil mis à jour ! ✅','ok');
   }catch(e){toast('Erreur: '+e.message,'err');}
 }
-
-// SETTINGS
 async function saveAccount(){
   const email=document.getElementById('s-email').value.trim();
   const pass=document.getElementById('s-pass').value;
@@ -807,7 +780,6 @@ async function saveAccount(){
     toast('Compte mis à jour ! ✅','ok');
   }catch(e){toast('Erreur: '+e.message,'err');}
 }
-
 function oty(){
   const v=document.getElementById('ctxt').value,r=280-v.length;
   const el=document.getElementById('cct');el.textContent=r;
