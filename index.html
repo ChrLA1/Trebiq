@@ -58,6 +58,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .ptop-back:hover{color:var(--white);}
 .ptitle{font-size:17px;font-weight:700;letter-spacing:-.3px;}
 .psub{font-size:13px;color:var(--t3);margin-top:1px;}
+.feed-tabs{display:flex;border-bottom:1px solid var(--border);}
+.ftab{flex:1;padding:14px;text-align:center;font-size:14px;font-weight:600;color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;}
+.ftab.on{color:var(--white);border-bottom-color:var(--accent);}
+.ftab:hover{background:rgba(255,255,255,0.02);color:var(--text);}
 .compose{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;gap:12px;}
 .cav{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex-shrink:0;margin-top:2px;color:#fff;overflow:hidden;}
 .cav img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
@@ -132,7 +136,6 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .prof-av-wrap{margin-top:-46px;margin-bottom:12px;}
 .prof-av{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:30px;color:#fff;border:4px solid var(--bg);overflow:hidden;}
 .prof-av img{width:100%;height:100%;object-fit:cover;}
-.prof-actions{display:flex;justify-content:flex-end;gap:8px;margin-bottom:12px;}
 .btn-edit{background:transparent;border:1px solid var(--border2);border-radius:20px;padding:8px 18px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;}
 .btn-edit:hover{background:var(--s2);}
 .btn-follow{background:linear-gradient(135deg,var(--accent),#9b87ff);border:none;border-radius:20px;padding:8px 20px;color:#fff;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;}
@@ -267,6 +270,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
     <main class="feed">
       <div class="page on" id="page-home">
         <div class="ptop"><div class="ptitle">Accueil</div></div>
+        <div class="feed-tabs">
+          <div class="ftab on" id="tab-foryou" onclick="switchFeed('foryou')">Pour toi</div>
+          <div class="ftab" id="tab-following" onclick="switchFeed('following')">Abonnements</div>
+        </div>
         <div class="compose">
           <div class="cav" id="cav">?</div>
           <div class="cr">
@@ -420,7 +427,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 
 <script>
 const SU='https://rcqiioozqfbempxuyvzq.supabase.co',SK='sb_publishable_Djp3G_plOEtDeDT1GwNMrg_QtS3TljZ';
-let me=null,myP=null,curPage='home',viewingUserId=null,historyStack=[],deletePostId=null,editAvatarFile=null;
+let me=null,myP=null,curPage='home',curFeed='foryou',viewingUserId=null,historyStack=[],deletePostId=null,editAvatarFile=null;
 
 async function sb(path,o={}){
   const r=await fetch(`${SU}/rest/v1${path}`,{headers:{'apikey':SK,'Authorization':`Bearer ${o.tok||SK}`,'Content-Type':'application/json','Prefer':o.pref||'return=representation',...(o.h||{})},method:o.method||'GET',body:o.body?JSON.stringify(o.body):undefined});
@@ -497,12 +504,34 @@ function goPage(page,userId=null){
 function goBack(){if(historyStack.length>0){const prev=historyStack.pop();goPage(prev);}else goPage('home');}
 function goUserProfile(uid){historyStack.push(curPage);goPage('profile',uid);}
 
+// ===== FEED TABS =====
+function switchFeed(tab){
+  curFeed=tab;
+  document.getElementById('tab-foryou').classList.toggle('on',tab==='foryou');
+  document.getElementById('tab-following').classList.toggle('on',tab==='following');
+  loadFeed();
+}
+
 async function loadFeed(){
   const c=document.getElementById('fp');
   c.innerHTML='<div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div>';
   try{
-    const posts=await sb('/posts?order=created_at.desc&limit=60',{tok:me.tok});
-    if(!posts?.length){c.innerHTML='<div class="empty"><div class="empty-ico">✨</div><div class="empty-t">Aucun post</div><div class="empty-s">Sois le premier à publier !<br>Tape <strong>@askClaude</strong> pour une réponse IA.</div></div>';return;}
+    let posts;
+    if(curFeed==='following'){
+      const follows=await sb(`/follows?follower_id=eq.${me.id}&select=following_id`,{tok:me.tok});
+      if(!follows?.length){
+        c.innerHTML='<div class="empty"><div class="empty-ico">👥</div><div class="empty-t">Aucun abonnement</div><div class="empty-s">Suis des utilisateurs pour voir leurs posts ici.<br>Va dans <strong>Explorer</strong> pour en trouver !</div></div>';
+        return;
+      }
+      const ids=follows.map(f=>f.following_id).join(',');
+      posts=await sb(`/posts?user_id=in.(${ids})&order=created_at.desc&limit=60`,{tok:me.tok});
+    }else{
+      posts=await sb('/posts?order=created_at.desc&limit=60',{tok:me.tok});
+    }
+    if(!posts?.length){
+      c.innerHTML='<div class="empty"><div class="empty-ico">✨</div><div class="empty-t">Aucun post</div><div class="empty-s">Sois le premier à publier !<br>Tape <strong>@askClaude</strong> pour une réponse IA.</div></div>';
+      return;
+    }
     const uids=[...new Set(posts.map(p=>p.user_id))];
     const profs=uids.length?await sb(`/profiles?id=in.(${uids.join(',')})`,{tok:me.tok}):[];
     const pm={};(profs||[]).forEach(p=>pm[p.id]=p);
@@ -514,6 +543,8 @@ async function loadFeed(){
     posts.forEach(p=>{llc(p.id);lrc(p.id);lrpc(p.id);});
   }catch(e){c.innerHTML=`<div class="empty"><div class="empty-t">Erreur: ${e.message}</div></div>`;}
 }
+// =====================
+
 function rp(p,prof,liked,reposted){
   const i=(prof?.display_name||'U')[0].toUpperCase();
   const url=prof?.avatar_url;
