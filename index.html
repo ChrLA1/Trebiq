@@ -202,6 +202,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .prof-tabs{display:flex;border-bottom:1px solid var(--border);}
 .ptab{flex:1;padding:14px;text-align:center;font-size:14px;font-weight:600;color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;}
 .ptab.on{color:var(--white);border-bottom-color:var(--accent);}
+.pinned-post{border-left:3px solid var(--accent);background:rgba(124,106,247,0.04);}
+.pinned-label{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--accent2);font-weight:600;padding:10px 20px 0;text-transform:uppercase;letter-spacing:.5px;}
 .poll-modal-opts{display:flex;flex-direction:column;gap:8px;margin-bottom:12px;}
 .poll-opt-row{display:flex;align-items:center;gap:8px;}
 .poll-opt-input{flex:1;background:var(--bg);border:1px solid var(--border2);border-radius:10px;padding:10px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:all .2s;}
@@ -906,7 +908,7 @@ function rp(p,prof,liked,reposted){
   const isOwn=p.user_id===me.id;
   const imgHtml=p.image_url?`<div class="post-img" onclick="openLightbox('${p.image_url}')"><img src="${p.image_url}" alt="image" loading="lazy"></div>`:''
   const pollHtml=p._poll?`<div id="poll-${p.id}">Chargement sondage...</div>`:'';
-  return`<div class="post" id="p-${p.id}"><div class="prow"><div class="pav" onclick="goUserProfile('${uid}')">${avContent}</div><div class="pb"><div class="pm"><span class="pname" onclick="goUserProfile('${uid}')">${esc(prof?.display_name||'Utilisateur')}</span><span class="phdl">@${esc(prof?.username||'...')}</span><span class="ptm">· ${ago(p.created_at)}</span></div><div class="ptxt">${txt}</div>${imgHtml}${pollHtml}${p.ai_reply?`<div class="airep"><div class="aih"><div class="aidot"></div><span class="ailbl">askClaude</span></div><div class="aitxt">${esc(p.ai_reply)}</div></div>`:''}<div class="pacts"><button class="pa ${liked?'lkd':''}" onclick="tl('${p.id}',${liked})">${liked?'❤️':'🤍'} <span id="lc-${p.id}">0</span></button><button class="pa" onclick="toggleReplies('${p.id}')">💬 <span id="rc-${p.id}">0</span></button><button class="pa ${reposted?'rptd':''}" onclick="tr2('${p.id}',${reposted})">🔁 <span id="rpc-${p.id}">0</span></button>${isOwn?`<button class="pa del" onclick="askDelete('${p.id}')">🗑️</button>`:''}</div><div id="replies-${p.id}" style="display:none"></div></div></div></div>`;
+  return`<div class="post" id="p-${p.id}"><div class="prow"><div class="pav" onclick="goUserProfile('${uid}')">${avContent}</div><div class="pb"><div class="pm"><span class="pname" onclick="goUserProfile('${uid}')">${esc(prof?.display_name||'Utilisateur')}</span><span class="phdl">@${esc(prof?.username||'...')}</span><span class="ptm">· ${ago(p.created_at)}</span></div><div class="ptxt">${txt}</div>${imgHtml}${pollHtml}${p.ai_reply?`<div class="airep"><div class="aih"><div class="aidot"></div><span class="ailbl">askClaude</span></div><div class="aitxt">${esc(p.ai_reply)}</div></div>`:''}<div class="pacts"><button class="pa ${liked?'lkd':''}" onclick="tl('${p.id}',${liked})">${liked?'❤️':'🤍'} <span id="lc-${p.id}">0</span></button><button class="pa" onclick="toggleReplies('${p.id}')">💬 <span id="rc-${p.id}">0</span></button><button class="pa ${reposted?'rptd':''}" onclick="tr2('${p.id}',${reposted})">🔁 <span id="rpc-${p.id}">0</span></button>${isOwn?`<button class="pa del" onclick="askDelete('${p.id}')">🗑️</button><button class="pa" onclick="togglePin('${p.id}')" title="Épingler">${p._pinned?'📌':'📍'}</button>`:''}</div><div id="replies-${p.id}" style="display:none"></div></div></div></div>`;
 }
 async function llc(id){try{const r=await fetch(`${SU}/rest/v1/likes?post_id=eq.${id}&select=id`,{headers:{'apikey':SK,'Authorization':`Bearer ${SK}`,'Prefer':'count=exact'}});const c=r.headers.get('content-range')?.split('/')[1]||'0';const el=document.getElementById('lc-'+id);if(el)el.textContent=c;}catch(e){}}
 async function lrc(id){try{const r=await fetch(`${SU}/rest/v1/replies?post_id=eq.${id}&select=id`,{headers:{'apikey':SK,'Authorization':`Bearer ${SK}`,'Prefer':'count=exact'}});const c=r.headers.get('content-range')?.split('/')[1]||'0';const el=document.getElementById('rc-'+id);if(el)el.textContent=c;}catch(e){}}
@@ -1000,6 +1002,18 @@ async function sendReply(pid){
     }
   }catch(e){toast('Erreur réponse','err');}
 }
+// ===== PIN =====
+async function togglePin(pid){
+  try{
+    const isAlreadyPinned=myP?.pinned_post_id===pid;
+    const newPinned=isAlreadyPinned?null:pid;
+    await sb(`/profiles?id=eq.${me.id}`,{method:'PATCH',tok:me.tok,body:{pinned_post_id:newPinned}});
+    myP={...myP,pinned_post_id:newPinned};
+    toast(isAlreadyPinned?'Post désépinglé':'Post épinglé 📌','ok');
+    if(curPage==='profile')loadProfile(me.id);
+  }catch(e){toast('Erreur','err');}
+}
+
 // ===== POLLS =====
 function openPollModal(){document.getElementById('poll-modal').classList.add('on');}
 function closePollModal(){document.getElementById('poll-modal').classList.remove('on');}
@@ -1282,8 +1296,16 @@ async function loadProfile(userId){
   const liked=new Set((lks||[]).map(l=>l.post_id));
   const c=document.getElementById('prof-posts-list');
   if(!posts?.length){c.innerHTML='<div class="empty"><div class="empty-ico">📝</div><div class="empty-t">Aucun post</div></div>';return;}
-  c.innerHTML=posts.map(p=>rp(p,prof,liked.has(p.id),false)).join('');
-  posts.forEach(p=>{llc(p.id);lrc(p.id);lrpc(p.id);});
+  // Pinned post first
+  const pinnedId=prof.pinned_post_id;
+  let sorted=[...posts];
+  if(pinnedId){
+    const pinnedIdx=sorted.findIndex(p=>p.id===pinnedId);
+    if(pinnedIdx>0){const [pinned]=sorted.splice(pinnedIdx,1);sorted.unshift(pinned);}
+    sorted=sorted.map(p=>({...p,_pinned:p.id===pinnedId}));
+  }
+  c.innerHTML=(pinnedId?`<div class="pinned-label">📌 Post épinglé</div>`:'')+sorted.map(p=>rp(p,prof,liked.has(p.id),false)).join('');
+  sorted.forEach(p=>{llc(p.id);lrc(p.id);lrpc(p.id);});
 }
 function switchProfTab(tab){
   document.querySelectorAll('.ptab').forEach((t,i)=>t.classList.toggle('on',(tab==='posts'&&i===0)||(tab==='likes'&&i===1)));
