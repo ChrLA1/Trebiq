@@ -854,8 +854,16 @@ async function pub(){
 }
 async function tl(pid,isLiked){
   try{
-    if(isLiked)await sb(`/likes?post_id=eq.${pid}&user_id=eq.${me.id}`,{method:'DELETE',tok:me.tok});
-    else await sb('/likes',{method:'POST',tok:me.tok,body:{post_id:pid,user_id:me.id}});
+    if(isLiked){
+      await sb(`/likes?post_id=eq.${pid}&user_id=eq.${me.id}`,{method:'DELETE',tok:me.tok});
+    }else{
+      await sb('/likes',{method:'POST',tok:me.tok,body:{post_id:pid,user_id:me.id}});
+      const posts=await sb(`/posts?id=eq.${pid}&select=user_id`,{tok:me.tok});
+      const ownerId=posts?.[0]?.user_id;
+      if(ownerId&&ownerId!==me.id){
+        sb('/notifications',{method:'POST',tok:me.tok,body:{user_id:ownerId,from_user_id:me.id,type:'like'}}).catch(()=>{});
+      }
+    }
     loadFeed();
   }catch(e){}
 }
@@ -896,7 +904,16 @@ async function loadReplies(pid){
 }
 async function sendReply(pid){
   const inp=document.getElementById('ri-'+pid);const content=inp.value.trim();if(!content)return;
-  try{await sb('/replies',{method:'POST',tok:me.tok,body:{post_id:pid,user_id:me.id,content}});inp.value='';loadReplies(pid);lrc(pid);toast('Réponse publiée !','ok');}catch(e){toast('Erreur réponse','err');}
+  try{
+    await sb('/replies',{method:'POST',tok:me.tok,body:{post_id:pid,user_id:me.id,content}});
+    inp.value='';loadReplies(pid);lrc(pid);toast('Réponse publiée !','ok');
+    // Notif au propriétaire du post
+    const posts=await sb(`/posts?id=eq.${pid}&select=user_id`,{tok:me.tok});
+    const ownerId=posts?.[0]?.user_id;
+    if(ownerId&&ownerId!==me.id){
+      sb('/notifications',{method:'POST',tok:me.tok,body:{user_id:ownerId,from_user_id:me.id,type:'reply'}}).catch(()=>{});
+    }
+  }catch(e){toast('Erreur réponse','err');}
 }
 let curExploreTab='users';
 function switchExplore(tab){
