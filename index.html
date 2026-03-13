@@ -101,6 +101,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .ptm{font-size:12px;color:var(--t3);font-family:'DM Mono',monospace;}
 .ptxt{font-size:15px;line-height:1.65;color:var(--text);white-space:pre-wrap;word-break:break-word;}
 .ptxt .men{color:var(--accent2);font-weight:500;}
+.ptxt .htag{color:var(--accent2);font-weight:500;cursor:pointer;}
+.ptxt .htag:hover{text-decoration:underline;}
 .post-img{margin-top:10px;border-radius:14px;overflow:hidden;border:1px solid var(--border);cursor:pointer;}
 .post-img img{width:100%;max-height:400px;object-fit:cover;display:block;transition:opacity .2s;}
 .post-img img:hover{opacity:.95;}
@@ -844,7 +846,9 @@ function rp(p,prof,liked,reposted){
   const i=(prof?.display_name||'U')[0].toUpperCase();
   const url=prof?.avatar_url;
   const avContent=url?`<img src="${url}" alt="">`:`${i}`;
-  const txt=esc(p.content).replace(/@askClaude/gi,'<span class="men">@askClaude</span>');
+  const txt=esc(p.content)
+    .replace(/@askClaude/gi,'<span class="men">@askClaude</span>')
+    .replace(/#(\w+)/g,'<span class="htag" onclick="searchHashtag(\'$1\')">#$1</span>');
   const uid=prof?.id||'';
   const isOwn=p.user_id===me.id;
   const imgHtml=p.image_url?`<div class="post-img" onclick="openLightbox('${p.image_url}')"><img src="${p.image_url}" alt="image" loading="lazy"></div>`:'';
@@ -982,6 +986,15 @@ async function loadStats(){
       ${topPost?`<div class="stat-section"><div class="stat-section-title">🏆 Post le plus liké</div><div class="top-post"><div class="top-post-txt">${esc(topPost.content?.slice(0,120))}${topPost.content?.length>120?'...':''}</div><div class="top-post-stats"><span>❤️ ${likesByPost[topPost.id]||0} likes</span><span>📅 ${ago(topPost.created_at)}</span></div></div></div>`:''}
     `;
   }catch(e){c.innerHTML=`<div class="empty"><div class="empty-t">Erreur: ${e.message}</div></div>`;}
+}
+
+function searchHashtag(tag){
+  goPage('explore');
+  setTimeout(()=>{
+    switchExplore('posts');
+    document.getElementById('search-input').value='#'+tag;
+    searchPosts();
+  },100);
 }
 
 let curExploreTab='users';
