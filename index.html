@@ -623,6 +623,19 @@ async function sbaPUT(path,body,tok){
   const d=await r.json();if(!r.ok)throw new Error(d.error_description||d.msg||'Erreur');return d;
 }
 
+function showEmailConfirm(email){
+  document.getElementById('fin').style.display='none';
+  document.getElementById('fup').style.display='none';
+  document.querySelectorAll('.atab').forEach(t=>t.classList.remove('on'));
+  document.getElementById('acard-inner').innerHTML='';
+  const div=document.createElement('div');
+  div.style.cssText='text-align:center;padding:20px 0;';
+  div.innerHTML='<div style="font-size:48px;margin-bottom:16px;">📬</div>'
+    +'<div style="font-size:18px;font-weight:700;color:#fff;margin-bottom:10px;">Vérifie ta boîte mail !</div>'
+    +'<div style="font-size:14px;color:#9898b8;line-height:1.7;margin-bottom:20px;">Un email a été envoyé à <strong style="color:#fff">'+email+'</strong>.<br>Clique sur le lien pour activer ton compte.</div>'
+    +'<button onclick="location.reload()" style="background:linear-gradient(135deg,#7c6af7,#9b87ff);border:none;border-radius:12px;padding:12px 24px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:sans-serif;">Se connecter</button>';
+  document.getElementById('acard-inner').appendChild(div);
+}
 function stab(t){
   document.querySelectorAll('.atab').forEach((e,i)=>e.classList.toggle('on',(t==='in'&&i===0)||(t==='up'&&i===1)));
   document.getElementById('fin').style.display=t==='in'?'block':'none';
@@ -661,10 +674,8 @@ async function register(){
   try{
     const d=await sba('/signup',{email:e,password:p});
     if(d.user&&!d.access_token){
-      // Email confirmation requis
-      document.getElementById('acard-inner').innerHTML='<div style="text-align:center;padding:20px 0;"><div style="font-size:48px;margin-bottom:16px;">📬</div><div style="font-size:18px;font-weight:700;color:var(--white);margin-bottom:10px;">Vérifie ta boîte mail !</div><div style="font-size:14px;color:var(--t2);line-height:1.7;margin-bottom:20px;">Un email a été envoyé à <strong style="color:var(--white)">'+e+'</strong>.<br>Clique sur le lien pour activer ton compte.</div><button onclick="location.reload()" style="background:linear-gradient(135deg,#7c6af7,#9b87ff);border:none;border-radius:12px;padding:12px 24px;color:#fff;font-family:DM Sans,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Se connecter</button></div>';
-      // Store pending profile info
       localStorage.setItem('pendingProfile',JSON.stringify({id:d.user.id,username:u,display_name:n}));
+      showEmailConfirm(e);
       return;
     }
     me=d.user;me.tok=d.access_token;
