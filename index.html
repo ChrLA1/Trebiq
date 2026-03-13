@@ -288,6 +288,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .lightbox.on{display:flex;}
 .lightbox img{max-width:100%;max-height:90vh;border-radius:12px;object-fit:contain;}
 .lightbox-close{position:absolute;top:20px;right:20px;background:rgba(255,255,255,0.1);border:none;border-radius:50%;width:40px;height:40px;color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.report-modal-opts{display:flex;flex-direction:column;gap:8px;margin-bottom:4px;}
+.report-opt{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--bg);border:1px solid var(--border2);border-radius:12px;cursor:pointer;transition:all .2s;font-size:14px;color:var(--text);}
+.report-opt:hover{border-color:var(--accent);background:var(--ag);}
+.report-opt.selected{border-color:var(--accent);background:var(--ag);color:var(--white);}
 .sugg-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);}
 .sugg-item:last-child{border-bottom:none;}
 .sugg-av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff;flex-shrink:0;overflow:hidden;cursor:pointer;}
@@ -572,6 +576,26 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
     <div class="modal-btns">
       <button class="btn-cancel" onclick="closeDelete()">Annuler</button>
       <button class="btn-danger" onclick="confirmDelete()">Supprimer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Report modal -->
+<div class="modal-bg" id="report-modal">
+  <div class="modal" style="max-width:400px;">
+    <button class="modal-close" onclick="closeReport()">×</button>
+    <div class="modal-title">🛡️ Signaler ce post</div>
+    <p style="color:var(--t2);font-size:14px;margin-bottom:16px;">Pourquoi signales-tu ce post ?</p>
+    <div class="report-modal-opts" id="report-opts">
+      <div class="report-opt" onclick="selectReason(this,'Spam')">🚫 Spam</div>
+      <div class="report-opt" onclick="selectReason(this,'Contenu inapproprié')">⚠️ Contenu inapproprié</div>
+      <div class="report-opt" onclick="selectReason(this,'Harcèlement')">😡 Harcèlement</div>
+      <div class="report-opt" onclick="selectReason(this,'Désinformation')">❌ Désinformation</div>
+      <div class="report-opt" onclick="selectReason(this,'Autre')">💬 Autre</div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeReport()">Annuler</button>
+      <button class="btn-danger" id="report-submit" onclick="submitReport()" disabled>Signaler</button>
     </div>
   </div>
 </div>
@@ -961,7 +985,7 @@ function rp(p,prof,liked,reposted){
   const isOwn=p.user_id===me.id;
   const imgHtml=p.image_url?`<div class="post-img" onclick="openLightbox('${p.image_url}')"><img src="${p.image_url}" alt="image" loading="lazy"></div>`:''
   const pollHtml=p._poll?`<div id="poll-${p.id}">Chargement sondage...</div>`:'';
-  return`<div class="post" id="p-${p.id}"><div class="prow"><div class="pav" onclick="goUserProfile('${uid}')">${avContent}</div><div class="pb"><div class="pm"><span class="pname" onclick="goUserProfile('${uid}')">${esc(prof?.display_name||'Utilisateur')}</span><span class="phdl">@${esc(prof?.username||'...')}</span><span class="ptm">· ${ago(p.created_at)}</span></div><div class="ptxt">${txt}</div>${imgHtml}${pollHtml}${p.ai_reply?`<div class="airep"><div class="aih"><div class="aidot"></div><span class="ailbl">askClaude</span></div><div class="aitxt">${esc(p.ai_reply)}</div></div>`:''}<div class="pacts"><button class="pa ${liked?'lkd':''}" onclick="tl('${p.id}',${liked})">${liked?'❤️':'🤍'} <span id="lc-${p.id}">0</span></button><button class="pa" onclick="toggleReplies('${p.id}')">💬 <span id="rc-${p.id}">0</span></button><button class="pa ${reposted?'rptd':''}" onclick="tr2('${p.id}',${reposted})">🔁 <span id="rpc-${p.id}">0</span></button>${isOwn?`<button class="pa del" onclick="askDelete('${p.id}')">🗑️</button><button class="pa" onclick="togglePin('${p.id}')" title="Épingler">${p._pinned?'📌':'📍'}</button>`:''}</div><div id="replies-${p.id}" style="display:none"></div></div></div></div>`;
+  return`<div class="post" id="p-${p.id}"><div class="prow"><div class="pav" onclick="goUserProfile('${uid}')">${avContent}</div><div class="pb"><div class="pm"><span class="pname" onclick="goUserProfile('${uid}')">${esc(prof?.display_name||'Utilisateur')}</span><span class="phdl">@${esc(prof?.username||'...')}</span><span class="ptm">· ${ago(p.created_at)}</span></div><div class="ptxt">${txt}</div>${imgHtml}${pollHtml}${p.ai_reply?`<div class="airep"><div class="aih"><div class="aidot"></div><span class="ailbl">askClaude</span></div><div class="aitxt">${esc(p.ai_reply)}</div></div>`:''}<div class="pacts"><button class="pa ${liked?'lkd':''}" onclick="tl('${p.id}',${liked})">${liked?'❤️':'🤍'} <span id="lc-${p.id}">0</span></button><button class="pa" onclick="toggleReplies('${p.id}')">💬 <span id="rc-${p.id}">0</span></button><button class="pa ${reposted?'rptd':''}" onclick="tr2('${p.id}',${reposted})">🔁 <span id="rpc-${p.id}">0</span></button>${isOwn?`<button class="pa del" onclick="askDelete('${p.id}')">🗑️</button><button class="pa" onclick="togglePin('${p.id}')" title="Épingler">${p._pinned?'📌':'📍'}</button>`:`<button class="pa" onclick="openReport('${p.id}')" title="Signaler">🚩</button>`}</div><div id="replies-${p.id}" style="display:none"></div></div></div></div>`;
 }
 async function llc(id){try{const r=await fetch(`${SU}/rest/v1/likes?post_id=eq.${id}&select=id`,{headers:{'apikey':SK,'Authorization':`Bearer ${SK}`,'Prefer':'count=exact'}});const c=r.headers.get('content-range')?.split('/')[1]||'0';const el=document.getElementById('lc-'+id);if(el)el.textContent=c;}catch(e){}}
 async function lrc(id){try{const r=await fetch(`${SU}/rest/v1/replies?post_id=eq.${id}&select=id`,{headers:{'apikey':SK,'Authorization':`Bearer ${SK}`,'Prefer':'count=exact'}});const c=r.headers.get('content-range')?.split('/')[1]||'0';const el=document.getElementById('rc-'+id);if(el)el.textContent=c;}catch(e){}}
@@ -1055,6 +1079,33 @@ async function sendReply(pid){
     }
   }catch(e){toast('Erreur réponse','err');}
 }
+// ===== REPORTS =====
+let reportPostId=null,reportReason=null;
+function openReport(pid){
+  reportPostId=pid;reportReason=null;
+  document.querySelectorAll('.report-opt').forEach(o=>o.classList.remove('selected'));
+  document.getElementById('report-submit').disabled=true;
+  document.getElementById('report-modal').classList.add('on');
+}
+function closeReport(){document.getElementById('report-modal').classList.remove('on');reportPostId=null;reportReason=null;}
+function selectReason(el,reason){
+  document.querySelectorAll('.report-opt').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  reportReason=reason;
+  document.getElementById('report-submit').disabled=false;
+}
+async function submitReport(){
+  if(!reportPostId||!reportReason)return;
+  try{
+    await sb('/reports',{method:'POST',tok:me.tok,body:{post_id:reportPostId,reporter_id:me.id,reason:reportReason}});
+    closeReport();
+    toast('Signalement envoyé ✅','ok');
+  }catch(e){
+    if(e.message.includes('unique'))toast('Tu as déjà signalé ce post','err');
+    else toast('Erreur: '+e.message,'err');
+  }
+}
+
 // ===== PIN =====
 async function togglePin(pid){
   try{
