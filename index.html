@@ -70,10 +70,14 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .cr{flex:1;}
 .ctxt{width:100%;background:transparent;border:none;color:var(--text);font-family:'DM Sans',sans-serif;font-size:16px;resize:none;outline:none;min-height:56px;padding-top:6px;line-height:1.55;}
 .ctxt::placeholder{color:var(--t3);}
+.cimg-preview{margin-top:10px;position:relative;display:inline-block;}
+.cimg-preview img{max-height:200px;max-width:100%;border-radius:12px;border:1px solid var(--border);}
+.cimg-remove{position:absolute;top:6px;right:6px;background:rgba(0,0,0,0.7);border:none;border-radius:50%;width:24px;height:24px;color:#fff;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 .cfoot{display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid var(--border);margin-top:8px;}
 .ctools{display:flex;gap:2px;}
 .ctool{background:none;border:none;color:var(--accent2);font-size:17px;cursor:pointer;padding:6px 8px;border-radius:8px;transition:background .2s;}
 .ctool:hover{background:var(--ag);}
+.ctool.active{background:var(--ag);color:var(--accent);}
 .cra{display:flex;align-items:center;gap:12px;}
 .cct{font-size:12px;font-family:'DM Mono',monospace;color:var(--t3);}
 .cct.w{color:#f59e0b;}.cct.ov{color:var(--red);}
@@ -97,6 +101,9 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .ptm{font-size:12px;color:var(--t3);font-family:'DM Mono',monospace;}
 .ptxt{font-size:15px;line-height:1.65;color:var(--text);white-space:pre-wrap;word-break:break-word;}
 .ptxt .men{color:var(--accent2);font-weight:500;}
+.post-img{margin-top:10px;border-radius:14px;overflow:hidden;border:1px solid var(--border);cursor:pointer;}
+.post-img img{width:100%;max-height:400px;object-fit:cover;display:block;transition:opacity .2s;}
+.post-img img:hover{opacity:.95;}
 .pacts{display:flex;gap:4px;margin-top:12px;}
 .pa{display:flex;align-items:center;gap:5px;color:var(--t3);font-size:13px;cursor:pointer;background:none;border:none;padding:5px 10px;border-radius:8px;transition:all .2s;font-family:'DM Sans',sans-serif;}
 .pa:hover{background:var(--s3);color:var(--text);}
@@ -136,7 +143,6 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .notif-item{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;transition:background .15s;cursor:pointer;}
 .notif-item:hover{background:rgba(255,255,255,0.02);}
 .notif-item.unread{background:rgba(124,106,247,0.04);border-left:3px solid var(--accent);}
-.notif-icon{font-size:20px;width:36px;text-align:center;flex-shrink:0;}
 .notif-text{flex:1;font-size:14px;line-height:1.5;}
 .notif-text strong{color:var(--white);}
 .notif-time{font-size:12px;color:var(--t3);font-family:'DM Mono',monospace;flex-shrink:0;}
@@ -207,6 +213,11 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .avatar-upload-btn{background:var(--s2);border:1px solid var(--border2);border-radius:10px;padding:10px 16px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s;}
 .avatar-upload-btn:hover{background:var(--s3);}
 #avatar-file{display:none;}
+#post-img-file{display:none;}
+.lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:200;align-items:center;justify-content:center;padding:20px;}
+.lightbox.on{display:flex;}
+.lightbox img{max-width:100%;max-height:90vh;border-radius:12px;object-fit:contain;}
+.lightbox-close{position:absolute;top:20px;right:20px;background:rgba(255,255,255,0.1);border:none;border-radius:50%;width:40px;height:40px;color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 .rnav{padding:20px 16px;border-left:1px solid var(--border);}
 .rw{background:var(--s1);border:1px solid var(--border);border-radius:18px;padding:20px;margin-bottom:14px;}
 .rwt{font-size:16px;font-weight:700;margin-bottom:16px;}
@@ -289,9 +300,14 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
           <div class="cav" id="cav">?</div>
           <div class="cr">
             <textarea class="ctxt" id="ctxt" placeholder="Quoi de neuf ? Tape @askClaude pour une réponse IA..." maxlength="280" oninput="oty()"></textarea>
+            <div id="cimg-preview" class="cimg-preview" style="display:none">
+              <img id="cimg-thumb" src="" alt="">
+              <button class="cimg-remove" onclick="removePostImg()">×</button>
+            </div>
             <div class="cfoot">
               <div class="ctools">
-                <button class="ctool">🖼️</button>
+                <button class="ctool" id="btn-img-tool" onclick="document.getElementById('post-img-file').click()">🖼️</button>
+                <input type="file" id="post-img-file" accept="image/*" onchange="previewPostImg(event)">
                 <button class="ctool">📊</button>
                 <button class="ctool" onclick="iac()">🤖</button>
               </div>
@@ -391,6 +407,12 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
   </div>
 </div>
 
+<!-- Lightbox image -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close">×</button>
+  <img id="lightbox-img" src="" alt="">
+</div>
+
 <div class="modal-bg" id="edit-modal">
   <div class="modal">
     <button class="modal-close" onclick="closeEdit()">×</button>
@@ -438,7 +460,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 
 <script>
 const SU='https://rcqiioozqfbempxuyvzq.supabase.co',SK='sb_publishable_Djp3G_plOEtDeDT1GwNMrg_QtS3TljZ';
-let me=null,myP=null,curPage='home',curFeed='foryou',viewingUserId=null,historyStack=[],deletePostId=null,editAvatarFile=null;
+let me=null,myP=null,curPage='home',curFeed='foryou',viewingUserId=null,historyStack=[],deletePostId=null,editAvatarFile=null,postImgFile=null;
 
 async function sb(path,o={}){
   const r=await fetch(`${SU}/rest/v1${path}`,{headers:{'apikey':SK,'Authorization':`Bearer ${o.tok||SK}`,'Content-Type':'application/json','Prefer':o.pref||'return=representation',...(o.h||{})},method:o.method||'GET',body:o.body?JSON.stringify(o.body):undefined});
@@ -516,6 +538,42 @@ function goPage(page,userId=null){
 function goBack(){if(historyStack.length>0){const prev=historyStack.pop();goPage(prev);}else goPage('home');}
 function goUserProfile(uid){historyStack.push(curPage);goPage('profile',uid);}
 
+// ===== IMAGE DANS POSTS =====
+function previewPostImg(e){
+  const file=e.target.files[0];if(!file)return;
+  if(file.size>5*1024*1024){toast('Image trop lourde (max 5MB)','err');return;}
+  postImgFile=file;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    document.getElementById('cimg-thumb').src=ev.target.result;
+    document.getElementById('cimg-preview').style.display='block';
+    document.getElementById('btn-img-tool').classList.add('active');
+  };
+  reader.readAsDataURL(file);
+  document.getElementById('cpub').disabled=false;
+}
+function removePostImg(){
+  postImgFile=null;
+  document.getElementById('cimg-preview').style.display='none';
+  document.getElementById('cimg-thumb').src='';
+  document.getElementById('btn-img-tool').classList.remove('active');
+  document.getElementById('post-img-file').value='';
+  oty();
+}
+async function uploadPostImg(){
+  if(!postImgFile)return null;
+  const ext=postImgFile.name.split('.').pop();
+  const path=`post-images/${me.id}-${Date.now()}.${ext}`;
+  const r=await fetch(`${SU}/storage/v1/object/avatars/${path}`,{method:'POST',headers:{'apikey':SK,'Authorization':`Bearer ${me.tok}`,'Content-Type':postImgFile.type,'x-upsert':'true'},body:postImgFile});
+  if(!r.ok)throw new Error('Erreur upload image');
+  return`${SU}/storage/v1/object/public/avatars/${path}`;
+}
+function openLightbox(url){
+  document.getElementById('lightbox-img').src=url;
+  document.getElementById('lightbox').classList.add('on');
+}
+function closeLightbox(){document.getElementById('lightbox').classList.remove('on');}
+
 // ===== FEED TABS =====
 function switchFeed(tab){
   curFeed=tab;
@@ -559,19 +617,29 @@ function rp(p,prof,liked,reposted){
   const txt=esc(p.content).replace(/@askClaude/gi,'<span class="men">@askClaude</span>');
   const uid=prof?.id||'';
   const isOwn=p.user_id===me.id;
-  return`<div class="post" id="p-${p.id}"><div class="prow"><div class="pav" onclick="goUserProfile('${uid}')">${avContent}</div><div class="pb"><div class="pm"><span class="pname" onclick="goUserProfile('${uid}')">${esc(prof?.display_name||'Utilisateur')}</span><span class="phdl">@${esc(prof?.username||'...')}</span><span class="ptm">· ${ago(p.created_at)}</span></div><div class="ptxt">${txt}</div>${p.ai_reply?`<div class="airep"><div class="aih"><div class="aidot"></div><span class="ailbl">askClaude</span></div><div class="aitxt">${esc(p.ai_reply)}</div></div>`:''}<div class="pacts"><button class="pa ${liked?'lkd':''}" onclick="tl('${p.id}',${liked})">${liked?'❤️':'🤍'} <span id="lc-${p.id}">0</span></button><button class="pa" onclick="toggleReplies('${p.id}')">💬 <span id="rc-${p.id}">0</span></button><button class="pa ${reposted?'rptd':''}" onclick="tr2('${p.id}',${reposted})">🔁 <span id="rpc-${p.id}">0</span></button>${isOwn?`<button class="pa del" onclick="askDelete('${p.id}')">🗑️</button>`:''}</div><div id="replies-${p.id}" style="display:none"></div></div></div></div>`;
+  const imgHtml=p.image_url?`<div class="post-img" onclick="openLightbox('${p.image_url}')"><img src="${p.image_url}" alt="image du post" loading="lazy"></div>`:'';
+  return`<div class="post" id="p-${p.id}"><div class="prow"><div class="pav" onclick="goUserProfile('${uid}')">${avContent}</div><div class="pb"><div class="pm"><span class="pname" onclick="goUserProfile('${uid}')">${esc(prof?.display_name||'Utilisateur')}</span><span class="phdl">@${esc(prof?.username||'...')}</span><span class="ptm">· ${ago(p.created_at)}</span></div><div class="ptxt">${txt}</div>${imgHtml}${p.ai_reply?`<div class="airep"><div class="aih"><div class="aidot"></div><span class="ailbl">askClaude</span></div><div class="aitxt">${esc(p.ai_reply)}</div></div>`:''}<div class="pacts"><button class="pa ${liked?'lkd':''}" onclick="tl('${p.id}',${liked})">${liked?'❤️':'🤍'} <span id="lc-${p.id}">0</span></button><button class="pa" onclick="toggleReplies('${p.id}')">💬 <span id="rc-${p.id}">0</span></button><button class="pa ${reposted?'rptd':''}" onclick="tr2('${p.id}',${reposted})">🔁 <span id="rpc-${p.id}">0</span></button>${isOwn?`<button class="pa del" onclick="askDelete('${p.id}')">🗑️</button>`:''}</div><div id="replies-${p.id}" style="display:none"></div></div></div></div>`;
 }
 async function llc(id){try{const r=await fetch(`${SU}/rest/v1/likes?post_id=eq.${id}&select=id`,{headers:{'apikey':SK,'Authorization':`Bearer ${SK}`,'Prefer':'count=exact'}});const c=r.headers.get('content-range')?.split('/')[1]||'0';const el=document.getElementById('lc-'+id);if(el)el.textContent=c;}catch(e){}}
 async function lrc(id){try{const r=await fetch(`${SU}/rest/v1/replies?post_id=eq.${id}&select=id`,{headers:{'apikey':SK,'Authorization':`Bearer ${SK}`,'Prefer':'count=exact'}});const c=r.headers.get('content-range')?.split('/')[1]||'0';const el=document.getElementById('rc-'+id);if(el)el.textContent=c;}catch(e){}}
 async function lrpc(id){try{const r=await fetch(`${SU}/rest/v1/reposts?post_id=eq.${id}&select=id`,{headers:{'apikey':SK,'Authorization':`Bearer ${SK}`,'Prefer':'count=exact'}});const c=r.headers.get('content-range')?.split('/')[1]||'0';const el=document.getElementById('rpc-'+id);if(el)el.textContent=c;}catch(e){}}
 
 async function pub(){
-  const tx=document.getElementById('ctxt');const content=tx.value.trim();if(!content)return;
+  const tx=document.getElementById('ctxt');const content=tx.value.trim();
+  if(!content&&!postImgFile)return;
   const btn=document.getElementById('cpub');btn.disabled=true;btn.textContent='...';
   const hasAI=/\@askClaude/i.test(content);
   try{
-    const posts=await sb('/posts',{method:'POST',tok:me.tok,body:{user_id:me.id,content}});
-    const post=posts[0];tx.value='';oty();loadFeed();
+    let image_url=null;
+    if(postImgFile){
+      toast('Upload de l\'image...','');
+      image_url=await uploadPostImg();
+    }
+    const postBody={user_id:me.id,content:content||''};
+    if(image_url)postBody.image_url=image_url;
+    const posts=await sb('/posts',{method:'POST',tok:me.tok,body:postBody});
+    const post=posts[0];
+    tx.value='';removePostImg();oty();loadFeed();
     if(hasAI){
       const aiR=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:content.replace(/@askClaude/gi,'').trim()||content})});
       const aiD=await aiR.json();
@@ -655,12 +723,8 @@ async function checkUnreadNotifs(){
     const count=parseInt(r.headers.get('content-range')?.split('/')[1]||'0');
     const badge=document.getElementById('notif-badge');
     const mobBadge=document.getElementById('mob-notif-badge');
-    if(count>0){
-      badge.textContent=count>9?'9+':count;badge.classList.add('show');
-      mobBadge.textContent=count>9?'9+':count;mobBadge.classList.add('show');
-    }else{
-      badge.classList.remove('show');mobBadge.classList.remove('show');
-    }
+    if(count>0){badge.textContent=count>9?'9+':count;badge.classList.add('show');mobBadge.textContent=count>9?'9+':count;mobBadge.classList.add('show');}
+    else{badge.classList.remove('show');mobBadge.classList.remove('show');}
   }catch(e){}
 }
 async function markNotifsRead(){
@@ -683,9 +747,7 @@ async function loadNotifs(){
     const replies=pidsStr?await sb(`/replies?post_id=in.(${pidsStr})&order=created_at.desc&limit=30`,{tok:me.tok}):[];
     const myReplies=(replies||[]).filter(r=>r.user_id!==me.id);
     const followNotifUids=(notifs||[]).filter(n=>n.type==='follow').map(n=>n.from_user_id);
-    const likeUids=myLikes.map(l=>l.user_id);
-    const replyUids=myReplies.map(r=>r.user_id);
-    const allUids=[...new Set([...followNotifUids,...likeUids,...replyUids])];
+    const allUids=[...new Set([...followNotifUids,...myLikes.map(l=>l.user_id),...myReplies.map(r=>r.user_id)])];
     const profs=allUids.length?await sb(`/profiles?id=in.(${allUids.join(',')})`,{tok:me.tok}):[];
     const pm={};(profs||[]).forEach(p=>pm[p.id]=p);
     const followItems=(notifs||[]).filter(n=>n.type==='follow').map(n=>({type:'follow',uid:n.from_user_id,time:n.created_at,unread:!n.read}));
@@ -697,7 +759,6 @@ async function loadNotifs(){
       const prof=pm[n.uid]||{};
       const ini=(prof.display_name||'U')[0].toUpperCase();
       const avC=prof.avatar_url?`<img src="${prof.avatar_url}" alt="">`:`${ini}`;
-      const icon=n.type==='follow'?'👤':n.type==='like'?'❤️':'💬';
       const txt=n.type==='follow'?`<strong>${esc(prof.display_name||'Quelqu\'un')}</strong> a commencé à te suivre`:n.type==='like'?`<strong>${esc(prof.display_name||'Quelqu\'un')}</strong> a aimé ton post`:`<strong>${esc(prof.display_name||'Quelqu\'un')}</strong> a répondu : <em style="color:var(--t2)">"${esc(n.content?.slice(0,60))}${n.content?.length>60?'...':''}"</em>`;
       return`<div class="notif-item ${n.unread?'unread':''}" onclick="goUserProfile('${prof.id||''}')">
         <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex-shrink:0;overflow:hidden;">${avC}</div>
@@ -735,13 +796,11 @@ async function toggleFollow(){
     }else{
       await sb('/follows',{method:'POST',tok:me.tok,body:{follower_id:me.id,following_id:viewingUserId}});
       btn.classList.add('following');btn.textContent='Abonné ✓';toast('Abonné ! 🎉','ok');
-      // Créer notification de follow
       await sb('/notifications',{method:'POST',tok:me.tok,body:{user_id:viewingUserId,from_user_id:me.id,type:'follow'}});
     }
     loadFollowCounts(viewingUserId);
   }catch(e){toast('Erreur: '+e.message,'err');}
 }
-// ==========================
 
 async function loadProfile(userId){
   const isOwn=userId===me.id;
@@ -828,8 +887,8 @@ async function saveProfile(){
     if(editAvatarFile){
       const ext=editAvatarFile.name.split('.').pop();
       const path=`avatars/${me.id}.${ext}`;
-      const uploadRes=await fetch(`${SU}/storage/v1/object/${path}`,{method:'POST',headers:{'apikey':SK,'Authorization':`Bearer ${me.tok}`,'Content-Type':editAvatarFile.type,'x-upsert':'true'},body:editAvatarFile});
-      if(uploadRes.ok)avatarUrl=`${SU}/storage/v1/object/public/${path}?t=${Date.now()}`;
+      const uploadRes=await fetch(`${SU}/storage/v1/object/avatars/${path}`,{method:'POST',headers:{'apikey':SK,'Authorization':`Bearer ${me.tok}`,'Content-Type':editAvatarFile.type,'x-upsert':'true'},body:editAvatarFile});
+      if(uploadRes.ok)avatarUrl=`${SU}/storage/v1/object/public/avatars/${path}?t=${Date.now()}`;
       else toast('Erreur upload photo','err');
     }
     await sb(`/profiles?id=eq.${me.id}`,{method:'PATCH',tok:me.tok,body:{display_name:name,bio,avatar_url:avatarUrl}});
@@ -861,7 +920,7 @@ function oty(){
   const v=document.getElementById('ctxt').value,r=280-v.length;
   const el=document.getElementById('cct');el.textContent=r;
   el.className='cct'+(r<30?' w':'')+(r<0?' ov':'');
-  document.getElementById('cpub').disabled=v.trim().length===0||r<0;
+  document.getElementById('cpub').disabled=(v.trim().length===0&&!postImgFile)||r<0;
   document.getElementById('hint').classList.toggle('active',/@askClaude/i.test(v));
 }
 function fc(){goPage('home');setTimeout(()=>{document.getElementById('ctxt').focus();window.scrollTo({top:0,behavior:'smooth'});},100);}
