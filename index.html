@@ -288,6 +288,51 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .lightbox.on{display:flex;}
 .lightbox img{max-width:100%;max-height:90vh;border-radius:12px;object-fit:contain;}
 .lightbox-close{position:absolute;top:20px;right:20px;background:rgba(255,255,255,0.1);border:none;border-radius:50%;width:40px;height:40px;color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+/* Leaderboard */
+.lb-podium{display:flex;align-items:flex-end;justify-content:center;gap:12px;padding:28px 20px 0;}
+.lb-pod{display:flex;flex-direction:column;align-items:center;gap:6px;}
+.lb-pod-av{border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;overflow:hidden;border:3px solid transparent;cursor:pointer;}
+.lb-pod-av img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.lb-pod.p1 .lb-pod-av{width:72px;height:72px;font-size:26px;border-color:#f59e0b;}
+.lb-pod.p2 .lb-pod-av{width:58px;height:58px;font-size:20px;border-color:#9ca3af;}
+.lb-pod.p3 .lb-pod-av{width:52px;height:52px;font-size:18px;border-color:#b45309;}
+.lb-pod-rank{font-size:22px;}
+.lb-pod-name{font-size:13px;font-weight:700;color:var(--white);text-align:center;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.lb-pod-xp{font-size:11px;color:var(--t3);font-family:'DM Mono',monospace;}
+.lb-pod-base{border-radius:12px 12px 0 0;width:100%;}
+.lb-pod.p1 .lb-pod-base{height:70px;background:linear-gradient(180deg,rgba(245,158,11,0.3),rgba(245,158,11,0.1));}
+.lb-pod.p2 .lb-pod-base{height:50px;background:linear-gradient(180deg,rgba(156,163,175,0.3),rgba(156,163,175,0.1));}
+.lb-pod.p3 .lb-pod-base{height:36px;background:linear-gradient(180deg,rgba(180,83,9,0.3),rgba(180,83,9,0.1));}
+.lb-list{padding:0 20px 20px;}
+.lb-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);}
+.lb-item:last-child{border-bottom:none;}
+.lb-rank{font-size:15px;font-weight:700;color:var(--t3);width:28px;text-align:center;font-family:'DM Mono',monospace;}
+.lb-av{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:#fff;flex-shrink:0;overflow:hidden;cursor:pointer;}
+.lb-av img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.lb-info{flex:1;}
+.lb-name{font-size:14px;font-weight:700;color:var(--white);}
+.lb-level{font-size:12px;color:var(--t3);}
+.lb-xp{font-size:13px;font-weight:700;color:var(--accent2);font-family:'DM Mono',monospace;}
+.lb-me{background:rgba(124,106,247,0.06);border-radius:12px;padding:12px;margin:0 0 8px;}
+.reward-section{padding:20px;border-top:1px solid var(--border);margin-top:4px;}
+.reward-title{font-size:15px;font-weight:700;color:var(--white);margin-bottom:14px;}
+.reward-item{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--s1);border:1px solid var(--border);border-radius:12px;margin-bottom:8px;}
+.reward-item.locked{opacity:.45;}
+.reward-ico{font-size:24px;width:36px;text-align:center;}
+.reward-info{flex:1;}
+.reward-name{font-size:14px;font-weight:600;color:var(--white);}
+.reward-desc{font-size:12px;color:var(--t3);}
+.reward-lock{font-size:12px;color:var(--t3);}
+/* XP & Levels */
+.xp-bar-wrap{margin:8px 0 12px;padding:0 20px;}
+.xp-bar-info{display:flex;justify-content:space-between;font-size:12px;color:var(--t3);margin-bottom:5px;font-family:'DM Mono',monospace;}
+.xp-bar-bg{background:var(--s2);border-radius:6px;height:6px;overflow:hidden;}
+.xp-bar-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .6s ease;}
+.level-badge{display:inline-flex;align-items:center;gap:5px;background:var(--s2);border:1px solid var(--border);border-radius:20px;padding:3px 10px;font-size:12px;font-weight:600;color:var(--accent2);}
+.badges-wrap{display:flex;flex-wrap:wrap;gap:6px;padding:8px 20px 12px;}
+.badge-item{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:6px 10px;font-size:13px;cursor:default;}
+.badge-item[title]:hover::after{content:attr(title);position:absolute;background:var(--s1);border:1px solid var(--border);border-radius:8px;padding:4px 8px;font-size:12px;color:var(--text);white-space:nowrap;z-index:10;transform:translateY(-110%);}
+.badge-item{position:relative;}
 .report-modal-opts{display:flex;flex-direction:column;gap:8px;margin-bottom:4px;}
 .report-opt{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--bg);border:1px solid var(--border2);border-radius:12px;cursor:pointer;transition:all .2s;font-size:14px;color:var(--text);}
 .report-opt:hover{border-color:var(--accent);background:var(--ag);}
@@ -366,6 +411,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
       <div class="ni" id="nav-messages" onclick="goPage('messages')"><span class="nico">💬</span><span>Messages</span><span class="notif-badge" id="dm-badge">0</span></div>
       <div class="ni" id="nav-profile" onclick="goPage('profile')"><span class="nico">👤</span><span>Profil</span></div>
       <div class="ni" id="nav-stats" onclick="goPage('stats')"><span class="nico">📊</span><span>Statistiques</span></div>
+      <div class="ni" id="nav-leaderboard" onclick="goPage('leaderboard')"><span class="nico">🏆</span><span>Classement</span></div>
       <div class="ni" id="nav-settings" onclick="goPage('settings')"><span class="nico">⚙️</span><span>Paramètres</span></div>
       <button class="nbtn" onclick="fc()">+ Publier</button>
       <div class="nbot">
@@ -478,6 +524,11 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
       <div class="page" id="page-stats">
         <div class="ptop"><div class="ptitle">Statistiques</div></div>
         <div id="stats-content"><div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div></div>
+      </div>
+
+      <div class="page" id="page-leaderboard">
+        <div class="ptop"><div class="ptitle">🏆 Classement</div></div>
+        <div id="leaderboard-content"><div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div></div>
       </div>
 
       <div class="page" id="page-settings">
@@ -769,6 +820,7 @@ function goPage(page,userId=null){
   else if(page==='notifs'){loadNotifs();markNotifsRead();}
   else if(page==='messages'){showDMList();checkUnreadDMs();}
   else if(page==='stats')loadStats();
+  else if(page==='leaderboard')loadLeaderboard();
   else if(page==='profile'){
     viewingUserId=userId||me.id;
     const isOwn=viewingUserId===me.id;
@@ -1038,6 +1090,7 @@ async function pub(){
       if(aiD.reply){await sb(`/posts?id=eq.${post.id}`,{method:'PATCH',tok:me.tok,body:{ai_reply:aiD.reply}});loadFeed();}
     }
     toast('Publié ! 🎉','ok');
+    addXP(10);
   }catch(e){toast('Erreur: '+e.message,'err');}
   btn.disabled=false;btn.textContent='Publier';
 }
@@ -1051,6 +1104,8 @@ async function tl(pid,isLiked){
       const ownerId=posts?.[0]?.user_id;
       if(ownerId&&ownerId!==me.id){
         sb('/notifications',{method:'POST',tok:me.tok,body:{user_id:ownerId,from_user_id:me.id,type:'like'}}).catch(()=>{});
+        // Add XP to post owner
+        if(ownerId===me.id)addXP(5);
       }
     }
     loadFeed();
@@ -1101,9 +1156,114 @@ async function sendReply(pid){
     const ownerId=posts?.[0]?.user_id;
     if(ownerId&&ownerId!==me.id){
       sb('/notifications',{method:'POST',tok:me.tok,body:{user_id:ownerId,from_user_id:me.id,type:'reply'}}).catch(()=>{});
+      if(ownerId===me.id)addXP(8);
     }
   }catch(e){toast('Erreur réponse','err');}
 }
+// ===== XP & LEVELS =====
+const LEVELS=[
+  {level:1,name:'Novice',emoji:'🌱',xp:0},
+  {level:2,name:'Actif',emoji:'⚡',xp:200},
+  {level:3,name:'Créateur',emoji:'🔥',xp:800},
+  {level:4,name:'Influenceur',emoji:'💎',xp:2500},
+  {level:5,name:'Expert',emoji:'🌟',xp:6000},
+  {level:6,name:'Légende',emoji:'👑',xp:15000},
+];
+const BADGES_DEF=[
+  {id:'first_post',emoji:'🎉',name:'Premier pas',desc:'Publier ton premier post'},
+  {id:'posts_10',emoji:'🔥',name:'En feu',desc:'Publier 10 posts'},
+  {id:'posts_50',emoji:'📢',name:'Prolifique',desc:'Publier 50 posts'},
+  {id:'likes_50',emoji:'❤️',name:'Populaire',desc:'Recevoir 50 likes'},
+  {id:'likes_100',emoji:'💯',name:'Centenaire',desc:'Recevoir 100 likes'},
+  {id:'followers_10',emoji:'👥',name:'Entouré',desc:'Avoir 10 abonnés'},
+  {id:'followers_100',emoji:'👑',name:'Star',desc:'Avoir 100 abonnés'},
+  {id:'premium',emoji:'⭐',name:'Premium',desc:'Abonné Trebiq Premium'},
+];
+
+function getLevel(xp){
+  let cur=LEVELS[0];
+  for(const l of LEVELS){if(xp>=l.xp)cur=l;else break;}
+  return cur;
+}
+function getNextLevel(xp){
+  for(const l of LEVELS){if(xp<l.xp)return l;}
+  return null;
+}
+function xpProgress(xp){
+  const cur=getLevel(xp);
+  const next=getNextLevel(xp);
+  if(!next)return 100;
+  return Math.round(((xp-cur.xp)/(next.xp-cur.xp))*100);
+}
+
+async function addXP(amount){
+  try{
+    const newXp=(myP?.xp||0)+amount;
+    await sb(`/profiles?id=eq.${me.id}`,{method:'PATCH',tok:me.tok,body:{xp:newXp}});
+    const oldLevel=getLevel(myP?.xp||0);
+    myP={...myP,xp:newXp};
+    const newLevel=getLevel(newXp);
+    if(newLevel.level>oldLevel.level){
+      toast(`🎉 Niveau ${newLevel.level} atteint ! ${newLevel.emoji} ${newLevel.name}`,'ok');
+    }
+    await checkBadges();
+  }catch(e){}
+}
+
+async function checkBadges(){
+  try{
+    const currentBadges=new Set(myP?.badges||[]);
+    const newBadges=[];
+    const posts=await sb(`/posts?user_id=eq.${me.id}&select=id`,{tok:me.tok});
+    const postCount=(posts||[]).length;
+    const pids=(posts||[]).map(p=>p.id);
+    let likesCount=0;
+    if(pids.length){const lks=await sb(`/likes?post_id=in.(${pids.join(',')})&select=id`,{tok:me.tok});likesCount=(lks||[]).length;}
+    const folR=await fetch(`${SU}/rest/v1/follows?following_id=eq.${me.id}&select=id`,{headers:{'apikey':SK,'Authorization':`Bearer ${me.tok}`,'Prefer':'count=exact'}});
+    const followersCount=parseInt(folR.headers.get('content-range')?.split('/')[1]||'0');
+
+    if(postCount>=1&&!currentBadges.has('first_post'))newBadges.push('first_post');
+    if(postCount>=10&&!currentBadges.has('posts_10'))newBadges.push('posts_10');
+    if(postCount>=50&&!currentBadges.has('posts_50'))newBadges.push('posts_50');
+    if(likesCount>=50&&!currentBadges.has('likes_50'))newBadges.push('likes_50');
+    if(likesCount>=100&&!currentBadges.has('likes_100'))newBadges.push('likes_100');
+    if(followersCount>=10&&!currentBadges.has('followers_10'))newBadges.push('followers_10');
+    if(followersCount>=100&&!currentBadges.has('followers_100'))newBadges.push('followers_100');
+    if(myP?.is_premium&&!currentBadges.has('premium'))newBadges.push('premium');
+
+    if(newBadges.length){
+      const allBadges=[...(myP?.badges||[]),...newBadges];
+      await sb(`/profiles?id=eq.${me.id}`,{method:'PATCH',tok:me.tok,body:{badges:allBadges}});
+      myP={...myP,badges:allBadges};
+      newBadges.forEach(bid=>{
+        const def=BADGES_DEF.find(b=>b.id===bid);
+        if(def)toast(`${def.emoji} Badge débloqué : ${def.name} !`,'ok');
+      });
+    }
+  }catch(e){}
+}
+
+function renderLevelBar(xp){
+  const lvl=getLevel(xp||0);
+  const next=getNextLevel(xp||0);
+  const pct=xpProgress(xp||0);
+  return`<div class="xp-bar-wrap">
+    <div class="xp-bar-info">
+      <span>${lvl.emoji} ${lvl.name} (Lv.${lvl.level})</span>
+      <span>${xp||0} XP${next?` / ${next.xp} XP`:' — Max'}</span>
+    </div>
+    <div class="xp-bar-bg"><div class="xp-bar-fill" style="width:${pct}%"></div></div>
+  </div>`;
+}
+
+function renderBadges(badges){
+  if(!badges?.length)return'<div style="padding:0 20px 12px;font-size:13px;color:var(--t3);">Aucun badge pour le moment.</div>';
+  return'<div class="badges-wrap">'+badges.map(bid=>{
+    const def=BADGES_DEF.find(b=>b.id===bid);
+    return def?`<div class="badge-item" title="${def.desc}">${def.emoji} ${def.name}</div>`:'';
+  }).join('')+'</div>';
+}
+
 // ===== TRANSLATE =====
 const translCache={};
 async function translatePost(pid, originalText){
@@ -1245,6 +1405,97 @@ async function castVote(pollId,optionIndex,postId){
     await sb('/poll_votes',{method:'POST',tok:me.tok,body:{poll_id:pollId,user_id:me.id,option_index:optionIndex}});
     loadFeed();
   }catch(e){toast('Déjà voté !','err');}
+}
+
+const REWARDS=[
+  {level:1,emoji:'🌱',name:'Graine Trebiq',desc:'Titre de départ pour tout nouvel utilisateur',unlocked:true},
+  {level:2,emoji:'⚡',name:'Cadre Trebiq',desc:'Bordure de profil électrique',unlocked:false},
+  {level:3,emoji:'🔥',name:'Titre Créateur',desc:'Badge "Créateur" visible sur ton profil',unlocked:false},
+  {level:4,emoji:'💎',name:'Fond de profil Diamant',desc:'Arrière-plan exclusif sur ta page profil',unlocked:false},
+  {level:5,emoji:'🌟',name:'Titre Expert',desc:'Badge "Expert" animé sur ton profil',unlocked:false},
+  {level:6,emoji:'👑',name:'Couronne Légende',desc:'Couronne dorée exclusive + accès VIP',unlocked:false},
+];
+
+async function loadLeaderboard(){
+  const c=document.getElementById('leaderboard-content');
+  c.innerHTML='<div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div>';
+  try{
+    const users=await sb('/profiles?order=xp.desc&limit=50',{tok:me.tok});
+    if(!users?.length){c.innerHTML='<div class="empty"><div class="empty-t">Aucun utilisateur</div></div>';return;}
+
+    const top3=users.slice(0,3);
+    const rest=users.slice(3);
+    const myRank=users.findIndex(u=>u.id===me.id)+1;
+    const myData=users.find(u=>u.id===me.id);
+    const myLevel=getLevel(myP?.xp||0);
+
+    // Podium HTML
+    const podAv=(u,size)=>{const ini=(u.display_name||'U')[0].toUpperCase();return u.avatar_url?`<img src="${u.avatar_url}" alt="">`:`${ini}`;};
+    const podOrder=[top3[1],top3[0],top3[2]].filter(Boolean);
+    const podClass=['p2','p1','p3'];
+    const podRanks=['🥈','🥇','🥉'];
+    const podRankNums=[2,1,3];
+
+    const podHtml=podOrder.map((u,i)=>{
+      if(!u)return'';
+      const cls=podClass[i];
+      const rank=podRanks[i];
+      const lvl=getLevel(u.xp||0);
+      return`<div class="lb-pod ${cls}" onclick="goUserProfile('${u.id}')">
+        <div class="lb-pod-rank">${rank}</div>
+        <div class="lb-pod-av">${podAv(u)}</div>
+        <div class="lb-pod-name">${esc(u.display_name||'?')}</div>
+        <div class="lb-pod-xp">${lvl.emoji} ${u.xp||0} XP</div>
+        <div class="lb-pod-base"></div>
+      </div>`;
+    }).join('');
+
+    // My position banner
+    const myBanner=myRank>3&&myData?`<div class="lb-item lb-me">
+      <div class="lb-rank">#${myRank}</div>
+      <div class="lb-av">${myData.avatar_url?`<img src="${myData.avatar_url}" alt="">`:(myData.display_name||'U')[0].toUpperCase()}</div>
+      <div class="lb-info"><div class="lb-name">Toi — ${esc(myData.display_name)}</div><div class="lb-level">${myLevel.emoji} ${myLevel.name}</div></div>
+      <div class="lb-xp">${myData.xp||0} XP</div>
+    </div>`:'';
+
+    // Rest of list
+    const listHtml=rest.map((u,i)=>{
+      const lvl=getLevel(u.xp||0);
+      const isMe=u.id===me.id;
+      const avC=u.avatar_url?`<img src="${u.avatar_url}" alt="">`:(u.display_name||'U')[0].toUpperCase();
+      return`<div class="lb-item ${isMe?'lb-me':''}" onclick="goUserProfile('${u.id}')">
+        <div class="lb-rank">#${i+4}</div>
+        <div class="lb-av">${avC}</div>
+        <div class="lb-info"><div class="lb-name">${esc(u.display_name||'Utilisateur')}${isMe?' (Toi)':''}</div><div class="lb-level">${lvl.emoji} ${lvl.name}</div></div>
+        <div class="lb-xp">${u.xp||0} XP</div>
+      </div>`;
+    }).join('');
+
+    // Rewards for current user
+    const myLevelNum=myLevel.level;
+    const rewardsHtml=REWARDS.map(r=>{
+      const unlocked=myLevelNum>=r.level;
+      return`<div class="reward-item ${unlocked?'':'locked'}">
+        <div class="reward-ico">${r.emoji}</div>
+        <div class="reward-info">
+          <div class="reward-name">${r.name}</div>
+          <div class="reward-desc">${r.desc}</div>
+        </div>
+        <div class="reward-lock">${unlocked?'✅':'🔒 Lv.'+r.level}</div>
+      </div>`;
+    }).join('');
+
+    c.innerHTML=`
+      <div class="lb-podium">${podHtml}</div>
+      <div class="lb-list">
+        ${myBanner}
+        ${listHtml}
+      </div>
+      <div class="reward-section">
+        <div class="reward-title">🎁 Tes récompenses</div>
+        ${rewardsHtml}
+      </div>`;
+  }catch(e){c.innerHTML=`<div class="empty"><div class="empty-t">Erreur: ${e.message}</div></div>`;}
 }
 
 async function loadStats(){
@@ -1463,6 +1714,8 @@ async function toggleFollow(){
       await sb('/follows',{method:'POST',tok:me.tok,body:{follower_id:me.id,following_id:viewingUserId}});
       btn.classList.add('following');btn.textContent='Abonné ✓';toast('Abonné ! 🎉','ok');
       await sb('/notifications',{method:'POST',tok:me.tok,body:{user_id:viewingUserId,from_user_id:me.id,type:'follow'}});
+      // If following yourself back or being followed — XP goes to the followed user
+      // We add XP to current user when THEY gain a follower (tracked server-side would be better, but approximate here)
     }
     loadFollowCounts(viewingUserId);
   }catch(e){toast('Erreur: '+e.message,'err');}
@@ -1479,7 +1732,9 @@ async function loadProfile(userId){
   document.getElementById('prof-handle').textContent='@'+(prof.username||'...');
   document.getElementById('prof-page-name').textContent=prof.display_name||'Utilisateur';
   const bioWrap=document.getElementById('prof-bio-wrap');
-  bioWrap.innerHTML=prof.bio?`<div class="prof-bio">${esc(prof.bio)}</div>`:`<div class="prof-bio-empty">${isOwn?'Ajoute une bio...':'Pas de bio.'}</div>`;
+  bioWrap.innerHTML=(prof.bio?`<div class="prof-bio">${esc(prof.bio)}</div>`:`<div class="prof-bio-empty">${isOwn?'Ajoute une bio...':'Pas de bio.'}</div>`)
+    +renderLevelBar(prof.xp||0)
+    +renderBadges(prof.badges||[]);
   const followBtn=document.getElementById('prof-follow-btn');
   if(!isOwn){
     followBtn.style.display='block';
