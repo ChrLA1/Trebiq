@@ -356,7 +356,11 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 
       <div class="page" id="page-explore">
         <div class="ptop"><div class="ptitle">Explorer</div></div>
-        <div class="search-bar"><input class="search-input" id="search-input" placeholder="Rechercher des utilisateurs..." oninput="searchUsers()" type="text"></div>
+        <div class="search-bar"><input class="search-input" id="search-input" placeholder="Rechercher..." oninput="onSearch()" type="text"></div>
+        <div class="feed-tabs">
+          <div class="ftab on" id="etab-users" onclick="switchExplore('users')">👤 Personnes</div>
+          <div class="ftab" id="etab-posts" onclick="switchExplore('posts')">📝 Posts</div>
+        </div>
         <div id="explore-results"><div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div></div>
       </div>
 
@@ -894,11 +898,20 @@ async function sendReply(pid){
   const inp=document.getElementById('ri-'+pid);const content=inp.value.trim();if(!content)return;
   try{await sb('/replies',{method:'POST',tok:me.tok,body:{post_id:pid,user_id:me.id,content}});inp.value='';loadReplies(pid);lrc(pid);toast('Réponse publiée !','ok');}catch(e){toast('Erreur réponse','err');}
 }
+let curExploreTab='users';
+function switchExplore(tab){
+  curExploreTab=tab;
+  document.getElementById('etab-users').classList.toggle('on',tab==='users');
+  document.getElementById('etab-posts').classList.toggle('on',tab==='posts');
+  document.getElementById('search-input').placeholder=tab==='users'?'Rechercher des personnes...':'Rechercher des posts...';
+  onSearch();
+}
+function onSearch(){
+  if(curExploreTab==='users')searchUsers();
+  else searchPosts();
+}
 async function loadExplore(){
-  const c=document.getElementById('explore-results');
-  c.innerHTML='<div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div>';
-  try{const users=await sb('/profiles?order=created_at.desc&limit=50',{tok:me.tok});renderUsers(users,c);}
-  catch(e){c.innerHTML=`<div class="empty"><div class="empty-t">Erreur: ${e.message}</div></div>`;}
+  switchExplore('users');
 }
 function renderUsers(users,c){
   if(!users?.length){c.innerHTML='<div class="empty"><div class="empty-ico">👥</div><div class="empty-t">Aucun utilisateur</div></div>';return;}
@@ -911,8 +924,31 @@ function renderUsers(users,c){
 async function searchUsers(){
   const q=document.getElementById('search-input').value.trim().toLowerCase();
   const c=document.getElementById('explore-results');
-  if(!q){loadExplore();return;}
-  try{const users=await sb(`/profiles?or=(username.ilike.*${q}*,display_name.ilike.*${q}*)&limit=20`,{tok:me.tok});renderUsers(users,c);}catch(e){}
+  c.innerHTML='<div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div>';
+  try{
+    const users=q
+      ?await sb(`/profiles?or=(username.ilike.*${q}*,display_name.ilike.*${q}*)&limit=20`,{tok:me.tok})
+      :await sb('/profiles?order=created_at.desc&limit=50',{tok:me.tok});
+    renderUsers(users,c);
+  }catch(e){c.innerHTML=`<div class="empty"><div class="empty-t">Erreur</div></div>`;}
+}
+async function searchPosts(){
+  const q=document.getElementById('search-input').value.trim();
+  const c=document.getElementById('explore-results');
+  c.innerHTML='<div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div>';
+  try{
+    const posts=q
+      ?await sb(`/posts?content=ilike.*${encodeURIComponent(q)}*&order=created_at.desc&limit=40`,{tok:me.tok})
+      :await sb('/posts?order=created_at.desc&limit=40',{tok:me.tok});
+    if(!posts?.length){c.innerHTML='<div class="empty"><div class="empty-ico">🔍</div><div class="empty-t">Aucun post trouvé</div></div>';return;}
+    const uids=[...new Set(posts.map(p=>p.user_id))];
+    const profs=uids.length?await sb(`/profiles?id=in.(${uids.join(',')})`,{tok:me.tok}):[];
+    const pm={};(profs||[]).forEach(p=>pm[p.id]=p);
+    const lks=await sb(`/likes?user_id=eq.${me.id}`,{tok:me.tok});
+    const liked=new Set((lks||[]).map(l=>l.post_id));
+    c.innerHTML=posts.map(p=>rp(p,pm[p.user_id],liked.has(p.id),false)).join('');
+    posts.forEach(p=>{llc(p.id);lrc(p.id);lrpc(p.id);});
+  }catch(e){c.innerHTML=`<div class="empty"><div class="empty-t">Erreur</div></div>`;}
 }
 async function checkUnreadNotifs(){
   try{
