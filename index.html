@@ -35,7 +35,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .lnav{padding:24px 12px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;border-right:1px solid var(--border);}
 .lbrand{font-family:'Instrument Serif',serif;font-size:26px;color:var(--white);padding:8px 12px 20px;letter-spacing:-.5px;}
 .lbrand em{color:var(--accent2);font-style:italic;}
-.ni{display:flex;align-items:center;gap:13px;padding:11px 14px;border-radius:14px;cursor:pointer;font-size:15px;font-weight:500;color:var(--t2);transition:all .2s;margin-bottom:2px;}
+.ni{display:flex;align-items:center;gap:13px;padding:11px 14px;border-radius:14px;cursor:pointer;font-size:15px;font-weight:500;color:var(--t2);transition:all .2s;margin-bottom:2px;position:relative;}
 .ni:hover{background:var(--s2);color:var(--text);}
 .ni.on{background:var(--s3);color:var(--white);font-weight:600;}
 .nico{font-size:18px;width:22px;text-align:center;}
@@ -50,6 +50,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .nuh{font-size:12px;color:var(--t3);}
 .nlo{margin-left:auto;background:none;border:none;color:var(--t3);cursor:pointer;font-size:16px;padding:4px;border-radius:6px;transition:color .2s;}
 .nlo:hover{color:var(--red);}
+.notif-badge{position:absolute;top:8px;left:26px;background:var(--red);color:#fff;border-radius:50%;width:16px;height:16px;font-size:10px;font-weight:700;display:none;align-items:center;justify-content:center;font-family:'DM Mono',monospace;}
+.notif-badge.show{display:flex;}
 .page{display:none;}
 .page.on{display:block;}
 .feed{border-right:1px solid var(--border);min-height:100vh;}
@@ -131,6 +133,13 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .empty-ico{font-size:44px;margin-bottom:14px;opacity:.5;}
 .empty-t{font-size:17px;font-weight:600;color:var(--t2);margin-bottom:8px;}
 .empty-s{font-size:14px;line-height:1.7;}
+.notif-item{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;transition:background .15s;cursor:pointer;}
+.notif-item:hover{background:rgba(255,255,255,0.02);}
+.notif-item.unread{background:rgba(124,106,247,0.04);border-left:3px solid var(--accent);}
+.notif-icon{font-size:20px;width:36px;text-align:center;flex-shrink:0;}
+.notif-text{flex:1;font-size:14px;line-height:1.5;}
+.notif-text strong{color:var(--white);}
+.notif-time{font-size:12px;color:var(--t3);font-family:'DM Mono',monospace;flex-shrink:0;}
 .prof-banner{height:120px;background:linear-gradient(135deg,var(--accent),#9b87ff,var(--accent2));}
 .prof-info{padding:16px 20px 0;}
 .prof-av-wrap{margin-top:-46px;margin-bottom:12px;}
@@ -211,8 +220,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .toast.err{border-color:var(--red);color:var(--red);}
 .mnav{display:none;position:fixed;bottom:0;left:0;right:0;background:rgba(12,12,18,0.95);border-top:1px solid var(--border);backdrop-filter:blur(18px);z-index:50;padding:6px 0;}
 .mitems{display:flex;justify-content:space-around;}
-.mb{background:none;border:none;color:var(--t3);font-size:22px;cursor:pointer;padding:10px 18px;border-radius:10px;transition:color .2s;}
+.mb{background:none;border:none;color:var(--t3);font-size:22px;cursor:pointer;padding:10px 18px;border-radius:10px;transition:color .2s;position:relative;}
 .mb.on{color:var(--accent2);}
+.mb-badge{position:absolute;top:6px;right:10px;background:var(--red);color:#fff;border-radius:50%;width:14px;height:14px;font-size:9px;font-weight:700;display:none;align-items:center;justify-content:center;}
+.mb-badge.show{display:flex;}
 .mfab{position:fixed;bottom:76px;right:20px;width:50px;height:50px;background:linear-gradient(135deg,var(--accent),#9b87ff);border:none;border-radius:50%;font-size:22px;color:#fff;cursor:pointer;box-shadow:0 4px 20px var(--ag);z-index:50;display:none;align-items:center;justify-content:center;}
 @media(max-width:1080px){.wrap{grid-template-columns:64px 1fr;}.rnav{display:none;}.ni span,.nbtn,.nun,.nuh,.nlo{display:none;}.lbrand{font-size:20px;padding:8px;text-align:center;}.ni{justify-content:center;padding:12px;}.nuser{justify-content:center;}.mfab{display:flex;}}
 @media(max-width:580px){.lnav{display:none;}.wrap{grid-template-columns:1fr;}.mnav{display:block;}body{padding-bottom:72px;}}
@@ -254,7 +265,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
       <div class="lbrand">Tre<em>biq</em></div>
       <div class="ni on" id="nav-home" onclick="goPage('home')"><span class="nico">🏠</span><span>Accueil</span></div>
       <div class="ni" id="nav-explore" onclick="goPage('explore')"><span class="nico">🔍</span><span>Explorer</span></div>
-      <div class="ni" id="nav-notifs" onclick="goPage('notifs')"><span class="nico">🔔</span><span>Notifications</span></div>
+      <div class="ni" id="nav-notifs" onclick="goPage('notifs')"><span class="nico">🔔</span><span>Notifications</span><span class="notif-badge" id="notif-badge">0</span></div>
       <div class="ni" id="nav-profile" onclick="goPage('profile')"><span class="nico">👤</span><span>Profil</span></div>
       <div class="ni" id="nav-settings" onclick="goPage('settings')"><span class="nico">⚙️</span><span>Paramètres</span></div>
       <button class="nbtn" onclick="fc()">+ Publier</button>
@@ -417,7 +428,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
   <div class="mitems">
     <button class="mb on" onclick="goPage('home')">🏠</button>
     <button class="mb" onclick="goPage('explore')">🔍</button>
-    <button class="mb" onclick="goPage('notifs')">🔔</button>
+    <button class="mb" onclick="goPage('notifs')">🔔<span class="mb-badge" id="mob-notif-badge"></span></button>
     <button class="mb" onclick="goPage('profile')">👤</button>
     <button class="mb" onclick="goPage('settings')">⚙️</button>
   </div>
@@ -479,6 +490,7 @@ function showApp(){
   document.getElementById('nav-n').textContent=myP?.display_name||'Utilisateur';
   document.getElementById('nav-h').textContent='@'+(myP?.username||'...');
   goPage('home');
+  checkUnreadNotifs();
 }
 function updateNavAvatar(){
   const i=(myP?.display_name||'U')[0].toUpperCase();
@@ -498,7 +510,7 @@ function goPage(page,userId=null){
   curPage=page;
   if(page==='home')loadFeed();
   else if(page==='explore')loadExplore();
-  else if(page==='notifs')loadNotifs();
+  else if(page==='notifs'){loadNotifs();markNotifsRead();}
   else if(page==='profile'){viewingUserId=userId||me.id;const isOwn=viewingUserId===me.id;document.getElementById('prof-back').style.display=isOwn?'none':'block';document.getElementById('prof-edit-btn').style.display=isOwn?'block':'none';loadProfile(viewingUserId);}
 }
 function goBack(){if(historyStack.length>0){const prev=historyStack.pop();goPage(prev);}else goPage('home');}
@@ -511,7 +523,6 @@ function switchFeed(tab){
   document.getElementById('tab-following').classList.toggle('on',tab==='following');
   loadFeed();
 }
-
 async function loadFeed(){
   const c=document.getElementById('fp');
   c.innerHTML='<div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div>';
@@ -528,10 +539,7 @@ async function loadFeed(){
     }else{
       posts=await sb('/posts?order=created_at.desc&limit=60',{tok:me.tok});
     }
-    if(!posts?.length){
-      c.innerHTML='<div class="empty"><div class="empty-ico">✨</div><div class="empty-t">Aucun post</div><div class="empty-s">Sois le premier à publier !<br>Tape <strong>@askClaude</strong> pour une réponse IA.</div></div>';
-      return;
-    }
+    if(!posts?.length){c.innerHTML='<div class="empty"><div class="empty-ico">✨</div><div class="empty-t">Aucun post</div><div class="empty-s">Sois le premier à publier !</div></div>';return;}
     const uids=[...new Set(posts.map(p=>p.user_id))];
     const profs=uids.length?await sb(`/profiles?id=in.(${uids.join(',')})`,{tok:me.tok}):[];
     const pm={};(profs||[]).forEach(p=>pm[p.id]=p);
@@ -543,7 +551,6 @@ async function loadFeed(){
     posts.forEach(p=>{llc(p.id);lrc(p.id);lrpc(p.id);});
   }catch(e){c.innerHTML=`<div class="empty"><div class="empty-t">Erreur: ${e.message}</div></div>`;}
 }
-// =====================
 
 function rp(p,prof,liked,reposted){
   const i=(prof?.display_name||'U')[0].toUpperCase();
@@ -640,26 +647,63 @@ async function searchUsers(){
   if(!q){loadExplore();return;}
   try{const users=await sb(`/profiles?or=(username.ilike.*${q}*,display_name.ilike.*${q}*)&limit=20`,{tok:me.tok});renderUsers(users,c);}catch(e){}
 }
+
+// ===== NOTIFICATIONS =====
+async function checkUnreadNotifs(){
+  try{
+    const r=await fetch(`${SU}/rest/v1/notifications?user_id=eq.${me.id}&read=eq.false&select=id`,{headers:{'apikey':SK,'Authorization':`Bearer ${me.tok}`,'Prefer':'count=exact'}});
+    const count=parseInt(r.headers.get('content-range')?.split('/')[1]||'0');
+    const badge=document.getElementById('notif-badge');
+    const mobBadge=document.getElementById('mob-notif-badge');
+    if(count>0){
+      badge.textContent=count>9?'9+':count;badge.classList.add('show');
+      mobBadge.textContent=count>9?'9+':count;mobBadge.classList.add('show');
+    }else{
+      badge.classList.remove('show');mobBadge.classList.remove('show');
+    }
+  }catch(e){}
+}
+async function markNotifsRead(){
+  try{
+    await sb(`/notifications?user_id=eq.${me.id}&read=eq.false`,{method:'PATCH',tok:me.tok,body:{read:true}});
+    document.getElementById('notif-badge').classList.remove('show');
+    document.getElementById('mob-notif-badge').classList.remove('show');
+  }catch(e){}
+}
 async function loadNotifs(){
   const c=document.getElementById('notifs-list');
+  c.innerHTML='<div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div>';
   try{
+    const notifs=await sb(`/notifications?user_id=eq.${me.id}&order=created_at.desc&limit=50`,{tok:me.tok});
     const myPostIds=await sb(`/posts?user_id=eq.${me.id}&select=id`,{tok:me.tok});
     const myIds=new Set((myPostIds||[]).map(p=>p.id));
-    if(!myIds.size){c.innerHTML='<div class="empty"><div class="empty-ico">🔔</div><div class="empty-t">Aucune notification</div></div>';return;}
-    const pidsStr=[...myIds].join(',');
-    const likes=await sb(`/likes?post_id=in.(${pidsStr})&order=created_at.desc&limit=30`,{tok:me.tok});
+    const pidsStr=myIds.size?[...myIds].join(','):null;
+    const likes=pidsStr?await sb(`/likes?post_id=in.(${pidsStr})&order=created_at.desc&limit=30`,{tok:me.tok}):[];
     const myLikes=(likes||[]).filter(l=>l.user_id!==me.id);
-    const replies=await sb(`/replies?post_id=in.(${pidsStr})&order=created_at.desc&limit=30`,{tok:me.tok});
+    const replies=pidsStr?await sb(`/replies?post_id=in.(${pidsStr})&order=created_at.desc&limit=30`,{tok:me.tok}):[];
     const myReplies=(replies||[]).filter(r=>r.user_id!==me.id);
-    const allUids=[...new Set([...myLikes.map(l=>l.user_id),...myReplies.map(r=>r.user_id)])];
+    const followNotifUids=(notifs||[]).filter(n=>n.type==='follow').map(n=>n.from_user_id);
+    const likeUids=myLikes.map(l=>l.user_id);
+    const replyUids=myReplies.map(r=>r.user_id);
+    const allUids=[...new Set([...followNotifUids,...likeUids,...replyUids])];
     const profs=allUids.length?await sb(`/profiles?id=in.(${allUids.join(',')})`,{tok:me.tok}):[];
     const pm={};(profs||[]).forEach(p=>pm[p.id]=p);
-    const all=[...myLikes.map(l=>({type:'like',uid:l.user_id,time:l.created_at})),...myReplies.map(r=>({type:'reply',uid:r.user_id,content:r.content,time:r.created_at}))].sort((a,b)=>new Date(b.time)-new Date(a.time));
-    if(!all.length){c.innerHTML='<div class="empty"><div class="empty-ico">🔔</div><div class="empty-t">Aucune notification</div><div class="empty-s">Tu seras notifié quand quelqu\'un like ou répond à tes posts.</div></div>';return;}
+    const followItems=(notifs||[]).filter(n=>n.type==='follow').map(n=>({type:'follow',uid:n.from_user_id,time:n.created_at,unread:!n.read}));
+    const likeItems=myLikes.map(l=>({type:'like',uid:l.user_id,time:l.created_at,unread:false}));
+    const replyItems=myReplies.map(r=>({type:'reply',uid:r.user_id,content:r.content,time:r.created_at,unread:false}));
+    const all=[...followItems,...likeItems,...replyItems].sort((a,b)=>new Date(b.time)-new Date(a.time));
+    if(!all.length){c.innerHTML='<div class="empty"><div class="empty-ico">🔔</div><div class="empty-t">Aucune notification</div><div class="empty-s">Tu seras notifié quand quelqu\'un te suit, like ou répond à tes posts.</div></div>';return;}
     c.innerHTML=all.map(n=>{
-      const prof=pm[n.uid]||{};const ini=(prof.display_name||'U')[0].toUpperCase();
+      const prof=pm[n.uid]||{};
+      const ini=(prof.display_name||'U')[0].toUpperCase();
       const avC=prof.avatar_url?`<img src="${prof.avatar_url}" alt="">`:`${ini}`;
-      return`<div class="post" style="display:flex;align-items:center;gap:12px;"><div class="pav" style="cursor:default">${avC}</div><div style="flex:1"><span style="font-weight:700">${esc(prof.display_name||'Quelqu\'un')}</span>${n.type==='like'?` ❤️ a aimé ton post`:`💬 a répondu : <em style="color:var(--t2)">"${esc(n.content?.slice(0,60))}${n.content?.length>60?'...':''}"</em>`}<span style="font-size:12px;color:var(--t3);margin-left:8px">${ago(n.time)}</span></div></div>`;
+      const icon=n.type==='follow'?'👤':n.type==='like'?'❤️':'💬';
+      const txt=n.type==='follow'?`<strong>${esc(prof.display_name||'Quelqu\'un')}</strong> a commencé à te suivre`:n.type==='like'?`<strong>${esc(prof.display_name||'Quelqu\'un')}</strong> a aimé ton post`:`<strong>${esc(prof.display_name||'Quelqu\'un')}</strong> a répondu : <em style="color:var(--t2)">"${esc(n.content?.slice(0,60))}${n.content?.length>60?'...':''}"</em>`;
+      return`<div class="notif-item ${n.unread?'unread':''}" onclick="goUserProfile('${prof.id||''}')">
+        <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex-shrink:0;overflow:hidden;">${avC}</div>
+        <div class="notif-text">${txt}</div>
+        <div class="notif-time">${ago(n.time)}</div>
+      </div>`;
     }).join('');
   }catch(e){c.innerHTML=`<div class="empty"><div class="empty-t">Erreur: ${e.message}</div></div>`;}
 }
@@ -691,6 +735,8 @@ async function toggleFollow(){
     }else{
       await sb('/follows',{method:'POST',tok:me.tok,body:{follower_id:me.id,following_id:viewingUserId}});
       btn.classList.add('following');btn.textContent='Abonné ✓';toast('Abonné ! 🎉','ok');
+      // Créer notification de follow
+      await sb('/notifications',{method:'POST',tok:me.tok,body:{user_id:viewingUserId,from_user_id:me.id,type:'follow'}});
     }
     loadFollowCounts(viewingUserId);
   }catch(e){toast('Erreur: '+e.message,'err');}
@@ -784,7 +830,7 @@ async function saveProfile(){
       const path=`avatars/${me.id}.${ext}`;
       const uploadRes=await fetch(`${SU}/storage/v1/object/${path}`,{method:'POST',headers:{'apikey':SK,'Authorization':`Bearer ${me.tok}`,'Content-Type':editAvatarFile.type,'x-upsert':'true'},body:editAvatarFile});
       if(uploadRes.ok)avatarUrl=`${SU}/storage/v1/object/public/${path}?t=${Date.now()}`;
-      else toast('Erreur upload photo, profil mis à jour sans photo','err');
+      else toast('Erreur upload photo','err');
     }
     await sb(`/profiles?id=eq.${me.id}`,{method:'PATCH',tok:me.tok,body:{display_name:name,bio,avatar_url:avatarUrl}});
     myP={...myP,display_name:name,bio,avatar_url:avatarUrl};
