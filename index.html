@@ -870,6 +870,7 @@ async function loadFeed(){
       posts=await sb('/posts?order=created_at.desc&limit=60',{tok:me.tok});
     }
     if(!posts?.length){c.innerHTML='<div class="empty"><div class="empty-ico">✨</div><div class="empty-t">Aucun post</div></div>';return;}
+    const pids=posts.map(p=>p.id);
     const uids=[...new Set(posts.map(p=>p.user_id))];
     const profs=uids.length?await sb(`/profiles?id=in.(${uids.join(',')})`,{tok:me.tok}):[];
     const pm={};(profs||[]).forEach(p=>pm[p.id]=p);
