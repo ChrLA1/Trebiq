@@ -1533,18 +1533,52 @@ function startGame(game){
 function gameBack(){curGame=null;loadGamesHub();}
 
 // ===== WORDLE =====
-const WRD_WORDS=['CRANE','PLAGE','LIVRE','MONDE','TIGER','FLEUR','NUAGE','ARBRE','VAGUE','SABLE','PLUIE','SOLEI','NOIRE','BLANC','ROUGE','VERDE','SPORT','MUSIC','DANSE','ROBOT','PIZZA','CARTE','TRAIN','AVION','CHIEN','OCEAN','LUNDI','MARDI','JEUDI','TABLE'];
-let wrdTarget='',wrdGuesses=[],wrdCurrent='',wrdOver=false;
+const WRD_WORDS=[
+  {w:'CRANE',h:'Oiseau noir qui croasse'},
+  {w:'PLAGE',h:'Bord de mer avec du sable'},
+  {w:'LIVRE',h:'On le lit pour apprendre ou rêver'},
+  {w:'MONDE',h:'La planète sur laquelle on vit'},
+  {w:'TIGER',h:'Grand félin rayé orange et noir'},
+  {w:'FLEUR',h:'Pousse dans les jardins, parfumée'},
+  {w:'NUAGE',h:'Flotte dans le ciel, annonce la pluie'},
+  {w:'ARBRE',h:'Végétal avec un tronc et des branches'},
+  {w:'VAGUE',h:'Mouvement de l\'eau dans la mer'},
+  {w:'SABLE',h:'Grain fin qu\'on trouve sur la plage'},
+  {w:'PLUIE',h:'Eau qui tombe du ciel'},
+  {w:'SOLEI',h:'Étoile qui nous réchauffe chaque jour'},
+  {w:'NOIRE',h:'Couleur opposée au blanc'},
+  {w:'BLANC',h:'Couleur de la neige'},
+  {w:'ROUGE',h:'Couleur du sang et des roses'},
+  {w:'VERDE',h:'Couleur des feuilles et de la nature'},
+  {w:'SPORT',h:'Activité physique pour rester en forme'},
+  {w:'MUSIC',h:'Art des sons et des mélodies'},
+  {w:'DANSE',h:'Bouger son corps en rythme'},
+  {w:'ROBOT',h:'Machine programmée pour agir'},
+  {w:'PIZZA',h:'Plat italien cuit au four'},
+  {w:'CARTE',h:'Document pour se repérer ou jouer'},
+  {w:'TRAIN',h:'Véhicule sur des rails'},
+  {w:'AVION',h:'Véhicule qui vole dans les airs'},
+  {w:'CHIEN',h:'Animal domestique fidèle'},
+  {w:'OCEAN',h:'Grande étendue d\'eau salée'},
+  {w:'LUNDI',h:'Premier jour de la semaine'},
+  {w:'MARDI',h:'Deuxième jour de la semaine'},
+  {w:'JEUDI',h:'Quatrième jour de la semaine'},
+  {w:'TABLE',h:'Meuble sur lequel on mange'},
+];
+let wrdTarget='',wrdHint='',wrdGuesses=[],wrdCurrent='',wrdOver=false;
 
 function initWordle(c){
   const today=new Date().toISOString().slice(0,10);
   const done=localStorage.getItem(`wrd_${me.id}_${today}`);
   const dayIdx=Math.floor(Date.now()/86400000)%WRD_WORDS.length;
-  wrdTarget=WRD_WORDS[dayIdx];
+  const wordObj=WRD_WORDS[dayIdx]; wrdTarget=wordObj.w; wrdHint=wordObj.h;
   wrdGuesses=[];wrdCurrent='';wrdOver=false;
 
   c.innerHTML=`<div class="game-area">
     <div class="game-back" onclick="gameBack()">← Retour aux jeux</div>
+    <div style="background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:12px 16px;margin-bottom:16px;font-size:14px;color:var(--t2);">
+      💡 <strong style="color:var(--accent2)">Indice :</strong> ${wordObj.h}
+    </div>
     <div class="wrd-grid" id="wrd-grid"></div>
     <div id="wrd-msg" style="text-align:center;font-size:14px;color:var(--accent2);min-height:24px;margin-bottom:12px;font-weight:600;"></div>
     <div class="wrd-kb" id="wrd-kb"></div>
