@@ -146,9 +146,40 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .notif-text{flex:1;font-size:14px;line-height:1.5;}
 .notif-text strong{color:var(--white);}
 .notif-time{font-size:12px;color:var(--t3);font-family:'DM Mono',monospace;flex-shrink:0;}
+/* DMs */
+.dm-list{display:flex;flex-direction:column;}
+.dm-item{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;}
+.dm-item:hover{background:rgba(255,255,255,0.02);}
+.dm-item.unread{background:rgba(124,106,247,0.04);}
+.dm-av{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;color:#fff;flex-shrink:0;overflow:hidden;}
+.dm-av img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.dm-info{flex:1;min-width:0;}
+.dm-name{font-weight:700;font-size:15px;color:var(--white);}
+.dm-preview{font-size:13px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px;}
+.dm-time{font-size:11px;color:var(--t3);font-family:'DM Mono',monospace;flex-shrink:0;}
+.dm-unread-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);flex-shrink:0;}
+/* Chat */
+.chat-wrap{display:flex;flex-direction:column;height:100vh;}
+.chat-msgs{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:8px;}
+.msg{display:flex;flex-direction:column;max-width:72%;}
+.msg.mine{align-self:flex-end;align-items:flex-end;}
+.msg.theirs{align-self:flex-start;align-items:flex-start;}
+.msg-bubble{padding:10px 14px;border-radius:18px;font-size:15px;line-height:1.5;word-break:break-word;}
+.msg.mine .msg-bubble{background:linear-gradient(135deg,var(--accent),#9b87ff);color:#fff;border-bottom-right-radius:4px;}
+.msg.theirs .msg-bubble{background:var(--s2);color:var(--text);border-bottom-left-radius:4px;}
+.msg-time{font-size:11px;color:var(--t3);margin-top:3px;font-family:'DM Mono',monospace;}
+.chat-input-wrap{padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:10px;align-items:center;background:var(--bg);}
+.chat-input{flex:1;background:var(--s2);border:1px solid var(--border);border-radius:22px;padding:10px 16px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;outline:none;transition:border-color .2s;}
+.chat-input:focus{border-color:var(--accent);}
+.chat-input::placeholder{color:var(--t3);}
+.chat-send{background:linear-gradient(135deg,var(--accent),#9b87ff);border:none;border-radius:50%;width:40px;height:40px;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;}
+.chat-send:hover{transform:scale(1.05);}
+.chat-send:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.new-dm-btn{margin:16px 20px;background:linear-gradient(135deg,var(--accent),#9b87ff);border:none;border-radius:14px;padding:12px;color:#fff;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;width:calc(100% - 40px);transition:all .2s;}
+.new-dm-btn:hover{transform:translateY(-1px);}
+/* Profile */
 .prof-banner{height:120px;background:linear-gradient(135deg,var(--accent),#9b87ff,var(--accent2));}
 .prof-info{padding:16px 20px 0;}
-.prof-av-wrap{margin-top:-46px;margin-bottom:12px;}
 .prof-av{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:30px;color:#fff;border:4px solid var(--bg);overflow:hidden;}
 .prof-av img{width:100%;height:100%;object-fit:cover;}
 .btn-edit{background:transparent;border:1px solid var(--border2);border-radius:20px;padding:8px 18px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;}
@@ -157,6 +188,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .btn-follow:hover{transform:translateY(-1px);box-shadow:0 4px 14px var(--ag);}
 .btn-follow.following{background:transparent;border:1px solid var(--accent);color:var(--accent);}
 .btn-follow.following:hover{border-color:var(--red);color:var(--red);background:rgba(248,113,113,0.06);}
+.btn-dm{background:transparent;border:1px solid var(--border2);border-radius:20px;padding:8px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;}
+.btn-dm:hover{background:var(--s2);}
 .prof-name{font-size:20px;font-weight:700;color:var(--white);}
 .prof-handle{font-size:14px;color:var(--t3);margin-bottom:8px;}
 .prof-bio{font-size:15px;color:var(--t2);line-height:1.6;margin-bottom:12px;}
@@ -212,8 +245,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .avatar-preview img{width:100%;height:100%;object-fit:cover;}
 .avatar-upload-btn{background:var(--s2);border:1px solid var(--border2);border-radius:10px;padding:10px 16px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s;}
 .avatar-upload-btn:hover{background:var(--s3);}
-#avatar-file{display:none;}
-#post-img-file{display:none;}
+#avatar-file{display:none;}#post-img-file{display:none;}
 .lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:200;align-items:center;justify-content:center;padding:20px;}
 .lightbox.on{display:flex;}
 .lightbox img{max-width:100%;max-height:90vh;border-radius:12px;object-fit:contain;}
@@ -231,9 +263,9 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .toast.err{border-color:var(--red);color:var(--red);}
 .mnav{display:none;position:fixed;bottom:0;left:0;right:0;background:rgba(12,12,18,0.95);border-top:1px solid var(--border);backdrop-filter:blur(18px);z-index:50;padding:6px 0;}
 .mitems{display:flex;justify-content:space-around;}
-.mb{background:none;border:none;color:var(--t3);font-size:22px;cursor:pointer;padding:10px 18px;border-radius:10px;transition:color .2s;position:relative;}
+.mb{background:none;border:none;color:var(--t3);font-size:22px;cursor:pointer;padding:10px 14px;border-radius:10px;transition:color .2s;position:relative;}
 .mb.on{color:var(--accent2);}
-.mb-badge{position:absolute;top:6px;right:10px;background:var(--red);color:#fff;border-radius:50%;width:14px;height:14px;font-size:9px;font-weight:700;display:none;align-items:center;justify-content:center;}
+.mb-badge{position:absolute;top:6px;right:8px;background:var(--red);color:#fff;border-radius:50%;width:14px;height:14px;font-size:9px;font-weight:700;display:none;align-items:center;justify-content:center;}
 .mb-badge.show{display:flex;}
 .mfab{position:fixed;bottom:76px;right:20px;width:50px;height:50px;background:linear-gradient(135deg,var(--accent),#9b87ff);border:none;border-radius:50%;font-size:22px;color:#fff;cursor:pointer;box-shadow:0 4px 20px var(--ag);z-index:50;display:none;align-items:center;justify-content:center;}
 @media(max-width:1080px){.wrap{grid-template-columns:64px 1fr;}.rnav{display:none;}.ni span,.nbtn,.nun,.nuh,.nlo{display:none;}.lbrand{font-size:20px;padding:8px;text-align:center;}.ni{justify-content:center;padding:12px;}.nuser{justify-content:center;}.mfab{display:flex;}}
@@ -241,7 +273,6 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 </style>
 </head>
 <body>
-
 <div id="auth">
   <div class="aw">
     <div class="abrand">
@@ -277,6 +308,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
       <div class="ni on" id="nav-home" onclick="goPage('home')"><span class="nico">🏠</span><span>Accueil</span></div>
       <div class="ni" id="nav-explore" onclick="goPage('explore')"><span class="nico">🔍</span><span>Explorer</span></div>
       <div class="ni" id="nav-notifs" onclick="goPage('notifs')"><span class="nico">🔔</span><span>Notifications</span><span class="notif-badge" id="notif-badge">0</span></div>
+      <div class="ni" id="nav-messages" onclick="goPage('messages')"><span class="nico">💬</span><span>Messages</span><span class="notif-badge" id="dm-badge">0</span></div>
       <div class="ni" id="nav-profile" onclick="goPage('profile')"><span class="nico">👤</span><span>Profil</span></div>
       <div class="ni" id="nav-settings" onclick="goPage('settings')"><span class="nico">⚙️</span><span>Paramètres</span></div>
       <button class="nbtn" onclick="fc()">+ Publier</button>
@@ -333,6 +365,24 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
         <div id="notifs-list"><div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div></div>
       </div>
 
+      <div class="page" id="page-messages">
+        <div class="ptop">
+          <button class="ptop-back" id="chat-back" onclick="goPage('messages')" style="display:none">←</button>
+          <div><div class="ptitle" id="messages-title">Messages</div></div>
+        </div>
+        <div id="messages-content">
+          <button class="new-dm-btn" onclick="openNewDM()">✉️ Nouveau message</button>
+          <div id="dm-list"><div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div></div>
+        </div>
+        <div id="chat-content" style="display:none" class="chat-wrap">
+          <div class="chat-msgs" id="chat-msgs"></div>
+          <div class="chat-input-wrap">
+            <input class="chat-input" id="chat-input" placeholder="Envoyer un message..." onkeydown="if(event.key==='Enter')sendMsg()">
+            <button class="chat-send" id="chat-send-btn" onclick="sendMsg()">➤</button>
+          </div>
+        </div>
+      </div>
+
       <div class="page" id="page-profile">
         <div class="ptop">
           <button class="ptop-back" id="prof-back" onclick="goBack()" style="display:none">←</button>
@@ -340,10 +390,11 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
         </div>
         <div class="prof-banner"></div>
         <div class="prof-info">
-          <div class="prof-av-wrap" style="display:flex;align-items:center;justify-content:space-between;padding:16px 0 8px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 0 8px;">
             <div class="prof-av" id="prof-av">?</div>
             <div style="display:flex;gap:8px;">
               <button class="btn-edit" id="prof-edit-btn" onclick="openEdit()">✏️ Modifier</button>
+              <button class="btn-dm" id="prof-dm-btn" onclick="startDMFromProfile()" style="display:none">💬 Message</button>
               <button class="btn-follow" id="prof-follow-btn" onclick="toggleFollow()" style="display:none">Suivre</button>
             </div>
           </div>
@@ -407,12 +458,26 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
   </div>
 </div>
 
-<!-- Lightbox image -->
+<!-- Lightbox -->
 <div class="lightbox" id="lightbox" onclick="closeLightbox()">
   <button class="lightbox-close">×</button>
   <img id="lightbox-img" src="" alt="">
 </div>
 
+<!-- Modal nouveau DM -->
+<div class="modal-bg" id="newdm-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeNewDM()">×</button>
+    <div class="modal-title">Nouveau message</div>
+    <div class="mfld">
+      <label>Rechercher un utilisateur</label>
+      <input type="text" id="newdm-search" placeholder="Nom ou @username..." oninput="searchNewDM()">
+    </div>
+    <div id="newdm-results"></div>
+  </div>
+</div>
+
+<!-- Modal edit profil -->
 <div class="modal-bg" id="edit-modal">
   <div class="modal">
     <button class="modal-close" onclick="closeEdit()">×</button>
@@ -451,8 +516,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
     <button class="mb on" onclick="goPage('home')">🏠</button>
     <button class="mb" onclick="goPage('explore')">🔍</button>
     <button class="mb" onclick="goPage('notifs')">🔔<span class="mb-badge" id="mob-notif-badge"></span></button>
+    <button class="mb" onclick="goPage('messages')">💬<span class="mb-badge" id="mob-dm-badge"></span></button>
     <button class="mb" onclick="goPage('profile')">👤</button>
-    <button class="mb" onclick="goPage('settings')">⚙️</button>
   </div>
 </div>
 <button class="mfab" onclick="fc()">✏️</button>
@@ -460,7 +525,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 
 <script>
 const SU='https://rcqiioozqfbempxuyvzq.supabase.co',SK='sb_publishable_Djp3G_plOEtDeDT1GwNMrg_QtS3TljZ';
-let me=null,myP=null,curPage='home',curFeed='foryou',viewingUserId=null,historyStack=[],deletePostId=null,editAvatarFile=null,postImgFile=null;
+let me=null,myP=null,curPage='home',curFeed='foryou',viewingUserId=null,historyStack=[],deletePostId=null,editAvatarFile=null,postImgFile=null,curConvId=null,curConvUserId=null,msgPollInterval=null;
 
 async function sb(path,o={}){
   const r=await fetch(`${SU}/rest/v1${path}`,{headers:{'apikey':SK,'Authorization':`Bearer ${o.tok||SK}`,'Content-Type':'application/json','Prefer':o.pref||'return=representation',...(o.h||{})},method:o.method||'GET',body:o.body?JSON.stringify(o.body):undefined});
@@ -501,7 +566,12 @@ async function register(){
     await loadMe();showApp();toast('Bienvenue sur Trebiq ! 🎉','ok');
   }catch(e){serr(e.message);}
 }
-function logout(){me=null;myP=null;document.getElementById('app').style.display='none';document.getElementById('auth').style.display='flex';}
+function logout(){
+  me=null;myP=null;
+  if(msgPollInterval)clearInterval(msgPollInterval);
+  document.getElementById('app').style.display='none';
+  document.getElementById('auth').style.display='flex';
+}
 function serr(m){document.getElementById('aerr').textContent=m;}
 async function loadMe(){const p=await sb(`/profiles?id=eq.${me.id}`,{tok:me.tok});myP=p?.[0];}
 
@@ -513,6 +583,8 @@ function showApp(){
   document.getElementById('nav-h').textContent='@'+(myP?.username||'...');
   goPage('home');
   checkUnreadNotifs();
+  checkUnreadDMs();
+  msgPollInterval=setInterval(()=>{checkUnreadDMs();if(curConvId)pollNewMessages();},10000);
 }
 function updateNavAvatar(){
   const i=(myP?.display_name||'U')[0].toUpperCase();
@@ -526,29 +598,168 @@ function goPage(page,userId=null){
   document.getElementById('page-'+page).classList.add('on');
   const navEl=document.getElementById('nav-'+page);
   if(navEl)navEl.classList.add('on');
-  const mobIdx={home:0,explore:1,notifs:2,profile:3,settings:4};
+  const mobIdx={home:0,explore:1,notifs:2,messages:3,profile:4};
   const mi=document.querySelectorAll('.mb')[mobIdx[page]];
   if(mi)mi.classList.add('on');
   curPage=page;
   if(page==='home')loadFeed();
   else if(page==='explore')loadExplore();
   else if(page==='notifs'){loadNotifs();markNotifsRead();}
-  else if(page==='profile'){viewingUserId=userId||me.id;const isOwn=viewingUserId===me.id;document.getElementById('prof-back').style.display=isOwn?'none':'block';document.getElementById('prof-edit-btn').style.display=isOwn?'block':'none';loadProfile(viewingUserId);}
+  else if(page==='messages'){showDMList();checkUnreadDMs();}
+  else if(page==='profile'){
+    viewingUserId=userId||me.id;
+    const isOwn=viewingUserId===me.id;
+    document.getElementById('prof-back').style.display=isOwn?'none':'block';
+    document.getElementById('prof-edit-btn').style.display=isOwn?'block':'none';
+    document.getElementById('prof-dm-btn').style.display=isOwn?'none':'block';
+    loadProfile(viewingUserId);
+  }
 }
 function goBack(){if(historyStack.length>0){const prev=historyStack.pop();goPage(prev);}else goPage('home');}
 function goUserProfile(uid){historyStack.push(curPage);goPage('profile',uid);}
 
-// ===== IMAGE DANS POSTS =====
+// ===== DMs =====
+function showDMList(){
+  document.getElementById('messages-title').textContent='Messages';
+  document.getElementById('messages-content').style.display='block';
+  document.getElementById('chat-content').style.display='none';
+  document.getElementById('chat-back').style.display='none';
+  curConvId=null;curConvUserId=null;
+  loadDMList();
+}
+async function loadDMList(){
+  const c=document.getElementById('dm-list');
+  c.innerHTML='<div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div>';
+  try{
+    const convs=await sb(`/conversations?or=(user1_id.eq.${me.id},user2_id.eq.${me.id})&order=created_at.desc`,{tok:me.tok});
+    if(!convs?.length){c.innerHTML='<div class="empty"><div class="empty-ico">💬</div><div class="empty-t">Aucun message</div><div class="empty-s">Démarre une conversation depuis un profil ou clique sur "Nouveau message".</div></div>';return;}
+    const otherIds=convs.map(cv=>cv.user1_id===me.id?cv.user2_id:cv.user1_id);
+    const profs=await sb(`/profiles?id=in.(${[...new Set(otherIds)].join(',')})`,{tok:me.tok});
+    const pm={};(profs||[]).forEach(p=>pm[p.id]=p);
+    const items=await Promise.all(convs.map(async cv=>{
+      const otherId=cv.user1_id===me.id?cv.user2_id:cv.user1_id;
+      const prof=pm[otherId]||{};
+      const msgs=await sb(`/messages?conversation_id=eq.${cv.id}&order=created_at.desc&limit=1`,{tok:me.tok});
+      const last=msgs?.[0];
+      const unreadR=await fetch(`${SU}/rest/v1/messages?conversation_id=eq.${cv.id}&read=eq.false&sender_id=neq.${me.id}&select=id`,{headers:{'apikey':SK,'Authorization':`Bearer ${me.tok}`,'Prefer':'count=exact'}});
+      const unread=parseInt(unreadR.headers.get('content-range')?.split('/')[1]||'0');
+      return{cv,prof,last,unread,otherId};
+    }));
+    c.innerHTML=items.map(({cv,prof,last,unread,otherId})=>{
+      const ini=(prof.display_name||'U')[0].toUpperCase();
+      const avC=prof.avatar_url?`<img src="${prof.avatar_url}" alt="">`:`${ini}`;
+      const preview=last?esc(last.content).slice(0,50)+(last.content.length>50?'...':''):'Pas encore de message';
+      return`<div class="dm-item ${unread>0?'unread':''}" onclick="openChat('${cv.id}','${otherId}')">
+        <div class="dm-av">${avC}</div>
+        <div class="dm-info">
+          <div class="dm-name">${esc(prof.display_name||'Utilisateur')}</div>
+          <div class="dm-preview">${preview}</div>
+        </div>
+        ${last?`<div class="dm-time">${ago(last.created_at)}</div>`:''}
+        ${unread>0?'<div class="dm-unread-dot"></div>':''}
+      </div>`;
+    }).join('');
+  }catch(e){c.innerHTML=`<div class="empty"><div class="empty-t">Erreur: ${e.message}</div></div>`;}
+}
+async function openChat(convId,otherUserId){
+  curConvId=convId;curConvUserId=otherUserId;
+  const prof=await sb(`/profiles?id=eq.${otherUserId}`,{tok:me.tok});
+  const p=prof?.[0]||{};
+  document.getElementById('messages-title').textContent=p.display_name||'Message';
+  document.getElementById('messages-content').style.display='none';
+  document.getElementById('chat-content').style.display='flex';
+  document.getElementById('chat-back').style.display='block';
+  await loadMessages();
+  await markMsgsRead(convId);
+  checkUnreadDMs();
+  document.getElementById('chat-input').focus();
+}
+async function loadMessages(){
+  if(!curConvId)return;
+  const c=document.getElementById('chat-msgs');
+  const msgs=await sb(`/messages?conversation_id=eq.${curConvId}&order=created_at.asc&limit=100`,{tok:me.tok});
+  if(!msgs?.length){c.innerHTML='<div style="text-align:center;padding:32px;color:var(--t3);font-size:14px;">Dis bonjour ! 👋</div>';return;}
+  const wasAtBottom=c.scrollHeight-c.scrollTop-c.clientHeight<60;
+  c.innerHTML=msgs.map(m=>{
+    const isMine=m.sender_id===me.id;
+    return`<div class="msg ${isMine?'mine':'theirs'}">
+      <div class="msg-bubble">${esc(m.content)}</div>
+      <div class="msg-time">${ago(m.created_at)}</div>
+    </div>`;
+  }).join('');
+  if(wasAtBottom||true)c.scrollTop=c.scrollHeight;
+}
+async function pollNewMessages(){
+  if(!curConvId)return;
+  await loadMessages();
+  await markMsgsRead(curConvId);
+}
+async function sendMsg(){
+  const inp=document.getElementById('chat-input');
+  const content=inp.value.trim();if(!content)return;
+  inp.value='';
+  try{
+    await sb('/messages',{method:'POST',tok:me.tok,body:{conversation_id:curConvId,sender_id:me.id,content}});
+    await loadMessages();
+  }catch(e){toast('Erreur envoi','err');}
+}
+async function markMsgsRead(convId){
+  try{await sb(`/messages?conversation_id=eq.${convId}&read=eq.false&sender_id=neq.${me.id}`,{method:'PATCH',tok:me.tok,body:{read:true}});}catch(e){}
+}
+async function checkUnreadDMs(){
+  try{
+    const convs=await sb(`/conversations?or=(user1_id.eq.${me.id},user2_id.eq.${me.id})&select=id`,{tok:me.tok});
+    if(!convs?.length)return;
+    const ids=convs.map(c=>c.id).join(',');
+    const r=await fetch(`${SU}/rest/v1/messages?conversation_id=in.(${ids})&read=eq.false&sender_id=neq.${me.id}&select=id`,{headers:{'apikey':SK,'Authorization':`Bearer ${me.tok}`,'Prefer':'count=exact'}});
+    const count=parseInt(r.headers.get('content-range')?.split('/')[1]||'0');
+    const b1=document.getElementById('dm-badge');
+    const b2=document.getElementById('mob-dm-badge');
+    if(count>0){b1.textContent=count>9?'9+':count;b1.classList.add('show');b2.textContent=count>9?'9+':count;b2.classList.add('show');}
+    else{b1.classList.remove('show');b2.classList.remove('show');}
+  }catch(e){}
+}
+async function getOrCreateConv(otherUserId){
+  const u1=me.id<otherUserId?me.id:otherUserId;
+  const u2=me.id<otherUserId?otherUserId:me.id;
+  let convs=await sb(`/conversations?user1_id=eq.${u1}&user2_id=eq.${u2}`,{tok:me.tok});
+  if(convs?.length)return convs[0].id;
+  const newConv=await sb('/conversations',{method:'POST',tok:me.tok,body:{user1_id:u1,user2_id:u2}});
+  return newConv[0].id;
+}
+function openNewDM(){document.getElementById('newdm-modal').classList.add('on');document.getElementById('newdm-search').value='';document.getElementById('newdm-results').innerHTML='';}
+function closeNewDM(){document.getElementById('newdm-modal').classList.remove('on');}
+async function searchNewDM(){
+  const q=document.getElementById('newdm-search').value.trim();
+  const c=document.getElementById('newdm-results');
+  if(!q){c.innerHTML='';return;}
+  try{
+    const users=await sb(`/profiles?or=(username.ilike.*${q}*,display_name.ilike.*${q}*)&limit=10`,{tok:me.tok});
+    const filtered=(users||[]).filter(u=>u.id!==me.id);
+    c.innerHTML=filtered.map(u=>{
+      const ini=(u.display_name||'U')[0].toUpperCase();
+      const avC=u.avatar_url?`<img src="${u.avatar_url}" alt="">`:`${ini}`;
+      return`<div class="user-card-item" onclick="startDM('${u.id}')"><div class="uci-av">${avC}</div><div><div class="uci-name">${esc(u.display_name||'Utilisateur')}</div><div class="uci-handle">@${esc(u.username||'...')}</div></div></div>`;
+    }).join('')||'<div style="padding:16px;color:var(--t3);text-align:center;font-size:14px;">Aucun résultat</div>';
+  }catch(e){}
+}
+async function startDM(otherUserId){
+  closeNewDM();
+  goPage('messages');
+  const convId=await getOrCreateConv(otherUserId);
+  await openChat(convId,otherUserId);
+}
+async function startDMFromProfile(){
+  await startDM(viewingUserId);
+}
+
+// ===== IMAGE POSTS =====
 function previewPostImg(e){
   const file=e.target.files[0];if(!file)return;
   if(file.size>5*1024*1024){toast('Image trop lourde (max 5MB)','err');return;}
   postImgFile=file;
   const reader=new FileReader();
-  reader.onload=ev=>{
-    document.getElementById('cimg-thumb').src=ev.target.result;
-    document.getElementById('cimg-preview').style.display='block';
-    document.getElementById('btn-img-tool').classList.add('active');
-  };
+  reader.onload=ev=>{document.getElementById('cimg-thumb').src=ev.target.result;document.getElementById('cimg-preview').style.display='block';document.getElementById('btn-img-tool').classList.add('active');};
   reader.readAsDataURL(file);
   document.getElementById('cpub').disabled=false;
 }
@@ -568,13 +779,10 @@ async function uploadPostImg(){
   if(!r.ok)throw new Error('Erreur upload image');
   return`${SU}/storage/v1/object/public/avatars/${path}`;
 }
-function openLightbox(url){
-  document.getElementById('lightbox-img').src=url;
-  document.getElementById('lightbox').classList.add('on');
-}
+function openLightbox(url){document.getElementById('lightbox-img').src=url;document.getElementById('lightbox').classList.add('on');}
 function closeLightbox(){document.getElementById('lightbox').classList.remove('on');}
 
-// ===== FEED TABS =====
+// ===== FEED =====
 function switchFeed(tab){
   curFeed=tab;
   document.getElementById('tab-foryou').classList.toggle('on',tab==='foryou');
@@ -588,16 +796,13 @@ async function loadFeed(){
     let posts;
     if(curFeed==='following'){
       const follows=await sb(`/follows?follower_id=eq.${me.id}&select=following_id`,{tok:me.tok});
-      if(!follows?.length){
-        c.innerHTML='<div class="empty"><div class="empty-ico">👥</div><div class="empty-t">Aucun abonnement</div><div class="empty-s">Suis des utilisateurs pour voir leurs posts ici.<br>Va dans <strong>Explorer</strong> pour en trouver !</div></div>';
-        return;
-      }
+      if(!follows?.length){c.innerHTML='<div class="empty"><div class="empty-ico">👥</div><div class="empty-t">Aucun abonnement</div><div class="empty-s">Suis des utilisateurs pour voir leurs posts ici.</div></div>';return;}
       const ids=follows.map(f=>f.following_id).join(',');
       posts=await sb(`/posts?user_id=in.(${ids})&order=created_at.desc&limit=60`,{tok:me.tok});
     }else{
       posts=await sb('/posts?order=created_at.desc&limit=60',{tok:me.tok});
     }
-    if(!posts?.length){c.innerHTML='<div class="empty"><div class="empty-ico">✨</div><div class="empty-t">Aucun post</div><div class="empty-s">Sois le premier à publier !</div></div>';return;}
+    if(!posts?.length){c.innerHTML='<div class="empty"><div class="empty-ico">✨</div><div class="empty-t">Aucun post</div></div>';return;}
     const uids=[...new Set(posts.map(p=>p.user_id))];
     const profs=uids.length?await sb(`/profiles?id=in.(${uids.join(',')})`,{tok:me.tok}):[];
     const pm={};(profs||[]).forEach(p=>pm[p.id]=p);
@@ -609,7 +814,6 @@ async function loadFeed(){
     posts.forEach(p=>{llc(p.id);lrc(p.id);lrpc(p.id);});
   }catch(e){c.innerHTML=`<div class="empty"><div class="empty-t">Erreur: ${e.message}</div></div>`;}
 }
-
 function rp(p,prof,liked,reposted){
   const i=(prof?.display_name||'U')[0].toUpperCase();
   const url=prof?.avatar_url;
@@ -617,13 +821,12 @@ function rp(p,prof,liked,reposted){
   const txt=esc(p.content).replace(/@askClaude/gi,'<span class="men">@askClaude</span>');
   const uid=prof?.id||'';
   const isOwn=p.user_id===me.id;
-  const imgHtml=p.image_url?`<div class="post-img" onclick="openLightbox('${p.image_url}')"><img src="${p.image_url}" alt="image du post" loading="lazy"></div>`:'';
+  const imgHtml=p.image_url?`<div class="post-img" onclick="openLightbox('${p.image_url}')"><img src="${p.image_url}" alt="image" loading="lazy"></div>`:'';
   return`<div class="post" id="p-${p.id}"><div class="prow"><div class="pav" onclick="goUserProfile('${uid}')">${avContent}</div><div class="pb"><div class="pm"><span class="pname" onclick="goUserProfile('${uid}')">${esc(prof?.display_name||'Utilisateur')}</span><span class="phdl">@${esc(prof?.username||'...')}</span><span class="ptm">· ${ago(p.created_at)}</span></div><div class="ptxt">${txt}</div>${imgHtml}${p.ai_reply?`<div class="airep"><div class="aih"><div class="aidot"></div><span class="ailbl">askClaude</span></div><div class="aitxt">${esc(p.ai_reply)}</div></div>`:''}<div class="pacts"><button class="pa ${liked?'lkd':''}" onclick="tl('${p.id}',${liked})">${liked?'❤️':'🤍'} <span id="lc-${p.id}">0</span></button><button class="pa" onclick="toggleReplies('${p.id}')">💬 <span id="rc-${p.id}">0</span></button><button class="pa ${reposted?'rptd':''}" onclick="tr2('${p.id}',${reposted})">🔁 <span id="rpc-${p.id}">0</span></button>${isOwn?`<button class="pa del" onclick="askDelete('${p.id}')">🗑️</button>`:''}</div><div id="replies-${p.id}" style="display:none"></div></div></div></div>`;
 }
 async function llc(id){try{const r=await fetch(`${SU}/rest/v1/likes?post_id=eq.${id}&select=id`,{headers:{'apikey':SK,'Authorization':`Bearer ${SK}`,'Prefer':'count=exact'}});const c=r.headers.get('content-range')?.split('/')[1]||'0';const el=document.getElementById('lc-'+id);if(el)el.textContent=c;}catch(e){}}
 async function lrc(id){try{const r=await fetch(`${SU}/rest/v1/replies?post_id=eq.${id}&select=id`,{headers:{'apikey':SK,'Authorization':`Bearer ${SK}`,'Prefer':'count=exact'}});const c=r.headers.get('content-range')?.split('/')[1]||'0';const el=document.getElementById('rc-'+id);if(el)el.textContent=c;}catch(e){}}
 async function lrpc(id){try{const r=await fetch(`${SU}/rest/v1/reposts?post_id=eq.${id}&select=id`,{headers:{'apikey':SK,'Authorization':`Bearer ${SK}`,'Prefer':'count=exact'}});const c=r.headers.get('content-range')?.split('/')[1]||'0';const el=document.getElementById('rpc-'+id);if(el)el.textContent=c;}catch(e){}}
-
 async function pub(){
   const tx=document.getElementById('ctxt');const content=tx.value.trim();
   if(!content&&!postImgFile)return;
@@ -631,15 +834,11 @@ async function pub(){
   const hasAI=/\@askClaude/i.test(content);
   try{
     let image_url=null;
-    if(postImgFile){
-      toast('Upload de l\'image...','');
-      image_url=await uploadPostImg();
-    }
+    if(postImgFile){toast('Upload...','');image_url=await uploadPostImg();}
     const postBody={user_id:me.id,content:content||''};
     if(image_url)postBody.image_url=image_url;
     const posts=await sb('/posts',{method:'POST',tok:me.tok,body:postBody});
-    const post=posts[0];
-    tx.value='';removePostImg();oty();loadFeed();
+    const post=posts[0];tx.value='';removePostImg();oty();loadFeed();
     if(hasAI){
       const aiR=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:content.replace(/@askClaude/gi,'').trim()||content})});
       const aiD=await aiR.json();
@@ -715,8 +914,6 @@ async function searchUsers(){
   if(!q){loadExplore();return;}
   try{const users=await sb(`/profiles?or=(username.ilike.*${q}*,display_name.ilike.*${q}*)&limit=20`,{tok:me.tok});renderUsers(users,c);}catch(e){}
 }
-
-// ===== NOTIFICATIONS =====
 async function checkUnreadNotifs(){
   try{
     const r=await fetch(`${SU}/rest/v1/notifications?user_id=eq.${me.id}&read=eq.false&select=id`,{headers:{'apikey':SK,'Authorization':`Bearer ${me.tok}`,'Prefer':'count=exact'}});
@@ -754,22 +951,16 @@ async function loadNotifs(){
     const likeItems=myLikes.map(l=>({type:'like',uid:l.user_id,time:l.created_at,unread:false}));
     const replyItems=myReplies.map(r=>({type:'reply',uid:r.user_id,content:r.content,time:r.created_at,unread:false}));
     const all=[...followItems,...likeItems,...replyItems].sort((a,b)=>new Date(b.time)-new Date(a.time));
-    if(!all.length){c.innerHTML='<div class="empty"><div class="empty-ico">🔔</div><div class="empty-t">Aucune notification</div><div class="empty-s">Tu seras notifié quand quelqu\'un te suit, like ou répond à tes posts.</div></div>';return;}
+    if(!all.length){c.innerHTML='<div class="empty"><div class="empty-ico">🔔</div><div class="empty-t">Aucune notification</div></div>';return;}
     c.innerHTML=all.map(n=>{
       const prof=pm[n.uid]||{};
       const ini=(prof.display_name||'U')[0].toUpperCase();
       const avC=prof.avatar_url?`<img src="${prof.avatar_url}" alt="">`:`${ini}`;
-      const txt=n.type==='follow'?`<strong>${esc(prof.display_name||'Quelqu\'un')}</strong> a commencé à te suivre`:n.type==='like'?`<strong>${esc(prof.display_name||'Quelqu\'un')}</strong> a aimé ton post`:`<strong>${esc(prof.display_name||'Quelqu\'un')}</strong> a répondu : <em style="color:var(--t2)">"${esc(n.content?.slice(0,60))}${n.content?.length>60?'...':''}"</em>`;
-      return`<div class="notif-item ${n.unread?'unread':''}" onclick="goUserProfile('${prof.id||''}')">
-        <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex-shrink:0;overflow:hidden;">${avC}</div>
-        <div class="notif-text">${txt}</div>
-        <div class="notif-time">${ago(n.time)}</div>
-      </div>`;
+      const txt=n.type==='follow'?`<strong>${esc(prof.display_name||'Quelqu\'un')}</strong> a commencé à te suivre`:n.type==='like'?`<strong>${esc(prof.display_name||'Quelqu\'un')}</strong> a aimé ton post`:`<strong>${esc(prof.display_name||'Quelqu\'un')}</strong> a répondu : <em style="color:var(--t2)">"${esc(n.content?.slice(0,60))}"</em>`;
+      return`<div class="notif-item ${n.unread?'unread':''}" onclick="goUserProfile('${prof.id||''}')"><div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex-shrink:0;overflow:hidden;">${avC}</div><div class="notif-text">${txt}</div><div class="notif-time">${ago(n.time)}</div></div>`;
     }).join('');
   }catch(e){c.innerHTML=`<div class="empty"><div class="empty-t">Erreur: ${e.message}</div></div>`;}
 }
-
-// ===== SYSTEME FOLLOW =====
 async function loadFollowCounts(userId){
   try{
     const r1=await fetch(`${SU}/rest/v1/follows?following_id=eq.${userId}&select=id`,{headers:{'apikey':SK,'Authorization':`Bearer ${SK}`,'Prefer':'count=exact'}});
@@ -801,7 +992,6 @@ async function toggleFollow(){
     loadFollowCounts(viewingUserId);
   }catch(e){toast('Erreur: '+e.message,'err');}
 }
-
 async function loadProfile(userId){
   const isOwn=userId===me.id;
   let prof=isOwn?myP:null;
@@ -821,9 +1011,7 @@ async function loadProfile(userId){
     const already=await checkFollowing(userId);
     followBtn.classList.toggle('following',already);
     followBtn.textContent=already?'Abonné ✓':'Suivre';
-  }else{
-    followBtn.style.display='none';
-  }
+  }else{followBtn.style.display='none';}
   loadFollowCounts(userId);
   const posts=await sb(`/posts?user_id=eq.${userId}&order=created_at.desc`,{tok:me.tok});
   document.getElementById('prof-posts-count').textContent=posts?.length||0;
@@ -858,7 +1046,7 @@ async function loadLikedPosts(){
     const myLiked=new Set((myLks||[]).map(l=>l.post_id));
     c.innerHTML=(posts||[]).map(p=>rp(p,pm[p.user_id],myLiked.has(p.id),false)).join('');
     (posts||[]).forEach(p=>{llc(p.id);lrc(p.id);lrpc(p.id);});
-  }catch(e){c.innerHTML=`<div class="empty"><div class="empty-t">Erreur: ${e.message}</div></div>`;}
+  }catch(e){}
 }
 function openEdit(){
   const ini=(myP?.display_name||'U')[0].toUpperCase();
@@ -889,12 +1077,10 @@ async function saveProfile(){
       const path=`avatars/${me.id}.${ext}`;
       const uploadRes=await fetch(`${SU}/storage/v1/object/avatars/${path}`,{method:'POST',headers:{'apikey':SK,'Authorization':`Bearer ${me.tok}`,'Content-Type':editAvatarFile.type,'x-upsert':'true'},body:editAvatarFile});
       if(uploadRes.ok)avatarUrl=`${SU}/storage/v1/object/public/avatars/${path}?t=${Date.now()}`;
-      else toast('Erreur upload photo','err');
     }
     await sb(`/profiles?id=eq.${me.id}`,{method:'PATCH',tok:me.tok,body:{display_name:name,bio,avatar_url:avatarUrl}});
     myP={...myP,display_name:name,bio,avatar_url:avatarUrl};
-    updateNavAvatar();
-    document.getElementById('nav-n').textContent=name;
+    updateNavAvatar();document.getElementById('nav-n').textContent=name;
     closeEdit();loadProfile(me.id);toast('Profil mis à jour ! ✅','ok');
   }catch(e){toast('Erreur: '+e.message,'err');}
 }
@@ -906,13 +1092,9 @@ async function saveAccount(){
   if(pass&&pass!==pass2)return toast('Les mots de passe ne correspondent pas','err');
   if(pass&&pass.length<6)return toast('Mot de passe trop court','err');
   try{
-    const body={};
-    if(email)body.email=email;
-    if(pass)body.password=pass;
+    const body={};if(email)body.email=email;if(pass)body.password=pass;
     await sbaPUT('/user',body,me.tok);
-    document.getElementById('s-email').value='';
-    document.getElementById('s-pass').value='';
-    document.getElementById('s-pass2').value='';
+    document.getElementById('s-email').value='';document.getElementById('s-pass').value='';document.getElementById('s-pass2').value='';
     toast('Compte mis à jour ! ✅','ok');
   }catch(e){toast('Erreur: '+e.message,'err');}
 }
