@@ -1248,7 +1248,7 @@ async function loadSuggestions(){
     followingIds.add(me.id);
     const users=await sb('/profiles?order=created_at.desc&limit=20',{tok:me.tok});
     const suggestions=(users||[]).filter(u=>!followingIds.has(u.id)).slice(0,4);
-    if(!suggestions.length){c.innerHTML='<div style="color:var(--t3);font-size:13px;">Aucune suggestion pour l'instant.</div>';return;}
+    if(!suggestions.length){c.innerHTML='<div style="color:var(--t3);font-size:13px;">Aucune suggestion pour le moment.</div>';return;}
     c.innerHTML=suggestions.map(u=>{
       const ini=(u.display_name||'U')[0].toUpperCase();
       const avC=u.avatar_url?`<img src="${u.avatar_url}" alt="">`:`${ini}`;
