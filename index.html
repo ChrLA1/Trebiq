@@ -288,6 +288,47 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .lightbox.on{display:flex;}
 .lightbox img{max-width:100%;max-height:90vh;border-radius:12px;object-fit:contain;}
 .lightbox-close{position:absolute;top:20px;right:20px;background:rgba(255,255,255,0.1);border:none;border-radius:50%;width:40px;height:40px;color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+/* Games */
+.games-hub{padding:16px 20px;display:flex;flex-direction:column;gap:12px;}
+.game-card{background:var(--s1);border:1px solid var(--border);border-radius:20px;padding:20px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:16px;}
+.game-card:hover{border-color:var(--accent);transform:translateY(-2px);}
+.game-ico{font-size:36px;width:56px;height:56px;display:flex;align-items:center;justify-content:center;background:var(--s2);border-radius:14px;flex-shrink:0;}
+.game-info{flex:1;}
+.game-title{font-size:16px;font-weight:700;color:var(--white);margin-bottom:4px;}
+.game-desc{font-size:13px;color:var(--t2);}
+.game-xp{font-size:12px;font-weight:700;color:var(--accent2);background:var(--ag);border:1px solid var(--accent);border-radius:10px;padding:3px 8px;white-space:nowrap;}
+.game-area{padding:0 20px 80px;}
+.game-back{display:flex;align-items:center;gap:8px;color:var(--t2);font-size:14px;cursor:pointer;margin-bottom:20px;padding:8px 0;}
+.game-back:hover{color:var(--white);}
+/* Wordle */
+.wrd-grid{display:flex;flex-direction:column;gap:6px;align-items:center;margin-bottom:20px;}
+.wrd-row{display:flex;gap:6px;}
+.wrd-cell{width:52px;height:52px;border:2px solid var(--border2);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:var(--white);transition:all .3s;text-transform:uppercase;}
+.wrd-cell.filled{border-color:var(--t2);}
+.wrd-cell.correct{background:#16a34a;border-color:#16a34a;}
+.wrd-cell.present{background:#ca8a04;border-color:#ca8a04;}
+.wrd-cell.absent{background:var(--s2);border-color:var(--s2);color:var(--t3);}
+.wrd-kb{display:flex;flex-direction:column;gap:6px;align-items:center;}
+.wrd-kb-row{display:flex;gap:5px;}
+.wrd-key{min-width:32px;height:42px;padding:0 8px;background:var(--s2);border:none;border-radius:8px;color:var(--text);font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;}
+.wrd-key:hover{background:var(--border2);}
+.wrd-key.correct{background:#16a34a;color:#fff;}
+.wrd-key.present{background:#ca8a04;color:#fff;}
+.wrd-key.absent{background:var(--s2);color:var(--t3);}
+.wrd-key.wide{min-width:52px;font-size:11px;}
+/* Memory */
+.mem-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;}
+.mem-card{aspect-ratio:1;background:var(--s2);border:2px solid var(--border);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:28px;cursor:pointer;transition:all .3s;user-select:none;}
+.mem-card.flipped,.mem-card.matched{background:var(--ag);border-color:var(--accent);}
+.mem-card.matched{opacity:.6;cursor:default;}
+.mem-card:not(.flipped):not(.matched){font-size:0;}
+/* Speed */
+.spd-area{position:relative;height:320px;background:var(--s1);border:1px solid var(--border);border-radius:20px;overflow:hidden;margin-bottom:16px;cursor:crosshair;}
+.spd-target{position:absolute;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;transition:transform .1s;box-shadow:0 0 20px rgba(124,106,247,0.4);}
+.spd-target:hover{transform:scale(1.1);}
+.spd-hud{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.spd-stat{background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:8px 14px;font-size:13px;color:var(--text);font-family:'DM Mono',monospace;}
+.spd-stat span{color:var(--accent2);font-weight:700;}
 /* Quiz */
 .quiz-card{margin:20px;background:var(--s1);border:1px solid var(--border);border-radius:20px;padding:24px;overflow:hidden;}
 .quiz-theme{font-size:11px;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px;font-family:'DM Mono',monospace;}
@@ -436,6 +477,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
       <div class="ni" id="nav-stats" onclick="goPage('stats')"><span class="nico">📊</span><span>Statistiques</span></div>
       <div class="ni" id="nav-leaderboard" onclick="goPage('leaderboard')"><span class="nico">🏆</span><span>Classement</span></div>
       <div class="ni" id="nav-quiz" onclick="goPage('quiz')"><span class="nico">🧠</span><span>Quizz</span></div>
+      <div class="ni" id="nav-games" onclick="goPage('games')"><span class="nico">🎮</span><span>Jeux</span></div>
       <div class="ni" id="nav-settings" onclick="goPage('settings')"><span class="nico">⚙️</span><span>Paramètres</span></div>
       <button class="nbtn" onclick="fc()">+ Publier</button>
       <div class="nbot">
@@ -553,6 +595,11 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
       <div class="page" id="page-leaderboard">
         <div class="ptop"><div class="ptitle">🏆 Classement</div></div>
         <div id="leaderboard-content"><div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div></div>
+      </div>
+
+      <div class="page" id="page-games">
+        <div class="ptop"><div class="ptitle">🎮 Mini-jeux</div></div>
+        <div id="games-content"></div>
       </div>
 
       <div class="page" id="page-quiz">
@@ -851,6 +898,7 @@ function goPage(page,userId=null){
   else if(page==='stats')loadStats();
   else if(page==='leaderboard')loadLeaderboard();
   else if(page==='quiz')loadQuiz();
+  else if(page==='games')loadGamesHub();
   else if(page==='profile'){
     viewingUserId=userId||me.id;
     const isOwn=viewingUserId===me.id;
@@ -1437,6 +1485,293 @@ async function castVote(pollId,optionIndex,postId){
   }catch(e){toast('Déjà voté !','err');}
 }
 
+// ===== GAMES =====
+let curGame=null;
+
+function loadGamesHub(){
+  const c=document.getElementById('games-content');
+  const today=new Date().toISOString().slice(0,10);
+  const wrdDone=localStorage.getItem(`wrd_${me.id}_${today}`);
+  const memDone=localStorage.getItem(`mem_xp_${me.id}_${today}`);
+  const spdDone=localStorage.getItem(`spd_xp_${me.id}_${today}`);
+  c.innerHTML=`<div class="games-hub">
+    <div class="game-card" onclick="startGame('wordle')">
+      <div class="game-ico">🔤</div>
+      <div class="game-info">
+        <div class="game-title">Wordle${wrdDone?' ✅':''}</div>
+        <div class="game-desc">Devine le mot en 6 essais${wrdDone?' · Déjà joué aujourd\'hui':''}</div>
+      </div>
+      <div class="game-xp">+20 XP</div>
+    </div>
+    <div class="game-card" onclick="startGame('memory')">
+      <div class="game-ico">🧩</div>
+      <div class="game-info">
+        <div class="game-title">Memory${memDone?' ✅':''}</div>
+        <div class="game-desc">Retrouve toutes les paires${memDone?' · XP récupéré aujourd\'hui':''}</div>
+      </div>
+      <div class="game-xp">+8 XP</div>
+    </div>
+    <div class="game-card" onclick="startGame('speed')">
+      <div class="game-ico">⚡</div>
+      <div class="game-info">
+        <div class="game-title">Rapidité${spdDone?' ✅':''}</div>
+        <div class="game-desc">Clique sur les cibles le plus vite possible${spdDone?' · XP récupéré aujourd\'hui':''}</div>
+      </div>
+      <div class="game-xp">+4 XP</div>
+    </div>
+  </div>`;
+}
+
+function startGame(game){
+  curGame=game;
+  const c=document.getElementById('games-content');
+  if(game==='wordle')initWordle(c);
+  else if(game==='memory')initMemory(c);
+  else if(game==='speed')initSpeed(c);
+}
+
+function gameBack(){curGame=null;loadGamesHub();}
+
+// ===== WORDLE =====
+const WRD_WORDS=['CRANE','PLAGE','LIVRE','MONDE','TIGER','FLEUR','NUAGE','ARBRE','VAGUE','SABLE','PLUIE','SOLEI','NOIRE','BLANC','ROUGE','VERDE','SPORT','MUSIC','DANSE','ROBOT','PIZZA','CARTE','TRAIN','AVION','CHIEN','OCEAN','LUNDI','MARDI','JEUDI','TABLE'];
+let wrdTarget='',wrdGuesses=[],wrdCurrent='',wrdOver=false;
+
+function initWordle(c){
+  const today=new Date().toISOString().slice(0,10);
+  const done=localStorage.getItem(`wrd_${me.id}_${today}`);
+  const dayIdx=Math.floor(Date.now()/86400000)%WRD_WORDS.length;
+  wrdTarget=WRD_WORDS[dayIdx];
+  wrdGuesses=[];wrdCurrent='';wrdOver=false;
+
+  c.innerHTML=`<div class="game-area">
+    <div class="game-back" onclick="gameBack()">← Retour aux jeux</div>
+    <div class="wrd-grid" id="wrd-grid"></div>
+    <div id="wrd-msg" style="text-align:center;font-size:14px;color:var(--accent2);min-height:24px;margin-bottom:12px;font-weight:600;"></div>
+    <div class="wrd-kb" id="wrd-kb"></div>
+  </div>`;
+
+  if(done){
+    const d=JSON.parse(done);
+    wrdGuesses=d.guesses;wrdOver=true;
+    renderWordleGrid();renderWordleKb();
+    document.getElementById('wrd-msg').textContent=d.won?'🎉 Déjà gagné aujourd\'hui !':'😅 Déjà joué aujourd\'hui. Mot : '+wrdTarget;
+    return;
+  }
+  renderWordleGrid();
+  renderWordleKb();
+  document.addEventListener('keydown',wrdKeyHandler);
+}
+
+function wrdKeyHandler(e){
+  if(curGame!=='wordle')return document.removeEventListener('keydown',wrdKeyHandler);
+  if(wrdOver)return;
+  const k=e.key.toUpperCase();
+  if(k==='ENTER')wrdSubmit();
+  else if(k==='BACKSPACE')wrdDelete();
+  else if(/^[A-Z]$/.test(k)&&k.length===1)wrdType(k);
+}
+
+function wrdType(l){if(wrdCurrent.length<5&&!wrdOver){wrdCurrent+=l;renderWordleGrid();}}
+function wrdDelete(){if(wrdCurrent.length>0&&!wrdOver){wrdCurrent=wrdCurrent.slice(0,-1);renderWordleGrid();}}
+function wrdSubmit(){
+  if(wrdCurrent.length!==5)return;
+  const guess=wrdCurrent;
+  wrdGuesses.push(guess);
+  wrdCurrent='';
+  const won=guess===wrdTarget;
+  if(won||wrdGuesses.length>=6){
+    wrdOver=true;
+    const today=new Date().toISOString().slice(0,10);
+    localStorage.setItem(`wrd_${me.id}_${today}`,JSON.stringify({guesses:wrdGuesses,won}));
+    document.removeEventListener('keydown',wrdKeyHandler);
+    setTimeout(()=>{
+      const msg=document.getElementById('wrd-msg');
+      if(won){msg.textContent='🎉 Bravo ! +20 XP';addXP(20);toast('🔤 Wordle gagné ! +20 XP','ok');}
+      else{msg.textContent='😅 Perdu ! Le mot était : '+wrdTarget;msg.style.color='var(--red)';}
+    },400);
+  }
+  renderWordleGrid();
+  renderWordleKb();
+}
+
+function wrdEval(guess){
+  const result=Array(5).fill('absent');
+  const tArr=wrdTarget.split('');
+  const gArr=guess.split('');
+  // correct pass
+  gArr.forEach((l,i)=>{if(l===tArr[i]){result[i]='correct';tArr[i]=null;gArr[i]=null;}});
+  // present pass
+  gArr.forEach((l,i)=>{if(l&&tArr.includes(l)){result[i]='present';tArr[tArr.indexOf(l)]=null;}});
+  return result;
+}
+
+function renderWordleGrid(){
+  const grid=document.getElementById('wrd-grid');
+  if(!grid)return;
+  let html='';
+  for(let r=0;r<6;r++){
+    html+='<div class="wrd-row">';
+    const guess=wrdGuesses[r];
+    const isCur=r===wrdGuesses.length&&!wrdOver;
+    const eval_=guess?wrdEval(guess):null;
+    for(let c2=0;c2<5;c2++){
+      let letter='',cls='';
+      if(guess){letter=guess[c2];cls=eval_[c2];}
+      else if(isCur){letter=wrdCurrent[c2]||'';cls=letter?'filled':'';}
+      html+=`<div class="wrd-cell ${cls}">${letter}</div>`;
+    }
+    html+='</div>';
+  }
+  grid.innerHTML=html;
+}
+
+function renderWordleKb(){
+  const kb=document.getElementById('wrd-kb');if(!kb)return;
+  const rows=[['A','Z','E','R','T','Y','U','I','O','P'],['Q','S','D','F','G','H','J','K','L','M'],['ENTER','W','X','C','V','B','N','⌫']];
+  const stateMap={};
+  wrdGuesses.forEach(g=>{const ev=wrdEval(g);g.split('').forEach((l,i)=>{const s=ev[i];if(!stateMap[l]||s==='correct'||(s==='present'&&stateMap[l]!=='correct'))stateMap[l]=s;});});
+  kb.innerHTML=rows.map(row=>`<div class="wrd-kb-row">${row.map(k=>{
+    const isWide=k==='ENTER'||k==='⌫';
+    const st=stateMap[k]||'';
+    const action=k==='ENTER'?'wrdSubmit()':k==='⌫'?'wrdDelete()':`wrdType('${k}')`;
+    return`<button class="wrd-key ${isWide?'wide':''} ${st}" onclick="${action}">${k}</button>`;
+  }).join('')}</div>`).join('');
+}
+
+// ===== MEMORY =====
+const MEM_EMOJIS=['🦁','🐯','🦊','🐸','🦋','🌸','⭐','💎'];
+let memCards=[],memFlipped=[],memMatched=0,memLocked=false;
+
+function initMemory(c){
+  const emojis=[...MEM_EMOJIS,...MEM_EMOJIS].sort(()=>Math.random()-.5);
+  memCards=emojis.map((e,i)=>({id:i,emoji:e,flipped:false,matched:false}));
+  memFlipped=[];memMatched=0;memLocked=false;
+  c.innerHTML=`<div class="game-area">
+    <div class="game-back" onclick="gameBack()">← Retour aux jeux</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <div style="font-size:15px;font-weight:700;color:var(--white)">🧩 Memory</div>
+      <div id="mem-pairs" style="font-size:13px;color:var(--t2)">0 / 8 paires</div>
+    </div>
+    <div class="mem-grid" id="mem-grid"></div>
+    <div id="mem-msg" style="text-align:center;font-size:14px;color:var(--accent2);min-height:24px;font-weight:600;"></div>
+  </div>`;
+  renderMemory();
+}
+
+function renderMemory(){
+  const grid=document.getElementById('mem-grid');if(!grid)return;
+  grid.innerHTML=memCards.map(card=>`<div class="mem-card ${card.flipped||card.matched?'flipped':''} ${card.matched?'matched':''}" onclick="memFlip(${card.id})">${card.flipped||card.matched?card.emoji:''}</div>`).join('');
+}
+
+function memFlip(id){
+  if(memLocked)return;
+  const card=memCards[id];
+  if(card.flipped||card.matched)return;
+  card.flipped=true;memFlipped.push(id);
+  renderMemory();
+  if(memFlipped.length===2){
+    memLocked=true;
+    const [a,b]=memFlipped;
+    if(memCards[a].emoji===memCards[b].emoji){
+      memCards[a].matched=memCards[b].matched=true;
+      memFlipped=[];memLocked=false;memMatched++;
+      document.getElementById('mem-pairs').textContent=`${memMatched} / 8 paires`;
+      if(memMatched===8){
+        const today=new Date().toISOString().slice(0,10);
+        const memKey=`mem_xp_${me.id}_${today}`;
+        const alreadyXP=localStorage.getItem(memKey);
+        if(!alreadyXP){
+          localStorage.setItem(memKey,'1');
+          document.getElementById('mem-msg').textContent='🎉 Gagné ! +8 XP';
+          addXP(8);toast('🧩 Memory terminé ! +8 XP','ok');
+        } else {
+          document.getElementById('mem-msg').textContent='🎉 Gagné ! (XP déjà récupéré aujourd\'hui)';
+          toast('🧩 Memory terminé ! Rejoue demain pour l\'XP','ok');
+        }
+      }
+    }else{
+      setTimeout(()=>{memCards[a].flipped=memCards[b].flipped=false;memFlipped=[];memLocked=false;renderMemory();},900);
+    }
+  }
+}
+
+// ===== SPEED =====
+let spdScore=0,spdTimeLeft=20,spdInterval=null,spdActive=false;
+
+function initSpeed(c){
+  spdScore=0;spdTimeLeft=20;spdActive=false;
+  if(spdInterval)clearInterval(spdInterval);
+  c.innerHTML=`<div class="game-area">
+    <div class="game-back" onclick="()=>{clearInterval(spdInterval);gameBack()}">← Retour aux jeux</div>
+    <div class="spd-hud">
+      <div class="spd-stat">⏱ <span id="spd-time">20</span>s</div>
+      <div class="spd-stat">🎯 <span id="spd-score">0</span> pts</div>
+    </div>
+    <div class="spd-area" id="spd-area">
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;" id="spd-start">
+        <div style="font-size:48px;">⚡</div>
+        <div style="font-size:16px;font-weight:700;color:var(--white)">Clique pour commencer</div>
+        <div style="font-size:13px;color:var(--t2)">Clique sur les cibles le plus vite possible !</div>
+      </div>
+    </div>
+    <div id="spd-msg" style="text-align:center;font-size:14px;color:var(--accent2);min-height:24px;font-weight:600;margin-top:12px;"></div>
+  </div>`;
+  document.getElementById('spd-area').addEventListener('click',spdStartOrHit);
+}
+
+function spdStartOrHit(e){
+  if(!spdActive){
+    spdActive=true;
+    document.getElementById('spd-start').style.display='none';
+    spdSpawnTarget();
+    spdInterval=setInterval(()=>{
+      spdTimeLeft--;
+      const el=document.getElementById('spd-time');
+      if(el)el.textContent=spdTimeLeft;
+      if(spdTimeLeft<=0){
+        clearInterval(spdInterval);spdActive=false;
+        const area=document.getElementById('spd-area');
+        if(area)area.innerHTML='<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:48px;">⏰</div>';
+        const xp=spdScore>=20?4:spdScore>=10?2:0;
+        const today=new Date().toISOString().slice(0,10);
+        const spdKey=`spd_xp_${me.id}_${today}`;
+        const alreadyXP=localStorage.getItem(spdKey);
+        const msg=document.getElementById('spd-msg');
+        if(msg){
+          if(xp>0&&!alreadyXP){
+            localStorage.setItem(spdKey,'1');
+            msg.textContent=`Score : ${spdScore} pts — +${xp} XP`;
+            addXP(xp);toast(`⚡ Score : ${spdScore} pts ! +${xp} XP`,'ok');
+          } else if(xp>0&&alreadyXP){
+            msg.textContent=`Score : ${spdScore} pts (XP déjà récupéré aujourd\'hui)`;
+            toast(`⚡ Score : ${spdScore} pts ! Rejoue demain pour l'XP`,'ok');
+          } else {
+            msg.textContent=`Score : ${spdScore} pts — Fais 10+ pour gagner de l'XP !`;
+          }
+        }
+      }
+    },1000);
+  }
+}
+
+function spdSpawnTarget(){
+  if(!spdActive)return;
+  const area=document.getElementById('spd-area');if(!area)return;
+  const t=document.createElement('div');t.className='spd-target';t.textContent='🎯';
+  const maxX=area.clientWidth-60,maxY=area.clientHeight-60;
+  t.style.left=Math.random()*maxX+'px';
+  t.style.top=Math.random()*maxY+'px';
+  t.onclick=(e)=>{
+    e.stopPropagation();
+    spdScore++;
+    const el=document.getElementById('spd-score');if(el)el.textContent=spdScore;
+    t.remove();
+    spdSpawnTarget();
+  };
+  area.appendChild(t);
+  setTimeout(()=>{if(t.parentNode){t.remove();if(spdActive)spdSpawnTarget();}},1500);
+}
+
 // ===== QUIZ =====
 const QUIZ_THEMES=['Culture générale','Histoire','Sciences','Technologie','Géographie','Sport','Cinéma','Musique','Nature','Mathématiques'];
 
@@ -1459,7 +1794,7 @@ async function loadQuiz(){
       <div class="quiz-done">
         <div class="quiz-done-ico">${r.correct?'🎉':'😅'}</div>
         <div class="quiz-done-title">${r.correct?'Bonne réponse !':'Raté !'}</div>
-        <div class="quiz-done-sub">Tu as déjà répondu au quizz d'aujourd'hui.<br>Thème : <strong style="color:var(--accent2)">${r.theme}</strong><br>Bonne réponse : <strong style="color:var(--green)">${esc(r.answer)}</strong><br><br>Reviens demain pour un nouveau quizz ! 🧠</div>
+        <div class="quiz-done-sub">Tu as déjà répondu au quizz d\'aujourd\'hui.<br>Thème : <strong style="color:var(--accent2)">${r.theme}</strong><br>Bonne réponse : <strong style="color:var(--green)">${esc(r.answer)}</strong><br><br>Reviens demain pour un nouveau quizz ! 🧠</div>
         <div class="quiz-xp">${r.correct?'+25':'+5'} XP gagné${r.correct?'s':''}</div>
       </div>`;
     return;
@@ -1521,7 +1856,7 @@ async function answerQuiz(chosen,correct,today,theme){
     <div class="quiz-result-ico">${isCorrect?'🎉':'😅'}</div>
     <div class="quiz-result-title">${isCorrect?'Bonne réponse !':'Pas tout à fait...'}</div>
     <div class="quiz-result-sub">${esc(quiz.explanation||'')}</div>
-    <div class="quiz-xp">${isCorrect?'+15 XP':'Aucun XP'}</div>
+    <div class="quiz-xp">${isCorrect?'+10 XP':'Aucun XP'}</div>
   </div>`;
 
   // Save to localStorage
@@ -1540,8 +1875,8 @@ async function answerQuiz(chosen,correct,today,theme){
   localStorage.setItem(lastKey,today);
 
   // Add XP only if correct
-  if(isCorrect)await addXP(15);
-  if(isCorrect){if(newStreak>1)toast(`🔥 Série de ${newStreak} jours ! +15 XP`,'ok');else toast('🎉 Bonne réponse ! +15 XP','ok');}
+  if(isCorrect)await addXP(10);
+  if(isCorrect){if(newStreak>1)toast(`🔥 Série de ${newStreak} jours ! +10 XP`,'ok');else toast('🎉 Bonne réponse ! +10 XP','ok');}
   else toast('😅 Mauvaise réponse, aucun XP gagné.','err');
 }
 
