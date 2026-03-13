@@ -200,6 +200,21 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .prof-tabs{display:flex;border-bottom:1px solid var(--border);}
 .ptab{flex:1;padding:14px;text-align:center;font-size:14px;font-weight:600;color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;}
 .ptab.on{color:var(--white);border-bottom-color:var(--accent);}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px 20px;}
+.stat-card{background:var(--s1);border:1px solid var(--border);border-radius:16px;padding:16px;text-align:center;}
+.stat-card-ico{font-size:28px;margin-bottom:8px;}
+.stat-card-val{font-size:26px;font-weight:700;color:var(--white);font-family:"DM Mono",monospace;}
+.stat-card-lbl{font-size:12px;color:var(--t3);margin-top:4px;text-transform:uppercase;letter-spacing:.5px;}
+.stat-section{padding:16px 20px;border-bottom:1px solid var(--border);}
+.stat-section-title{font-size:15px;font-weight:700;color:var(--white);margin-bottom:12px;}
+.stat-bar-wrap{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.stat-bar-label{font-size:12px;color:var(--t3);width:28px;text-align:right;font-family:"DM Mono",monospace;}
+.stat-bar-bg{flex:1;background:var(--s2);border-radius:6px;height:8px;overflow:hidden;}
+.stat-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:6px;transition:width .6s ease;}
+.stat-bar-val{font-size:12px;color:var(--t2);font-family:"DM Mono",monospace;width:24px;}
+.top-post{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:14px;}
+.top-post-txt{font-size:14px;color:var(--text);line-height:1.5;margin-bottom:8px;}
+.top-post-stats{display:flex;gap:14px;font-size:13px;color:var(--t3);}
 .search-bar{padding:16px 20px;border-bottom:1px solid var(--border);}
 .search-input{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:14px;padding:12px 16px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;outline:none;transition:all .2s;}
 .search-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--ag);}
@@ -310,6 +325,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
       <div class="ni" id="nav-notifs" onclick="goPage('notifs')"><span class="nico">🔔</span><span>Notifications</span><span class="notif-badge" id="notif-badge">0</span></div>
       <div class="ni" id="nav-messages" onclick="goPage('messages')"><span class="nico">💬</span><span>Messages</span><span class="notif-badge" id="dm-badge">0</span></div>
       <div class="ni" id="nav-profile" onclick="goPage('profile')"><span class="nico">👤</span><span>Profil</span></div>
+      <div class="ni" id="nav-stats" onclick="goPage('stats')"><span class="nico">📊</span><span>Statistiques</span></div>
       <div class="ni" id="nav-settings" onclick="goPage('settings')"><span class="nico">⚙️</span><span>Paramètres</span></div>
       <button class="nbtn" onclick="fc()">+ Publier</button>
       <div class="nbot">
@@ -417,6 +433,11 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
           <div class="ptab" onclick="switchProfTab('likes')">Likes</div>
         </div>
         <div id="prof-posts-list"><div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div></div>
+      </div>
+
+      <div class="page" id="page-stats">
+        <div class="ptop"><div class="ptitle">Statistiques</div></div>
+        <div id="stats-content"><div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div></div>
       </div>
 
       <div class="page" id="page-settings">
@@ -610,6 +631,7 @@ function goPage(page,userId=null){
   else if(page==='explore')loadExplore();
   else if(page==='notifs'){loadNotifs();markNotifsRead();}
   else if(page==='messages'){showDMList();checkUnreadDMs();}
+  else if(page==='stats')loadStats();
   else if(page==='profile'){
     viewingUserId=userId||me.id;
     const isOwn=viewingUserId===me.id;
@@ -915,6 +937,53 @@ async function sendReply(pid){
     }
   }catch(e){toast('Erreur réponse','err');}
 }
+async function loadStats(){
+  const c=document.getElementById('stats-content');
+  c.innerHTML='<div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div>';
+  try{
+    const posts=await sb(`/posts?user_id=eq.${me.id}&order=created_at.desc`,{tok:me.tok});
+    const pids=(posts||[]).map(p=>p.id);
+    const [likes,replies,reposts,followers,following]=await Promise.all([
+      pids.length?sb(`/likes?post_id=in.(${pids.join(',')})&select=id`,{tok:me.tok}):Promise.resolve([]),
+      pids.length?sb(`/replies?post_id=in.(${pids.join(',')})&select=id,post_id`,{tok:me.tok}):Promise.resolve([]),
+      pids.length?sb(`/reposts?post_id=in.(${pids.join(',')})&select=id,post_id`,{tok:me.tok}).catch(()=>[]):Promise.resolve([]),
+      fetch(`${SU}/rest/v1/follows?following_id=eq.${me.id}&select=id`,{headers:{'apikey':SK,'Authorization':`Bearer ${me.tok}`,'Prefer':'count=exact'}}),
+      fetch(`${SU}/rest/v1/follows?follower_id=eq.${me.id}&select=id`,{headers:{'apikey':SK,'Authorization':`Bearer ${me.tok}`,'Prefer':'count=exact'}}),
+    ]);
+    const followersCount=parseInt((await followers).headers?.get('content-range')?.split('/')[1]||'0');
+    const followingCount=parseInt((await following).headers?.get('content-range')?.split('/')[1]||'0');
+    // Posts 7 derniers jours
+    const days=[];const now=new Date();
+    for(let i=6;i>=0;i--){const d=new Date(now);d.setDate(d.getDate()-i);days.push(d.toISOString().slice(0,10));}
+    const postsByDay={};days.forEach(d=>postsByDay[d]=0);
+    (posts||[]).forEach(p=>{const d=p.created_at?.slice(0,10);if(postsByDay[d]!==undefined)postsByDay[d]++;});
+    const maxDay=Math.max(...Object.values(postsByDay),1);
+    // Top post
+    const likesByPost={};(likes||[]).forEach(l=>{likesByPost[l.post_id]=(likesByPost[l.post_id]||0)+1;});
+    const topPost=pids.length?posts.reduce((a,b)=>(likesByPost[b.id]||0)>(likesByPost[a.id]||0)?b:a,posts[0]):null;
+    c.innerHTML=`
+      <div class="stat-grid">
+        <div class="stat-card"><div class="stat-card-ico">📝</div><div class="stat-card-val">${posts?.length||0}</div><div class="stat-card-lbl">Posts</div></div>
+        <div class="stat-card"><div class="stat-card-ico">❤️</div><div class="stat-card-val">${likes?.length||0}</div><div class="stat-card-lbl">Likes reçus</div></div>
+        <div class="stat-card"><div class="stat-card-ico">💬</div><div class="stat-card-val">${replies?.length||0}</div><div class="stat-card-lbl">Replies reçus</div></div>
+        <div class="stat-card"><div class="stat-card-ico">🔁</div><div class="stat-card-val">${reposts?.length||0}</div><div class="stat-card-lbl">Reposts reçus</div></div>
+        <div class="stat-card"><div class="stat-card-ico">👥</div><div class="stat-card-val">${followersCount}</div><div class="stat-card-lbl">Abonnés</div></div>
+        <div class="stat-card"><div class="stat-card-ico">➕</div><div class="stat-card-val">${followingCount}</div><div class="stat-card-lbl">Abonnements</div></div>
+      </div>
+      <div class="stat-section">
+        <div class="stat-section-title">📈 Posts — 7 derniers jours</div>
+        ${days.map(d=>{
+          const short=new Date(d).toLocaleDateString('fr',{weekday:'short'});
+          const val=postsByDay[d];
+          const pct=Math.round((val/maxDay)*100);
+          return`<div class="stat-bar-wrap"><div class="stat-bar-label">${short}</div><div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${pct}%"></div></div><div class="stat-bar-val">${val}</div></div>`;
+        }).join('')}
+      </div>
+      ${topPost?`<div class="stat-section"><div class="stat-section-title">🏆 Post le plus liké</div><div class="top-post"><div class="top-post-txt">${esc(topPost.content?.slice(0,120))}${topPost.content?.length>120?'...':''}</div><div class="top-post-stats"><span>❤️ ${likesByPost[topPost.id]||0} likes</span><span>📅 ${ago(topPost.created_at)}</span></div></div></div>`:''}
+    `;
+  }catch(e){c.innerHTML=`<div class="empty"><div class="empty-t">Erreur: ${e.message}</div></div>`;}
+}
+
 let curExploreTab='users';
 function switchExplore(tab){
   curExploreTab=tab;
