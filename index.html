@@ -288,6 +288,29 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .lightbox.on{display:flex;}
 .lightbox img{max-width:100%;max-height:90vh;border-radius:12px;object-fit:contain;}
 .lightbox-close{position:absolute;top:20px;right:20px;background:rgba(255,255,255,0.1);border:none;border-radius:50%;width:40px;height:40px;color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+/* Quiz */
+.quiz-card{margin:20px;background:var(--s1);border:1px solid var(--border);border-radius:20px;padding:24px;overflow:hidden;}
+.quiz-theme{font-size:11px;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px;font-family:'DM Mono',monospace;}
+.quiz-question{font-size:18px;font-weight:700;color:var(--white);line-height:1.5;margin-bottom:20px;}
+.quiz-opts{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
+.quiz-opt{padding:14px 18px;background:var(--s2);border:1px solid var(--border2);border-radius:14px;font-size:15px;color:var(--text);cursor:pointer;transition:all .2s;text-align:left;font-family:'DM Sans',sans-serif;width:100%;}
+.quiz-opt:hover:not(:disabled){border-color:var(--accent);background:var(--ag);color:var(--white);}
+.quiz-opt.correct{border-color:var(--green);background:rgba(52,211,153,0.1);color:var(--green);}
+.quiz-opt.wrong{border-color:var(--red);background:rgba(248,113,113,0.1);color:var(--red);}
+.quiz-opt:disabled{cursor:not-allowed;}
+.quiz-result{text-align:center;padding:16px 0 4px;}
+.quiz-result-ico{font-size:48px;margin-bottom:10px;}
+.quiz-result-title{font-size:20px;font-weight:700;color:var(--white);margin-bottom:6px;}
+.quiz-result-sub{font-size:14px;color:var(--t2);line-height:1.6;}
+.quiz-xp{display:inline-block;margin-top:12px;background:var(--ag);border:1px solid var(--accent);border-radius:20px;padding:6px 16px;font-size:14px;font-weight:700;color:var(--accent2);}
+.quiz-done{text-align:center;padding:48px 20px;}
+.quiz-done-ico{font-size:56px;margin-bottom:16px;}
+.quiz-done-title{font-size:20px;font-weight:700;color:var(--white);margin-bottom:8px;}
+.quiz-done-sub{font-size:14px;color:var(--t2);line-height:1.7;}
+.quiz-streak{display:flex;align-items:center;justify-content:center;gap:8px;margin:16px 20px 0;background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:12px 20px;}
+.quiz-streak-ico{font-size:24px;}
+.quiz-streak-info{font-size:14px;color:var(--text);}
+.quiz-streak-info strong{color:var(--accent2);}
 /* Leaderboard */
 .lb-podium{display:flex;align-items:flex-end;justify-content:center;gap:12px;padding:28px 20px 0;}
 .lb-pod{display:flex;flex-direction:column;align-items:center;gap:6px;}
@@ -412,6 +435,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
       <div class="ni" id="nav-profile" onclick="goPage('profile')"><span class="nico">👤</span><span>Profil</span></div>
       <div class="ni" id="nav-stats" onclick="goPage('stats')"><span class="nico">📊</span><span>Statistiques</span></div>
       <div class="ni" id="nav-leaderboard" onclick="goPage('leaderboard')"><span class="nico">🏆</span><span>Classement</span></div>
+      <div class="ni" id="nav-quiz" onclick="goPage('quiz')"><span class="nico">🧠</span><span>Quizz</span></div>
       <div class="ni" id="nav-settings" onclick="goPage('settings')"><span class="nico">⚙️</span><span>Paramètres</span></div>
       <button class="nbtn" onclick="fc()">+ Publier</button>
       <div class="nbot">
@@ -529,6 +553,11 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
       <div class="page" id="page-leaderboard">
         <div class="ptop"><div class="ptitle">🏆 Classement</div></div>
         <div id="leaderboard-content"><div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div></div>
+      </div>
+
+      <div class="page" id="page-quiz">
+        <div class="ptop"><div class="ptitle">🧠 Quizz du jour</div></div>
+        <div id="quiz-content"><div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div></div>
       </div>
 
       <div class="page" id="page-settings">
@@ -821,6 +850,7 @@ function goPage(page,userId=null){
   else if(page==='messages'){showDMList();checkUnreadDMs();}
   else if(page==='stats')loadStats();
   else if(page==='leaderboard')loadLeaderboard();
+  else if(page==='quiz')loadQuiz();
   else if(page==='profile'){
     viewingUserId=userId||me.id;
     const isOwn=viewingUserId===me.id;
@@ -1405,6 +1435,114 @@ async function castVote(pollId,optionIndex,postId){
     await sb('/poll_votes',{method:'POST',tok:me.tok,body:{poll_id:pollId,user_id:me.id,option_index:optionIndex}});
     loadFeed();
   }catch(e){toast('Déjà voté !','err');}
+}
+
+// ===== QUIZ =====
+const QUIZ_THEMES=['Culture générale','Histoire','Sciences','Technologie','Géographie','Sport','Cinéma','Musique','Nature','Mathématiques'];
+
+async function loadQuiz(){
+  const c=document.getElementById('quiz-content');
+  c.innerHTML='<div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div>';
+  const today=new Date().toISOString().slice(0,10);
+  const key=`quiz_${me.id}_${today}`;
+  const done=localStorage.getItem(key);
+  const streakKey=`quiz_streak_${me.id}`;
+  const streak=parseInt(localStorage.getItem(streakKey)||'0');
+
+  if(done){
+    const r=JSON.parse(done);
+    c.innerHTML=`
+      <div class="quiz-streak">
+        <div class="quiz-streak-ico">🔥</div>
+        <div class="quiz-streak-info">Série en cours : <strong>${streak} jour${streak>1?'s':''}</strong></div>
+      </div>
+      <div class="quiz-done">
+        <div class="quiz-done-ico">${r.correct?'🎉':'😅'}</div>
+        <div class="quiz-done-title">${r.correct?'Bonne réponse !':'Raté !'}</div>
+        <div class="quiz-done-sub">Tu as déjà répondu au quizz d'aujourd'hui.<br>Thème : <strong style="color:var(--accent2)">${r.theme}</strong><br>Bonne réponse : <strong style="color:var(--green)">${esc(r.answer)}</strong><br><br>Reviens demain pour un nouveau quizz ! 🧠</div>
+        <div class="quiz-xp">${r.correct?'+25':'+5'} XP gagné${r.correct?'s':''}</div>
+      </div>`;
+    return;
+  }
+
+  // Generate quiz with Claude
+  const theme=QUIZ_THEMES[new Date().getDay()%QUIZ_THEMES.length];
+  try{
+    const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({message:`Génère un quizz de culture générale sur le thème "${theme}". Réponds UNIQUEMENT en JSON valide (sans markdown) avec ce format exact: {"question":"...","options":["A. ...","B. ...","C. ...","D. ..."],"correct":0,"explanation":"..."}. correct est l'index (0-3) de la bonne réponse.`})
+    });
+    const d=await r.json();
+    let quiz;
+    try{quiz=JSON.parse(d.reply);}
+    catch(e){
+      // Try to extract JSON from reply
+      const match=d.reply.match(/\{[\s\S]*\}/);
+      if(match)quiz=JSON.parse(match[0]);
+      else throw new Error('Format invalide');
+    }
+
+    c.innerHTML=`
+      <div class="quiz-streak">
+        <div class="quiz-streak-ico">🔥</div>
+        <div class="quiz-streak-info">Série en cours : <strong>${streak} jour${streak>1?'s':''}</strong></div>
+      </div>
+      <div class="quiz-card">
+        <div class="quiz-theme">🎯 ${theme}</div>
+        <div class="quiz-question">${esc(quiz.question)}</div>
+        <div class="quiz-opts" id="quiz-opts">
+          ${quiz.options.map((opt,i)=>`<button class="quiz-opt" onclick="answerQuiz(${i},${quiz.correct},'${today}','${theme.replace(/'/g,'')}')" data-idx="${i}">${esc(opt)}</button>`).join('')}
+        </div>
+        <div id="quiz-feedback" style="display:none"></div>
+      </div>`;
+    // Store quiz data for answer
+    window._currentQuiz=quiz;
+  }catch(e){
+    c.innerHTML=`<div class="empty"><div class="empty-ico">⚠️</div><div class="empty-t">Erreur de génération</div><div class="empty-s">Impossible de charger le quizz. Réessaie dans quelques secondes.</div></div>
+    <div style="padding:0 20px"><button class="btn-save" onclick="loadQuiz()" style="width:100%">🔄 Réessayer</button></div>`;
+  }
+}
+
+async function answerQuiz(chosen,correct,today,theme){
+  const isCorrect=chosen===correct;
+  const xpGained=isCorrect?25:0;
+  const quiz=window._currentQuiz;
+
+  // Disable all buttons
+  document.querySelectorAll('.quiz-opt').forEach((btn,i)=>{
+    btn.disabled=true;
+    if(i===correct)btn.classList.add('correct');
+    else if(i===chosen&&!isCorrect)btn.classList.add('wrong');
+  });
+
+  // Show feedback
+  const fb=document.getElementById('quiz-feedback');
+  fb.style.display='block';
+  fb.innerHTML=`<div class="quiz-result">
+    <div class="quiz-result-ico">${isCorrect?'🎉':'😅'}</div>
+    <div class="quiz-result-title">${isCorrect?'Bonne réponse !':'Pas tout à fait...'}</div>
+    <div class="quiz-result-sub">${esc(quiz.explanation||'')}</div>
+    <div class="quiz-xp">${isCorrect?'+15 XP':'Aucun XP'}</div>
+  </div>`;
+
+  // Save to localStorage
+  const key=`quiz_${me.id}_${today}`;
+  localStorage.setItem(key,JSON.stringify({correct:isCorrect,theme,answer:quiz.options[correct]}));
+
+  // Update streak
+  const streakKey=`quiz_streak_${me.id}`;
+  const lastKey=`quiz_last_${me.id}`;
+  const last=localStorage.getItem(lastKey);
+  const yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);
+  const yStr=yesterday.toISOString().slice(0,10);
+  const streak=parseInt(localStorage.getItem(streakKey)||'0');
+  const newStreak=last===yStr?streak+1:1;
+  localStorage.setItem(streakKey,newStreak);
+  localStorage.setItem(lastKey,today);
+
+  // Add XP only if correct
+  if(isCorrect)await addXP(15);
+  if(isCorrect){if(newStreak>1)toast(`🔥 Série de ${newStreak} jours ! +15 XP`,'ok');else toast('🎉 Bonne réponse ! +15 XP','ok');}
+  else toast('😅 Mauvaise réponse, aucun XP gagné.','err');
 }
 
 const REWARDS=[
