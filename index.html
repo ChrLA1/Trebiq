@@ -630,7 +630,22 @@ function stab(t){
 async function login(){
   const e=document.getElementById('ie').value.trim(),p=document.getElementById('ip').value;
   if(!e||!p)return serr('Remplis tous les champs');
-  try{const d=await sba('/token?grant_type=password',{email:e,password:p});me=d.user;me.tok=d.access_token;await loadMe();showApp();}
+  try{
+    const d=await sba('/token?grant_type=password',{email:e,password:p});
+    me=d.user;me.tok=d.access_token;
+    await loadMe();
+    // Create profile if pending from email confirmation
+    if(!myP){
+      const pending=localStorage.getItem('pendingProfile');
+      if(pending){
+        const{username,display_name}=JSON.parse(pending);
+        await sb('/profiles',{method:'POST',tok:me.tok,body:{id:me.id,username,display_name}}).catch(()=>{});
+        localStorage.removeItem('pendingProfile');
+        await loadMe();
+      }
+    }
+    showApp();
+  }
   catch(e){serr(e.message);}
 }
 async function register(){
@@ -642,7 +657,15 @@ async function register(){
   if(p.length<6)return serr('Mot de passe trop court (6 min)');
   if(!/^[a-z0-9_]+$/.test(u))return serr('Lettres, chiffres, _ uniquement');
   try{
-    const d=await sba('/signup',{email:e,password:p});me=d.user;me.tok=d.access_token;
+    const d=await sba('/signup',{email:e,password:p});
+    if(d.user&&!d.access_token){
+      // Email confirmation requis
+      document.querySelector('.acard').innerHTML='<div style="text-align:center;padding:20px 0;"><div style="font-size:48px;margin-bottom:16px;">📬</div><div style="font-size:18px;font-weight:700;color:var(--white);margin-bottom:10px;">Vérifie ta boîte mail !</div><div style="font-size:14px;color:var(--t2);line-height:1.7;margin-bottom:20px;">Un email a été envoyé à <strong style="color:var(--white)">'+e+'</strong>.<br>Clique sur le lien pour activer ton compte.</div><button onclick="location.reload()" style="background:linear-gradient(135deg,#7c6af7,#9b87ff);border:none;border-radius:12px;padding:12px 24px;color:#fff;font-family:DM Sans,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Se connecter</button></div>';
+      // Store pending profile info
+      localStorage.setItem('pendingProfile',JSON.stringify({id:d.user.id,username:u,display_name:n}));
+      return;
+    }
+    me=d.user;me.tok=d.access_token;
     await sb('/profiles',{method:'POST',tok:me.tok,body:{id:me.id,username:u,display_name:n}});
     await loadMe();showApp();toast('Bienvenue sur Trebiq ! 🎉','ok');
   }catch(e){serr(e.message);}
