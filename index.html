@@ -288,6 +288,17 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .lightbox.on{display:flex;}
 .lightbox img{max-width:100%;max-height:90vh;border-radius:12px;object-fit:contain;}
 .lightbox-close{position:absolute;top:20px;right:20px;background:rgba(255,255,255,0.1);border:none;border-radius:50%;width:40px;height:40px;color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.sugg-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);}
+.sugg-item:last-child{border-bottom:none;}
+.sugg-av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff;flex-shrink:0;overflow:hidden;cursor:pointer;}
+.sugg-av img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.sugg-info{flex:1;min-width:0;}
+.sugg-name{font-size:13px;font-weight:600;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;}
+.sugg-name:hover{text-decoration:underline;}
+.sugg-handle{font-size:12px;color:var(--t3);}
+.sugg-follow{background:linear-gradient(135deg,var(--accent),#9b87ff);border:none;border-radius:14px;padding:5px 12px;color:#fff;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .2s;flex-shrink:0;}
+.sugg-follow:hover{transform:translateY(-1px);}
+.sugg-follow.done{background:transparent;border:1px solid var(--accent);color:var(--accent);}
 .rnav{padding:20px 16px;border-left:1px solid var(--border);}
 .rw{background:var(--s1);border:1px solid var(--border);border-radius:18px;padding:20px;margin-bottom:14px;}
 .rwt{font-size:16px;font-weight:700;margin-bottom:16px;}
@@ -498,6 +509,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
         <div class="tr" onclick="ins('#Trebiq ')"><div class="trc">Réseau social</div><div class="trn">#Trebiq</div></div>
         <div class="tr" onclick="iac()"><div class="trc">IA</div><div class="trn">@askClaude</div></div>
       </div>
+      <div class="rw" id="sugg-widget">
+        <div class="rwt">💡 Suggestions</div>
+        <div id="sugg-list"><div style="color:var(--t3);font-size:13px;">Chargement...</div></div>
+      </div>
       <div class="rw" style="font-size:12px;color:var(--t3);line-height:2.2;">
         <a href="/legal.html" style="color:var(--t3);text-decoration:none">Mentions légales</a> · <a href="/legal.html" style="color:var(--t3);text-decoration:none">CGU</a> · <a href="/legal.html" style="color:var(--t3);text-decoration:none">Confidentialité</a><br>
         Propulsé par l'API Claude (Anthropic)
@@ -650,6 +665,7 @@ function showApp(){
   goPage('home');
   checkUnreadNotifs();
   checkUnreadDMs();
+  loadSuggestions();
   msgPollInterval=setInterval(()=>{checkUnreadDMs();if(curConvId)pollNewMessages();},10000);
 }
 function updateNavAvatar(){
@@ -1187,6 +1203,40 @@ async function searchPosts(){
     posts.forEach(p=>{llc(p.id);lrc(p.id);lrpc(p.id);});
   }catch(e){c.innerHTML=`<div class="empty"><div class="empty-t">Erreur</div></div>`;}
 }
+async function loadSuggestions(){
+  const c=document.getElementById('sugg-list');
+  if(!c)return;
+  try{
+    const follows=await sb(`/follows?follower_id=eq.${me.id}&select=following_id`,{tok:me.tok});
+    const followingIds=new Set((follows||[]).map(f=>f.following_id));
+    followingIds.add(me.id);
+    const users=await sb('/profiles?order=created_at.desc&limit=20',{tok:me.tok});
+    const suggestions=(users||[]).filter(u=>!followingIds.has(u.id)).slice(0,4);
+    if(!suggestions.length){c.innerHTML='<div style="color:var(--t3);font-size:13px;">Aucune suggestion pour l'instant.</div>';return;}
+    c.innerHTML=suggestions.map(u=>{
+      const ini=(u.display_name||'U')[0].toUpperCase();
+      const avC=u.avatar_url?`<img src="${u.avatar_url}" alt="">`:`${ini}`;
+      return`<div class="sugg-item">
+        <div class="sugg-av" onclick="goUserProfile('${u.id}')">${avC}</div>
+        <div class="sugg-info">
+          <div class="sugg-name" onclick="goUserProfile('${u.id}')">${esc(u.display_name||'Utilisateur')}</div>
+          <div class="sugg-handle">@${esc(u.username||'...')}</div>
+        </div>
+        <button class="sugg-follow" id="sf-${u.id}" onclick="suggFollow('${u.id}')">Suivre</button>
+      </div>`;
+    }).join('');
+  }catch(e){}
+}
+async function suggFollow(uid){
+  const btn=document.getElementById('sf-'+uid);
+  try{
+    await sb('/follows',{method:'POST',tok:me.tok,body:{follower_id:me.id,following_id:uid}});
+    await sb('/notifications',{method:'POST',tok:me.tok,body:{user_id:uid,from_user_id:me.id,type:'follow'}}).catch(()=>{});
+    if(btn){btn.textContent='Abonné ✓';btn.classList.add('done');btn.disabled=true;}
+    toast('Abonné ! 🎉','ok');
+  }catch(e){toast('Erreur','err');}
+}
+
 async function checkUnreadNotifs(){
   try{
     const r=await fetch(`${SU}/rest/v1/notifications?user_id=eq.${me.id}&read=eq.false&select=id`,{headers:{'apikey':SK,'Authorization':`Bearer ${me.tok}`,'Prefer':'count=exact'}});
