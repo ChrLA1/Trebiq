@@ -202,6 +202,25 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .prof-tabs{display:flex;border-bottom:1px solid var(--border);}
 .ptab{flex:1;padding:14px;text-align:center;font-size:14px;font-weight:600;color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;}
 .ptab.on{color:var(--white);border-bottom-color:var(--accent);}
+.poll-modal-opts{display:flex;flex-direction:column;gap:8px;margin-bottom:12px;}
+.poll-opt-row{display:flex;align-items:center;gap:8px;}
+.poll-opt-input{flex:1;background:var(--bg);border:1px solid var(--border2);border-radius:10px;padding:10px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:all .2s;}
+.poll-opt-input:focus{border-color:var(--accent);}
+.poll-opt-input::placeholder{color:var(--t3);}
+.poll-opt-del{background:none;border:none;color:var(--t3);font-size:18px;cursor:pointer;padding:4px;border-radius:6px;transition:color .2s;}
+.poll-opt-del:hover{color:var(--red);}
+.poll-add-opt{background:none;border:1px dashed var(--border2);border-radius:10px;padding:9px;color:var(--t3);font-size:13px;cursor:pointer;width:100%;transition:all .2s;font-family:'DM Sans',sans-serif;}
+.poll-add-opt:hover{border-color:var(--accent);color:var(--accent2);}
+.poll-wrap{margin-top:12px;background:var(--s2);border-radius:14px;padding:14px;border:1px solid var(--border);}
+.poll-question{font-size:14px;font-weight:600;color:var(--white);margin-bottom:10px;}
+.poll-opt{margin-bottom:8px;cursor:pointer;}
+.poll-opt:last-child{margin-bottom:0;}
+.poll-bar-bg{background:var(--s3);border-radius:8px;height:36px;position:relative;overflow:hidden;border:1px solid var(--border);}
+.poll-bar-fill{position:absolute;left:0;top:0;height:100%;background:linear-gradient(90deg,var(--ag),rgba(124,106,247,0.25));border-radius:8px;transition:width .5s ease;}
+.poll-bar-fill.voted{background:linear-gradient(90deg,rgba(124,106,247,0.4),rgba(124,106,247,0.2));}
+.poll-bar-label{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:13px;font-weight:500;color:var(--text);z-index:1;}
+.poll-bar-pct{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:12px;font-weight:700;color:var(--accent2);font-family:'DM Mono',monospace;z-index:1;}
+.poll-footer{font-size:12px;color:var(--t3);margin-top:8px;font-family:'DM Mono',monospace;}
 .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px 20px;}
 .stat-card{background:var(--s1);border:1px solid var(--border);border-radius:16px;padding:16px;text-align:center;}
 .stat-card-ico{font-size:28px;margin-bottom:8px;}
@@ -358,7 +377,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
               <div class="ctools">
                 <button class="ctool" id="btn-img-tool" onclick="document.getElementById('post-img-file').click()">🖼️</button>
                 <input type="file" id="post-img-file" accept="image/*" onchange="previewPostImg(event)">
-                <button class="ctool">📊</button>
+                <button class="ctool" id="btn-poll-tool" onclick="openPollModal()">📊</button>
                 <button class="ctool" onclick="iac()">🤖</button>
               </div>
               <div class="cra">
@@ -538,6 +557,24 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
   </div>
 </div>
 
+<!-- Poll modal -->
+<div class="modal-bg" id="poll-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closePollModal()">×</button>
+    <div class="modal-title">📊 Créer un sondage</div>
+    <div class="mfld"><label>Question</label><input type="text" id="poll-question" placeholder="Quelle est ta question ?"></div>
+    <div class="poll-modal-opts" id="poll-opts">
+      <div class="poll-opt-row"><input class="poll-opt-input" placeholder="Option 1" value=""><button class="poll-opt-del" onclick="removePollOpt(this)" style="visibility:hidden">×</button></div>
+      <div class="poll-opt-row"><input class="poll-opt-input" placeholder="Option 2" value=""><button class="poll-opt-del" onclick="removePollOpt(this)" style="visibility:hidden">×</button></div>
+    </div>
+    <button class="poll-add-opt" id="poll-add-btn" onclick="addPollOpt()">+ Ajouter une option</button>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closePollModal()">Annuler</button>
+      <button class="btn-save" onclick="confirmPoll()">Ajouter au post</button>
+    </div>
+  </div>
+</div>
+
 <div class="mnav">
   <div class="mitems">
     <button class="mb on" onclick="goPage('home')">🏠</button>
@@ -552,7 +589,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 
 <script>
 const SU='https://rcqiioozqfbempxuyvzq.supabase.co',SK='sb_publishable_Djp3G_plOEtDeDT1GwNMrg_QtS3TljZ';
-let me=null,myP=null,curPage='home',curFeed='foryou',viewingUserId=null,historyStack=[],deletePostId=null,editAvatarFile=null,postImgFile=null,curConvId=null,curConvUserId=null,msgPollInterval=null;
+let me=null,myP=null,pendingPoll=null,curPage='home',curFeed='foryou',viewingUserId=null,historyStack=[],deletePostId=null,editAvatarFile=null,postImgFile=null,curConvId=null,curConvUserId=null,msgPollInterval=null;
 
 async function sb(path,o={}){
   const r=await fetch(`${SU}/rest/v1${path}`,{headers:{'apikey':SK,'Authorization':`Bearer ${o.tok||SK}`,'Content-Type':'application/json','Prefer':o.pref||'return=representation',...(o.h||{})},method:o.method||'GET',body:o.body?JSON.stringify(o.body):undefined});
@@ -838,8 +875,24 @@ async function loadFeed(){
     const liked=new Set((lks||[]).map(l=>l.post_id));
     const rpts=await sb(`/reposts?user_id=eq.${me.id}`,{tok:me.tok}).catch(()=>[]);
     const reposted=new Set((rpts||[]).map(r=>r.post_id));
+    // Fetch polls for these posts
+    const pollsData=pids.length?await sb(`/polls?post_id=in.(${pids.join(',')})`,{tok:me.tok}).catch(()=>[]):[];
+    const pollsByPost={};(pollsData||[]).forEach(pl=>pollsByPost[pl.post_id]=pl);
+    const pollIds=(pollsData||[]).map(pl=>pl.id);
+    const myVotes=pollIds.length?await sb(`/poll_votes?poll_id=in.(${pollIds.join(',')})&user_id=eq.${me.id}`,{tok:me.tok}).catch(()=>[]):[];
+    const myVoteByPoll={};(myVotes||[]).forEach(v=>myVoteByPoll[v.poll_id]=v.option_index);
+    posts.forEach(p=>{if(pollsByPost[p.id])p._poll=pollsByPost[p.id];});
     c.innerHTML=posts.map(p=>rp(p,pm[p.user_id],liked.has(p.id),reposted.has(p.id))).join('');
-    posts.forEach(p=>{llc(p.id);lrc(p.id);lrpc(p.id);});
+    posts.forEach(p=>{
+      llc(p.id);lrc(p.id);lrpc(p.id);
+      if(p._poll){
+        const poll=p._poll;
+        const userVote=myVoteByPoll[poll.id];
+        renderPoll(p.id,{id:poll.id,options:poll.options.options,question:poll.options.question},userVote).then(html=>{
+          const el=document.getElementById('poll-'+p.id);if(el)el.innerHTML=html;
+        });
+      }
+    });
   }catch(e){c.innerHTML=`<div class="empty"><div class="empty-t">Erreur: ${e.message}</div></div>`;}
 }
 function rp(p,prof,liked,reposted){
@@ -851,8 +904,9 @@ function rp(p,prof,liked,reposted){
     .replace(/#(\w+)/g,'<span class="htag" onclick="searchHashtag(\'$1\')">#$1</span>');
   const uid=prof?.id||'';
   const isOwn=p.user_id===me.id;
-  const imgHtml=p.image_url?`<div class="post-img" onclick="openLightbox('${p.image_url}')"><img src="${p.image_url}" alt="image" loading="lazy"></div>`:'';
-  return`<div class="post" id="p-${p.id}"><div class="prow"><div class="pav" onclick="goUserProfile('${uid}')">${avContent}</div><div class="pb"><div class="pm"><span class="pname" onclick="goUserProfile('${uid}')">${esc(prof?.display_name||'Utilisateur')}</span><span class="phdl">@${esc(prof?.username||'...')}</span><span class="ptm">· ${ago(p.created_at)}</span></div><div class="ptxt">${txt}</div>${imgHtml}${p.ai_reply?`<div class="airep"><div class="aih"><div class="aidot"></div><span class="ailbl">askClaude</span></div><div class="aitxt">${esc(p.ai_reply)}</div></div>`:''}<div class="pacts"><button class="pa ${liked?'lkd':''}" onclick="tl('${p.id}',${liked})">${liked?'❤️':'🤍'} <span id="lc-${p.id}">0</span></button><button class="pa" onclick="toggleReplies('${p.id}')">💬 <span id="rc-${p.id}">0</span></button><button class="pa ${reposted?'rptd':''}" onclick="tr2('${p.id}',${reposted})">🔁 <span id="rpc-${p.id}">0</span></button>${isOwn?`<button class="pa del" onclick="askDelete('${p.id}')">🗑️</button>`:''}</div><div id="replies-${p.id}" style="display:none"></div></div></div></div>`;
+  const imgHtml=p.image_url?`<div class="post-img" onclick="openLightbox('${p.image_url}')"><img src="${p.image_url}" alt="image" loading="lazy"></div>`:''
+  const pollHtml=p._poll?`<div id="poll-${p.id}">Chargement sondage...</div>`:'';
+  return`<div class="post" id="p-${p.id}"><div class="prow"><div class="pav" onclick="goUserProfile('${uid}')">${avContent}</div><div class="pb"><div class="pm"><span class="pname" onclick="goUserProfile('${uid}')">${esc(prof?.display_name||'Utilisateur')}</span><span class="phdl">@${esc(prof?.username||'...')}</span><span class="ptm">· ${ago(p.created_at)}</span></div><div class="ptxt">${txt}</div>${imgHtml}${pollHtml}${p.ai_reply?`<div class="airep"><div class="aih"><div class="aidot"></div><span class="ailbl">askClaude</span></div><div class="aitxt">${esc(p.ai_reply)}</div></div>`:''}<div class="pacts"><button class="pa ${liked?'lkd':''}" onclick="tl('${p.id}',${liked})">${liked?'❤️':'🤍'} <span id="lc-${p.id}">0</span></button><button class="pa" onclick="toggleReplies('${p.id}')">💬 <span id="rc-${p.id}">0</span></button><button class="pa ${reposted?'rptd':''}" onclick="tr2('${p.id}',${reposted})">🔁 <span id="rpc-${p.id}">0</span></button>${isOwn?`<button class="pa del" onclick="askDelete('${p.id}')">🗑️</button>`:''}</div><div id="replies-${p.id}" style="display:none"></div></div></div></div>`;
 }
 async function llc(id){try{const r=await fetch(`${SU}/rest/v1/likes?post_id=eq.${id}&select=id`,{headers:{'apikey':SK,'Authorization':`Bearer ${SK}`,'Prefer':'count=exact'}});const c=r.headers.get('content-range')?.split('/')[1]||'0';const el=document.getElementById('lc-'+id);if(el)el.textContent=c;}catch(e){}}
 async function lrc(id){try{const r=await fetch(`${SU}/rest/v1/replies?post_id=eq.${id}&select=id`,{headers:{'apikey':SK,'Authorization':`Bearer ${SK}`,'Prefer':'count=exact'}});const c=r.headers.get('content-range')?.split('/')[1]||'0';const el=document.getElementById('rc-'+id);if(el)el.textContent=c;}catch(e){}}
@@ -868,7 +922,12 @@ async function pub(){
     const postBody={user_id:me.id,content:content||''};
     if(image_url)postBody.image_url=image_url;
     const posts=await sb('/posts',{method:'POST',tok:me.tok,body:postBody});
-    const post=posts[0];tx.value='';removePostImg();oty();loadFeed();
+    const post=posts[0];tx.value='';removePostImg();
+    if(pendingPoll){
+      await sb('/polls',{method:'POST',tok:me.tok,body:{post_id:post.id,options:{question:pendingPoll.question,options:pendingPoll.options}}});
+      removePendingPoll();
+    }
+    oty();loadFeed();
     if(hasAI){
       const aiR=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:content.replace(/@askClaude/gi,'').trim()||content})});
       const aiD=await aiR.json();
@@ -941,6 +1000,70 @@ async function sendReply(pid){
     }
   }catch(e){toast('Erreur réponse','err');}
 }
+// ===== POLLS =====
+function openPollModal(){document.getElementById('poll-modal').classList.add('on');}
+function closePollModal(){document.getElementById('poll-modal').classList.remove('on');}
+function addPollOpt(){
+  const c=document.getElementById('poll-opts');
+  if(c.children.length>=4)return;
+  const row=document.createElement('div');row.className='poll-opt-row';
+  row.innerHTML=`<input class="poll-opt-input" placeholder="Option ${c.children.length+1}"><button class="poll-opt-del" onclick="removePollOpt(this)">×</button>`;
+  c.appendChild(row);
+  updatePollDels();
+  if(c.children.length>=4)document.getElementById('poll-add-btn').style.display='none';
+}
+function removePollOpt(btn){
+  btn.parentElement.remove();
+  updatePollDels();
+  document.getElementById('poll-add-btn').style.display='block';
+}
+function updatePollDels(){
+  const rows=document.querySelectorAll('#poll-opts .poll-opt-row');
+  rows.forEach((r,i)=>{const b=r.querySelector('.poll-opt-del');b.style.visibility=rows.length>2?'visible':'hidden';});
+}
+function confirmPoll(){
+  const q=document.getElementById('poll-question').value.trim();
+  const opts=[...document.querySelectorAll('#poll-opts .poll-opt-input')].map(i=>i.value.trim()).filter(Boolean);
+  if(!q)return toast('Ajoute une question','err');
+  if(opts.length<2)return toast('Ajoute au moins 2 options','err');
+  pendingPoll={question:q,options:opts};
+  document.getElementById('btn-poll-tool').classList.add('active');
+  closePollModal();
+  document.getElementById('ctxt').placeholder='Ajoute un texte (optionnel)...';
+  document.getElementById('cpub').disabled=false;
+  toast('Sondage prêt ! Publie ton post 📊','ok');
+}
+function removePendingPoll(){
+  pendingPoll=null;
+  document.getElementById('btn-poll-tool').classList.remove('active');
+  document.getElementById('ctxt').placeholder='Quoi de neuf ? Tape @askClaude pour une réponse IA...';
+}
+async function renderPoll(postId,pollData,userVote){
+  const {id:pollId,options,question}=pollData;
+  const votes=await sb(`/poll_votes?poll_id=eq.${pollId}&select=option_index`,{tok:me.tok}).catch(()=>[]);
+  const total=(votes||[]).length;
+  const counts=options.map((_,i)=>(votes||[]).filter(v=>v.option_index===i).length);
+  const hasVoted=userVote!==undefined&&userVote!==null;
+  const optsHtml=options.map((opt,i)=>{
+    const pct=total>0?Math.round((counts[i]/total)*100):0;
+    const isMyVote=userVote===i;
+    return`<div class="poll-opt" onclick="${hasVoted?'':'`castVote('+JSON.stringify(pollId)+','+i+','+JSON.stringify(postId)+')`'}">
+      <div class="poll-bar-bg">
+        <div class="poll-bar-fill ${isMyVote?'voted':''}" style="width:${hasVoted?pct:0}%"></div>
+        <span class="poll-bar-label">${esc(opt)}${isMyVote?' ✓':''}</span>
+        ${hasVoted?`<span class="poll-bar-pct">${pct}%</span>`:''}
+      </div>
+    </div>`;
+  }).join('');
+  return`<div class="poll-wrap"><div class="poll-question">${esc(question)}</div>${optsHtml}<div class="poll-footer">${total} vote${total!==1?'s':''} · ${hasVoted?'Vous avez voté':'Clique pour voter'}</div></div>`;
+}
+async function castVote(pollId,optionIndex,postId){
+  try{
+    await sb('/poll_votes',{method:'POST',tok:me.tok,body:{poll_id:pollId,user_id:me.id,option_index:optionIndex}});
+    loadFeed();
+  }catch(e){toast('Déjà voté !','err');}
+}
+
 async function loadStats(){
   const c=document.getElementById('stats-content');
   c.innerHTML='<div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div>';
