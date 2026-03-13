@@ -333,6 +333,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
         <div class="atab on" onclick="stab('in')">Connexion</div>
         <div class="atab" onclick="stab('up')">Inscription</div>
       </div>
+      <div id="acard-inner">
       <div id="fin">
         <div class="fld"><label>Email</label><input type="email" id="ie" placeholder="ton@email.com"></div>
         <div class="fld"><label>Mot de passe</label><input type="password" id="ip" placeholder="••••••••" onkeydown="if(event.key==='Enter')login()"></div>
@@ -345,6 +346,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
         <div class="fld"><label>Mot de passe</label><input type="password" id="up2" placeholder="•••••• (6 min)" onkeydown="if(event.key==='Enter')register()"></div>
         <button class="btn-a" onclick="register()">Créer mon compte</button>
       </div>
+      </div><!-- end acard-inner -->
       <div id="aerr" class="aerr"></div>
     </div>
   </div>
@@ -660,7 +662,7 @@ async function register(){
     const d=await sba('/signup',{email:e,password:p});
     if(d.user&&!d.access_token){
       // Email confirmation requis
-      document.querySelector('.acard').innerHTML='<div style="text-align:center;padding:20px 0;"><div style="font-size:48px;margin-bottom:16px;">📬</div><div style="font-size:18px;font-weight:700;color:var(--white);margin-bottom:10px;">Vérifie ta boîte mail !</div><div style="font-size:14px;color:var(--t2);line-height:1.7;margin-bottom:20px;">Un email a été envoyé à <strong style="color:var(--white)">'+e+'</strong>.<br>Clique sur le lien pour activer ton compte.</div><button onclick="location.reload()" style="background:linear-gradient(135deg,#7c6af7,#9b87ff);border:none;border-radius:12px;padding:12px 24px;color:#fff;font-family:DM Sans,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Se connecter</button></div>';
+      document.getElementById('acard-inner').innerHTML='<div style="text-align:center;padding:20px 0;"><div style="font-size:48px;margin-bottom:16px;">📬</div><div style="font-size:18px;font-weight:700;color:var(--white);margin-bottom:10px;">Vérifie ta boîte mail !</div><div style="font-size:14px;color:var(--t2);line-height:1.7;margin-bottom:20px;">Un email a été envoyé à <strong style="color:var(--white)">'+e+'</strong>.<br>Clique sur le lien pour activer ton compte.</div><button onclick="location.reload()" style="background:linear-gradient(135deg,#7c6af7,#9b87ff);border:none;border-radius:12px;padding:12px 24px;color:#fff;font-family:DM Sans,sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Se connecter</button></div>';
       // Store pending profile info
       localStorage.setItem('pendingProfile',JSON.stringify({id:d.user.id,username:u,display_name:n}));
       return;
