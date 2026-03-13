@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trebiq — Profil</title>
+<meta name="theme-color" content="#050508">
+<meta property="og:type" content="profile">
+<meta property="og:site_name" content="Trebiq">
+<meta id="og-title" property="og:title" content="Trebiq">
+<meta id="og-desc" property="og:description" content="Retrouve-moi sur Trebiq !">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#050508;--s1:#0c0c12;--s2:#13131c;--s3:#1a1a26;--border:#1f1f2e;--border2:#2a2a3d;--accent:#7c6af7;--ag:rgba(124,106,247,0.18);--accent2:#b8b0ff;--green:#34d399;--red:#f87171;--text:#ddddf0;--t2:#9898b8;--t3:#5a5a78;--white:#fff;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
+.topbar{max-width:640px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);}
+.brand{font-family:'Instrument Serif',serif;font-size:24px;color:var(--white);text-decoration:none;letter-spacing:-.5px;}
+.brand em{color:var(--accent2);font-style:italic;}
+.btn-join{background:linear-gradient(135deg,var(--accent),#9b87ff);border:none;border-radius:20px;padding:8px 20px;color:#fff;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;text-decoration:none;}
+.btn-join:hover{opacity:.9;}
+.container{max-width:640px;margin:0 auto;}
+.prof-banner{height:120px;background:linear-gradient(135deg,var(--accent),#9b87ff,var(--accent2));}
+.prof-info{padding:16px 20px 0;}
+.prof-av{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:30px;color:#fff;border:4px solid var(--bg);overflow:hidden;margin-top:-46px;margin-bottom:12px;}
+.prof-av img{width:100%;height:100%;object-fit:cover;}
+.prof-name{font-size:22px;font-weight:700;color:var(--white);}
+.prof-handle{font-size:14px;color:var(--t3);margin-bottom:8px;}
+.prof-bio{font-size:15px;color:var(--t2);line-height:1.6;margin-bottom:12px;}
+.prof-stats{display:flex;gap:20px;padding-bottom:14px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.pstat{font-size:14px;color:var(--t3);}
+.pstat strong{color:var(--white);font-weight:700;}
+.join-banner{margin:16px 20px;padding:16px 20px;background:linear-gradient(135deg,rgba(124,106,247,0.12),rgba(124,106,247,0.06));border:1px solid rgba(124,106,247,0.25);border-radius:16px;text-align:center;}
+.join-title{font-size:16px;font-weight:700;color:var(--white);margin-bottom:6px;}
+.join-sub{font-size:13px;color:var(--t2);margin-bottom:14px;}
+.join-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.btn-primary{background:linear-gradient(135deg,var(--accent),#9b87ff);border:none;border-radius:20px;padding:10px 24px;color:#fff;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block;}
+.btn-secondary{background:transparent;border:1px solid var(--border2);border-radius:20px;padding:10px 24px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-block;}
+.posts-title{padding:14px 20px;font-size:15px;font-weight:700;border-bottom:1px solid var(--border);}
+.post{padding:16px 20px;border-bottom:1px solid var(--border);}
+.prow{display:flex;gap:12px;}
+.pav-s{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex-shrink:0;color:#fff;overflow:hidden;}
+.pav-s img{width:100%;height:100%;object-fit:cover;}
+.pb{flex:1;min-width:0;}
+.pm{display:flex;align-items:baseline;gap:6px;margin-bottom:5px;flex-wrap:wrap;}
+.pname{font-weight:700;font-size:15px;color:var(--white);}
+.phdl{font-size:13px;color:var(--t3);}
+.ptm{font-size:12px;color:var(--t3);font-family:'DM Mono',monospace;}
+.ptxt{font-size:15px;line-height:1.65;color:var(--text);white-space:pre-wrap;word-break:break-word;}
+.ptxt .men{color:var(--accent2);font-weight:500;}
+.ptxt .htag{color:var(--accent2);font-weight:500;}
+.post-img{margin-top:10px;border-radius:14px;overflow:hidden;border:1px solid var(--border);}
+.post-img img{width:100%;max-height:360px;object-fit:cover;display:block;}
+.pstats{display:flex;gap:16px;margin-top:10px;font-size:13px;color:var(--t3);}
+.spin{display:flex;justify-content:center;gap:8px;padding:48px;}
+.sd{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:tp 1s infinite;}
+.sd:nth-child(2){animation-delay:.15s;}.sd:nth-child(3){animation-delay:.3s;}
+@keyframes tp{0%,60%,100%{opacity:.25;transform:scale(1)}30%{opacity:1;transform:scale(1.3)}}
+.empty{text-align:center;padding:48px 20px;color:var(--t3);}
+.not-found{text-align:center;padding:80px 20px;}
+.nf-ico{font-size:48px;margin-bottom:16px;}
+.nf-t{font-size:20px;font-weight:700;color:var(--white);margin-bottom:8px;}
+.nf-s{font-size:14px;color:var(--t3);}
+.blur-overlay{filter:blur(4px);pointer-events:none;user-select:none;opacity:.5;}
+@media(max-width:580px){.topbar{padding:12px 14px;}.prof-info{padding:12px 14px 0;}.post{padding:14px 14px;}.join-banner{margin:12px 14px;}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="/" class="brand">Tre<em>biq</em></a>
+  <a href="/" class="btn-join">Rejoindre</a>
+</div>
+
+<div class="container">
+  <div id="main-content">
+    <div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div>
+  </div>
+</div>
+
+<script>
+const SU='https://rcqiioozqfbempxuyvzq.supabase.co',SK='sb_publishable_Djp3G_plOEtDeDT1GwNMrg_QtS3TljZ';
+
+async function sb(path){
+  const r=await fetch(`${SU}/rest/v1${path}`,{headers:{'apikey':SK,'Authorization':`Bearer ${SK}`,'Content-Type':'application/json'}});
+  if(!r.ok)throw new Error('Erreur');return r.json();
+}
+
+function esc(t){return(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function ago(d){const s=(Date.now()-new Date(d))/1000;if(s<60)return'maintenant';if(s<3600)return Math.floor(s/60)+'min';if(s<86400)return Math.floor(s/3600)+'h';return Math.floor(s/86400)+'j';}
+
+function formatTxt(txt){
+  return esc(txt)
+    .replace(/@askClaude/gi,'<span class="men">@askClaude</span>')
+    .replace(/#(\w+)/g,'<span class="htag">#$1</span>');
+}
+
+async function loadProfile(){
+  const c=document.getElementById('main-content');
+  // Get username from URL: /profile/username or ?u=username
+  const path=window.location.pathname;
+  const parts=path.split('/').filter(Boolean);
+  const username=parts[parts.length-1]||new URLSearchParams(window.location.search).get('u');
+
+  if(!username||username==='profile'){
+    c.innerHTML='<div class="not-found"><div class="nf-ico">🔍</div><div class="nf-t">Aucun profil</div><div class="nf-s">Aucun nom d\'utilisateur spécifié.</div></div>';
+    return;
+  }
+
+  try{
+    const profs=await sb(`/profiles?username=eq.${encodeURIComponent(username)}&limit=1`);
+    const prof=profs?.[0];
+    if(!prof){
+      c.innerHTML=`<div class="not-found"><div class="nf-ico">👤</div><div class="nf-t">Profil introuvable</div><div class="nf-s">@${esc(username)} n'existe pas sur Trebiq.</div></div>`;
+      return;
+    }
+
+    // Update meta tags
+    document.title=`${prof.display_name} (@${prof.username}) — Trebiq`;
+    document.getElementById('og-title').content=`${prof.display_name} (@${prof.username}) sur Trebiq`;
+    document.getElementById('og-desc').content=prof.bio||`Retrouve ${prof.display_name} sur Trebiq !`;
+
+    const ini=(prof.display_name||'U')[0].toUpperCase();
+    const avC=prof.avatar_url?`<img src="${prof.avatar_url}" alt="">`:`${ini}`;
+
+    // Fetch stats
+    const posts=await sb(`/posts?user_id=eq.${prof.id}&order=created_at.desc&limit=6`);
+    const pids=(posts||[]).map(p=>p.id);
+
+    const [followersR,followingR]=await Promise.all([
+      fetch(`${SU}/rest/v1/follows?following_id=eq.${prof.id}&select=id`,{headers:{'apikey':SK,'Prefer':'count=exact'}}),
+      fetch(`${SU}/rest/v1/follows?follower_id=eq.${prof.id}&select=id`,{headers:{'apikey':SK,'Prefer':'count=exact'}}),
+    ]);
+    const followers=parseInt((await followersR).headers.get('content-range')?.split('/')[1]||'0');
+    const following=parseInt((await followingR).headers.get('content-range')?.split('/')[1]||'0');
+
+    let totalLikes=0;
+    if(pids.length){
+      const lks=await sb(`/likes?post_id=in.(${pids.join(',')})&select=id`);
+      totalLikes=(lks||[]).length;
+    }
+
+    // Get like counts per post
+    const likesByPost={};
+    if(pids.length){
+      const allLikes=await sb(`/likes?post_id=in.(${pids.join(',')})&select=post_id`);
+      (allLikes||[]).forEach(l=>{likesByPost[l.post_id]=(likesByPost[l.post_id]||0)+1;});
+    }
+    const repliesByPost={};
+    if(pids.length){
+      const allReplies=await sb(`/replies?post_id=in.(${pids.join(',')})&select=post_id`);
+      (allReplies||[]).forEach(r=>{repliesByPost[r.post_id]=(repliesByPost[r.post_id]||0)+1;});
+    }
+
+    const postsHtml=(posts||[]).slice(0,3).map(p=>`
+      <div class="post">
+        <div class="prow">
+          <div class="pav-s">${avC}</div>
+          <div class="pb">
+            <div class="pm">
+              <span class="pname">${esc(prof.display_name)}</span>
+              <span class="phdl">@${esc(prof.username)}</span>
+              <span class="ptm">· ${ago(p.created_at)}</span>
+            </div>
+            <div class="ptxt">${formatTxt(p.content)}</div>
+            ${p.image_url?`<div class="post-img"><img src="${p.image_url}" alt="image" loading="lazy"></div>`:''}
+            <div class="pstats">
+              <span>❤️ ${likesByPost[p.id]||0}</span>
+              <span>💬 ${repliesByPost[p.id]||0}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+    const blurredPosts=(posts||[]).slice(3).map(p=>`
+      <div class="post blur-overlay">
+        <div class="prow">
+          <div class="pav-s">${avC}</div>
+          <div class="pb">
+            <div class="pm"><span class="pname">${esc(prof.display_name)}</span><span class="phdl">@${esc(prof.username)}</span></div>
+            <div class="ptxt">${esc(p.content?.slice(0,60))}...</div>
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+    c.innerHTML=`
+      <div class="prof-banner"></div>
+      <div class="prof-info">
+        <div class="prof-av">${avC}</div>
+        <div class="prof-name">${esc(prof.display_name||'Utilisateur')}</div>
+        <div class="prof-handle">@${esc(prof.username)}</div>
+        ${prof.bio?`<div class="prof-bio">${esc(prof.bio)}</div>`:''}
+        <div class="prof-stats">
+          <div class="pstat"><strong>${posts?.length||0}</strong> Posts</div>
+          <div class="pstat"><strong>${totalLikes}</strong> Likes reçus</div>
+          <div class="pstat"><strong>${followers}</strong> Abonnés</div>
+          <div class="pstat"><strong>${following}</strong> Abonnements</div>
+        </div>
+      </div>
+      <div class="join-banner">
+        <div class="join-title">Rejoins Trebiq pour voir plus 👀</div>
+        <div class="join-sub">Connecte-toi pour voir tous les posts, liker, répondre et suivre ${esc(prof.display_name)} !</div>
+        <div class="join-btns">
+          <a href="/" class="btn-primary">Créer un compte</a>
+          <a href="/" class="btn-secondary">Se connecter</a>
+        </div>
+      </div>
+      ${posts?.length?`<div class="posts-title">📝 Posts récents</div>${postsHtml}${blurredPosts}`:'<div class="empty">Aucun post pour l\'instant.</div>'}
+    `;
+  }catch(e){
+    c.innerHTML=`<div class="not-found"><div class="nf-ico">⚠️</div><div class="nf-t">Erreur</div><div class="nf-s">${e.message}</div></div>`;
+  }
+}
+
+loadProfile();
+</script>
+</body>
+</html>
