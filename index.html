@@ -423,6 +423,18 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
 .toast.ok{border-color:var(--green);color:var(--green);}
 .toast.err{border-color:var(--red);color:var(--red);}
+.cookie-banner{position:fixed;bottom:0;left:0;right:0;background:var(--s1);border-top:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;z-index:200;font-size:13px;color:var(--t2);}
+.cookie-banner.hidden{display:none;}
+.cookie-btn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;}
+@media(max-width:580px){.cookie-banner{flex-direction:column;text-align:center;padding-bottom:calc(12px + env(safe-area-inset-bottom));}}
+.mob-more-menu{display:none;position:fixed;bottom:65px;left:0;right:0;background:rgba(12,12,18,0.98);border-top:1px solid var(--border);backdrop-filter:blur(18px);z-index:49;padding:16px;}
+.mob-more-menu.open{display:block;}
+.mob-more-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.mob-more-btn{display:flex;flex-direction:column;align-items:center;gap:6px;background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:14px 8px;font-size:22px;color:var(--text);cursor:pointer;font-family:'DM Sans',sans-serif;}
+.mob-more-btn span{font-size:11px;color:var(--t2);}
+.mob-more-btn.danger span{color:#f87171;}
+.mb-lbl{display:block;font-size:10px;color:var(--t3);margin-top:2px;font-family:'DM Sans',sans-serif;font-weight:500;}
+.mb.on .mb-lbl{color:var(--accent2);}
 .mnav{display:none;position:fixed;bottom:0;left:0;right:0;background:rgba(12,12,18,0.95);border-top:1px solid var(--border);backdrop-filter:blur(18px);z-index:50;padding:6px 0;}
 .mitems{display:flex;justify-content:space-around;}
 .mb{background:none;border:none;color:var(--t3);font-size:22px;cursor:pointer;padding:10px 14px;border-radius:10px;transition:color .2s;position:relative;}
@@ -778,15 +790,30 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 
 <div class="mnav">
   <div class="mitems">
-    <button class="mb on" onclick="goPage('home')">🏠</button>
-    <button class="mb" onclick="goPage('explore')">🔍</button>
-    <button class="mb" onclick="goPage('notifs')">🔔<span class="mb-badge" id="mob-notif-badge"></span></button>
-    <button class="mb" onclick="goPage('messages')">💬<span class="mb-badge" id="mob-dm-badge"></span></button>
-    <button class="mb" onclick="goPage('profile')">👤</button>
+    <button class="mb on" id="mob-home" onclick="goPage('home')">🏠<span class="mb-lbl">Accueil</span></button>
+    <button class="mb" id="mob-explore" onclick="goPage('explore')">🔍<span class="mb-lbl">Explorer</span></button>
+    <button class="mb" id="mob-notifs" onclick="goPage('notifs')">🔔<span class="mb-badge" id="mob-notif-badge"></span><span class="mb-lbl">Notifs</span></button>
+    <button class="mb" id="mob-messages" onclick="goPage('messages')">💬<span class="mb-badge" id="mob-dm-badge"></span><span class="mb-lbl">Messages</span></button>
+    <button class="mb" id="mob-profile" onclick="goPage('profile')">👤<span class="mb-lbl">Profil</span></button>
+    <button class="mb" id="mob-more" onclick="toggleMobMore()">⋯<span class="mb-lbl">Plus</span></button>
+  </div>
+</div>
+<div class="mob-more-menu" id="mob-more-menu">
+  <div class="mob-more-grid">
+    <button class="mob-more-btn" onclick="goPage('stats');toggleMobMore()">📊<span>Stats</span></button>
+    <button class="mob-more-btn" onclick="goPage('leaderboard');toggleMobMore()">🏆<span>Classement</span></button>
+    <button class="mob-more-btn" onclick="goPage('quiz');toggleMobMore()">🧠<span>Quizz</span></button>
+    <button class="mob-more-btn" onclick="goPage('games');toggleMobMore()">🎮<span>Jeux</span></button>
+    <button class="mob-more-btn" onclick="window.open('/legal','_blank');toggleMobMore()">📄<span>Légal</span></button>
+    <button class="mob-more-btn danger" onclick="logout();toggleMobMore()">🚪<span>Déconnexion</span></button>
   </div>
 </div>
 <button class="mfab" onclick="fc()">✏️</button>
 <div class="toast" id="toast"></div>
+<div class="cookie-banner" id="cookie-banner">
+  <div class="cookie-txt">🍪 Trebiq utilise des cookies essentiels pour fonctionner. <a href="/legal" target="_blank" style="color:var(--accent2)">En savoir plus</a></div>
+  <button class="cookie-btn" onclick="acceptCookies()">Accepter</button>
+</div>
 
 <script>
 const SU='https://rcqiioozqfbempxuyvzq.supabase.co',SK='sb_publishable_Djp3G_plOEtDeDT1GwNMrg_QtS3TljZ';
@@ -900,12 +927,12 @@ function goPage(page,userId=null){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
   document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
   document.querySelectorAll('.mb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('mob-more-menu')?.classList.remove('open');
   document.getElementById('page-'+page).classList.add('on');
   const navEl=document.getElementById('nav-'+page);
   if(navEl)navEl.classList.add('on');
-  const mobIdx={home:0,explore:1,notifs:2,messages:3,profile:4};
-  const mi=document.querySelectorAll('.mb')[mobIdx[page]];
-  if(mi)mi.classList.add('on');
+  const mobBtn=document.getElementById('mob-'+page);
+  if(mobBtn)mobBtn.classList.add('on');
   curPage=page;
   if(page==='home')loadFeed();
   else if(page==='explore')loadExplore();
@@ -923,6 +950,10 @@ function goPage(page,userId=null){
     document.getElementById('prof-dm-btn').style.display=isOwn?'none':'block';
     loadProfile(viewingUserId);
   }
+}
+function toggleMobMore(){
+  const m=document.getElementById('mob-more-menu');
+  m.classList.toggle('open');
 }
 function goBack(){if(historyStack.length>0){const prev=historyStack.pop();goPage(prev);}else goPage('home');}
 function goUserProfile(uid){historyStack.push(curPage);goPage('profile',uid);}
@@ -2372,7 +2403,9 @@ function iac(){ins('@askClaude ');}
 function esc(t){return(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function ago(d){const s=(Date.now()-new Date(d))/1000;if(s<60)return'maintenant';if(s<3600)return Math.floor(s/60)+'m';if(s<86400)return Math.floor(s/3600)+'h';return Math.floor(s/86400)+'j';}
 function toast(m,t=''){const el=document.getElementById('toast');el.textContent=m;el.className=`toast ${t} show`;setTimeout(()=>el.className='toast',3200);}
-document.addEventListener('DOMContentLoaded',()=>{document.getElementById('ctxt').addEventListener('keydown',e=>{if(e.ctrlKey&&e.key==='Enter')pub();});});
+function acceptCookies(){localStorage.setItem('cookies_accepted','1');document.getElementById('cookie-banner').classList.add('hidden');}
+document.addEventListener('DOMContentLoaded',()=>{
+  if(localStorage.getItem('cookies_accepted'))document.getElementById('cookie-banner').classList.add('hidden');document.getElementById('ctxt').addEventListener('keydown',e=>{if(e.ctrlKey&&e.key==='Enter')pub();});});
 </script>
 </body>
 </html>
