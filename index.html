@@ -431,6 +431,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .mb-lbl{display:none;}
 .mnav{display:none;position:fixed;bottom:0;left:0;right:0;background:rgba(5,5,8,0.96);border-top:1px solid rgba(255,255,255,0.06);backdrop-filter:blur(20px);z-index:50;padding:8px 0 calc(8px + env(safe-area-inset-bottom));}
 .mitems{display:flex;justify-content:space-around;align-items:center;}
+.mob-menu-item{display:flex;flex-direction:column;align-items:center;gap:6px;background:var(--s2);border:1px solid var(--border);border-radius:14px;padding:12px 6px;font-size:11px;color:var(--t2);cursor:pointer;font-family:'DM Sans',sans-serif;width:100%;transition:all .15s;}
+.mob-menu-item:active{transform:scale(0.93);background:var(--s3);}
+.mob-menu-item.danger{color:#f87171;}
+.mob-menu-ico{font-size:22px;line-height:1;}
 .mb{background:none;border:none;color:var(--t3);font-size:24px;cursor:pointer;padding:10px 16px;border-radius:12px;transition:all .15s;position:relative;display:flex;align-items:center;justify-content:center;}
 .mb.on{color:var(--white);}
 .mb:active{transform:scale(0.88);}
@@ -785,12 +789,55 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 
 <div class="mnav" id="mob-nav">
   <div class="mitems">
-    <button class="mb on" id="mob-home" onclick="goPage('home')">🏠</button>
-    <button class="mb" id="mob-explore" onclick="goPage('explore')">🔍</button>
-    <button class="mb" id="mob-notifs" onclick="goPage('notifs')">🔔<span class="mb-badge" id="mob-notif-badge"></span></button>
-    <button class="mb" id="mob-messages" onclick="goPage('messages')">💬<span class="mb-badge" id="mob-dm-badge"></span></button>
-    <button class="mb" id="mob-profile" onclick="goPage('profile')">👤</button>
-    <button class="mb" onclick="goPage('settings')">⚙️</button>
+    <button class="mb on" id="mob-home" onclick="goPage('home')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H5a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>
+    </button>
+    <button class="mb" id="mob-explore" onclick="goPage('explore')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </button>
+    <button class="mb" id="mob-notifs" onclick="goPage('notifs')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+      <span class="mb-badge" id="mob-notif-badge"></span>
+    </button>
+    <button class="mb" id="mob-messages" onclick="goPage('messages')">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      <span class="mb-badge" id="mob-dm-badge"></span>
+    </button>
+    <button class="mb" id="mob-more-btn" onclick="toggleMobMenu()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- Menu mobile "Plus" -->
+<div id="mob-menu-overlay" onclick="closeMobMenu()" style="display:none;position:fixed;inset:0;z-index:60;"></div>
+<div id="mob-menu" style="display:none;position:fixed;bottom:65px;left:0;right:0;background:var(--s1);border-top:1px solid var(--border);border-radius:20px 20px 0 0;z-index:61;padding:12px 0 20px;transform:translateY(100%);transition:transform .25s ease;">
+  <div style="width:40px;height:4px;background:var(--border2);border-radius:2px;margin:0 auto 16px;"></div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:0 16px 12px;border-bottom:1px solid var(--border);">
+    <button class="mob-menu-item" onclick="goPageClose('profile')">
+      <div class="mob-menu-ico">👤</div><span>Profil</span>
+    </button>
+    <button class="mob-menu-item" onclick="goPageClose('stats')">
+      <div class="mob-menu-ico">📊</div><span>Stats</span>
+    </button>
+    <button class="mob-menu-item" onclick="goPageClose('leaderboard')">
+      <div class="mob-menu-ico">🏆</div><span>Classement</span>
+    </button>
+    <button class="mob-menu-item" onclick="goPageClose('quiz')">
+      <div class="mob-menu-ico">🧠</div><span>Quizz</span>
+    </button>
+    <button class="mob-menu-item" onclick="goPageClose('games')">
+      <div class="mob-menu-ico">🎮</div><span>Jeux</span>
+    </button>
+    <button class="mob-menu-item" onclick="goPageClose('settings')">
+      <div class="mob-menu-ico">⚙️</div><span>Paramètres</span>
+    </button>
+    <button class="mob-menu-item" onclick="window.open('/legal','_blank');closeMobMenu()">
+      <div class="mob-menu-ico">📄</div><span>Légal</span>
+    </button>
+    <button class="mob-menu-item danger" onclick="logout();closeMobMenu()">
+      <div class="mob-menu-ico">🚪</div><span>Quitter</span>
+    </button>
   </div>
 </div>
 <button class="mfab" id="mob-fab" onclick="fc()">✏️</button>
@@ -946,6 +993,28 @@ function goPage(page,userId=null){
     document.getElementById('prof-dm-btn').style.display=isOwn?'none':'block';
     loadProfile(viewingUserId);
   }
+}
+function toggleMobMenu(){
+  const m=document.getElementById('mob-menu');
+  const o=document.getElementById('mob-menu-overlay');
+  const isOpen=m.style.display==='block';
+  if(isOpen){closeMobMenu();}else{
+    m.style.display='block';
+    o.style.display='block';
+    setTimeout(()=>m.style.transform='translateY(0)',10);
+    document.getElementById('mob-more-btn').classList.add('on');
+  }
+}
+function closeMobMenu(){
+  const m=document.getElementById('mob-menu');
+  const o=document.getElementById('mob-menu-overlay');
+  m.style.transform='translateY(100%)';
+  document.getElementById('mob-more-btn').classList.remove('on');
+  setTimeout(()=>{m.style.display='none';o.style.display='none';},250);
+}
+function goPageClose(page){
+  closeMobMenu();
+  setTimeout(()=>goPage(page),50);
 }
 function goBack(){if(historyStack.length>0){const prev=historyStack.pop();goPage(prev);}else goPage('home');}
 function goUserProfile(uid){historyStack.push(curPage);goPage('profile',uid);}
