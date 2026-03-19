@@ -190,6 +190,9 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .btn-follow.following{background:transparent;border:1px solid var(--accent);color:var(--accent);}
 .btn-follow.following:hover{border-color:var(--red);color:var(--red);background:rgba(248,113,113,0.06);}
 .btn-dm{background:transparent;border:1px solid var(--border2);border-radius:20px;padding:8px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;}
+.btn-notify{background:transparent;border:1px solid var(--border2);border-radius:20px;padding:8px 12px;color:var(--t2);font-size:16px;cursor:pointer;transition:all .2s;}
+.btn-notify:hover{background:var(--s2);}
+.btn-notify.active{border-color:var(--accent);color:var(--accent2);background:var(--ag);}
 .btn-dm:hover{background:var(--s2);}
 .prof-name{font-size:20px;font-weight:700;color:var(--white);}
 .prof-handle{font-size:14px;color:var(--t3);margin-bottom:8px;}
@@ -594,6 +597,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
             <div style="display:flex;gap:8px;">
               <button class="btn-edit" id="prof-edit-btn" onclick="openEdit()">✏️ Modifier</button>
               <button class="btn-dm" id="prof-dm-btn" onclick="startDMFromProfile()" style="display:none">💬 Message</button>
+              <button class="btn-notify" id="prof-notify-btn" onclick="toggleNotifyUser()" style="display:none" title="Notifications">🔔</button>
               <button class="btn-follow" id="prof-follow-btn" onclick="toggleFollow()" style="display:none">Suivre</button>
             </div>
           </div>
@@ -1293,6 +1297,7 @@ async function pub(){
       if(aiD.reply){await sb(`/posts?id=eq.${post.id}`,{method:'PATCH',tok:me.tok,body:{ai_reply:aiD.reply}});loadFeed();}
     }
     toast('Publié ! 🎉','ok');
+    notifyFollowersOnPost(content).catch(()=>{});
     addXP(10);
   }catch(e){toast('Erreur: '+e.message,'err');}
   btn.disabled=false;btn.textContent='Publier';
@@ -2371,12 +2376,23 @@ async function loadProfile(userId){
     +renderLevelBar(prof.xp||0)
     +renderBadges(prof.badges||[]);
   const followBtn=document.getElementById('prof-follow-btn');
+  const notifyBtn=document.getElementById('prof-notify-btn');
   if(!isOwn){
     followBtn.style.display='block';
     const already=await checkFollowing(userId);
     followBtn.classList.toggle('following',already);
     followBtn.textContent=already?'Abonné ✓':'Suivre';
-  }else{followBtn.style.display='none';}
+    // Notify button
+    if(notifyBtn){
+      notifyBtn.style.display='block';
+      const notifying=await checkNotifyPref(userId);
+      notifyBtn.classList.toggle('active',notifying);
+      notifyBtn.title=notifying?'Désactiver les notifications':'Activer les notifications';
+    }
+  }else{
+    followBtn.style.display='none';
+    if(notifyBtn)notifyBtn.style.display='none';
+  }
   loadFollowCounts(userId);
   const posts=await sb(`/posts?user_id=eq.${userId}&order=created_at.desc`,{tok:me.tok});
   document.getElementById('prof-posts-count').textContent=posts?.length||0;
@@ -2484,6 +2500,44 @@ function iac(){ins('@askClaude ');}
 function esc(t){return(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function ago(d){const s=(Date.now()-new Date(d))/1000;if(s<60)return'maintenant';if(s<3600)return Math.floor(s/60)+'m';if(s<86400)return Math.floor(s/3600)+'h';return Math.floor(s/86400)+'j';}
 function toast(m,t=''){const el=document.getElementById('toast');el.textContent=m;el.className=`toast ${t} show`;setTimeout(()=>el.className='toast',3200);}
+// ===== NOTIFY USER =====
+async function checkNotifyPref(targetUserId){
+  try{
+    const r=await sb(`/notification_prefs?user_id=eq.${me.id}&target_user_id=eq.${targetUserId}`,{tok:me.tok});
+    return r&&r.length>0;
+  }catch(e){return false;}
+}
+
+async function toggleNotifyUser(){
+  const btn=document.getElementById('prof-notify-btn');
+  const isActive=btn.classList.contains('active');
+  try{
+    if(isActive){
+      await sb(`/notification_prefs?user_id=eq.${me.id}&target_user_id=eq.${viewingUserId}`,{method:'DELETE',tok:me.tok});
+      btn.classList.remove('active');
+      btn.title='Activer les notifications';
+      toast('Notifications désactivées','ok');
+    }else{
+      await sb('/notification_prefs',{method:'POST',tok:me.tok,body:{user_id:me.id,target_user_id:viewingUserId,notify_posts:true}});
+      btn.classList.add('active');
+      btn.title='Désactiver les notifications';
+      toast('Notifications activées 🔔','ok');
+    }
+  }catch(e){toast('Erreur','err');}
+}
+
+async function notifyFollowersOnPost(postContent){
+  try{
+    // Get users who want notifs from me
+    const prefs=await sb(`/notification_prefs?target_user_id=eq.${me.id}&notify_posts=eq.true&select=user_id`,{tok:me.tok});
+    if(!prefs?.length)return;
+    const preview=postContent.slice(0,60)+(postContent.length>60?'...':'');
+    for(const pref of prefs){
+      sendPushToUser(pref.user_id,`🆕 ${myP?.display_name||'Quelqu\'un'} a publié`,preview).catch(()=>{});
+    }
+  }catch(e){}
+}
+
 // ===== PUSH NOTIFICATIONS =====
 async function loadPushSettings(){
   const statusEl=document.getElementById('push-status');
