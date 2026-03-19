@@ -8,18 +8,20 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#050508;--s1:#0c0c12;--s2:#13131c;--border:#1f1f2e;--accent:#7c6af7;--accent2:#b8b0ff;--text:#ddddf0;--t2:#9898b8;--t3:#5a5a78;--white:#fff;}
+:root{--bg:#050508;--s1:#0c0c12;--s2:#13131c;--border:#1f1f2e;--accent:#7c6af7;--accent2:#b8b0ff;--text:#ddddf0;--t2:#9898b8;--t3:#5a5a78;--white:#fff;--green:#34d399;}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased;}
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;line-height:1.7;}
 .topbar{max-width:780px;margin:0 auto;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);}
-.brand{font-family:'Instrument Serif',serif;font-size:24px;color:var(--white);text-decoration:none;letter-spacing:-.5px;}
-.brand em{color:var(--accent2);font-style:italic;}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.brand-icon{width:32px;height:32px;flex-shrink:0;}
+.brand-name{font-family:'Instrument Serif',serif;font-size:22px;color:var(--white);letter-spacing:-.5px;}
+.brand-name em{color:var(--accent2);font-style:italic;}
 .back{color:var(--t2);text-decoration:none;font-size:14px;display:flex;align-items:center;gap:6px;transition:color .2s;}
 .back:hover{color:var(--white);}
 .container{max-width:780px;margin:0 auto;padding:40px 20px 80px;}
 .page-title{font-family:'Instrument Serif',serif;font-size:36px;color:var(--white);margin-bottom:8px;letter-spacing:-.5px;}
-.page-sub{font-size:14px;color:var(--t3);margin-bottom:48px;}
-.tabs{display:flex;gap:8px;margin-bottom:40px;flex-wrap:wrap;}
+.page-sub{font-size:14px;color:var(--t3);margin-bottom:36px;}
+.tabs{display:flex;gap:8px;margin-bottom:32px;flex-wrap:wrap;}
 .tab{padding:8px 18px;border-radius:20px;border:1px solid var(--border);color:var(--t2);font-size:14px;font-weight:500;cursor:pointer;transition:all .2s;background:transparent;}
 .tab.on{background:var(--accent);border-color:var(--accent);color:#fff;}
 .tab:hover:not(.on){border-color:var(--accent);color:var(--accent2);}
@@ -37,47 +39,57 @@ a:hover{text-decoration:underline;}
 .highlight{background:rgba(124,106,247,0.08);border:1px solid rgba(124,106,247,0.2);border-radius:12px;padding:16px 20px;margin:16px 0;}
 .highlight p{margin:0;color:var(--text);}
 .date{font-size:12px;color:var(--t3);margin-top:40px;padding-top:16px;border-top:1px solid var(--border);}
-@media(max-width:580px){.container{padding:24px 14px 60px;}.page-title{font-size:28px;}}
+.contact-card{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:20px;margin:16px 0;display:flex;align-items:center;gap:14px;}
+.contact-ico{font-size:28px;}
+.contact-info{flex:1;}
+.contact-label{font-size:13px;color:var(--t3);margin-bottom:4px;}
+.contact-email{font-size:16px;font-weight:600;color:var(--accent2);}
+@media(max-width:580px){.container{padding:24px 14px 60px;}.page-title{font-size:28px;}.tabs{gap:6px;}.tab{padding:7px 14px;font-size:13px;}}
 </style>
 </head>
 <body>
 <div class="topbar">
-  <a href="/" class="brand" style="display:flex;align-items:center;gap:10px;text-decoration:none;line-height:0;">
-  <svg width="32" height="32" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-    <defs><linearGradient id="lg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7c6af7"/><stop offset="100%" stop-color="#b8b0ff"/></linearGradient></defs>
-    <rect width="120" height="120" rx="28" fill="url(#lg1)"/>
-    <rect x="28" y="26" width="64" height="12" rx="5" fill="#fff" opacity="0.95"/>
-    <rect x="53" y="38" width="14" height="52" rx="5" fill="#fff" opacity="0.95"/>
-    <circle cx="106" cy="108" r="4" fill="#fff" opacity="0.9"/>
-    <path d="M97 100 Q106 92 115 100" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
-    <path d="M91 94 Q106 82 121 94" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" opacity="0.45"/>
-  </svg>
-  <svg width="100" height="30" viewBox="0 0 260 70" xmlns="http://www.w3.org/2000/svg">
-    <defs><linearGradient id="lg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#b8b0ff"/><stop offset="100%" stop-color="#7c6af7"/></linearGradient></defs>
-    <text x="0" y="52" font-family="Georgia,serif" font-size="52" font-weight="400" fill="#ddddf0" letter-spacing="-1">Tre</text>
-    <text x="88" y="52" font-family="Georgia,serif" font-size="52" font-style="italic" font-weight="400" fill="url(#lg2)" letter-spacing="-1">biq</text>
-  </svg>
-</a>
+  <a href="/" class="brand">
+    <svg class="brand-icon" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+      <defs><linearGradient id="lg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7c6af7"/><stop offset="100%" stop-color="#b8b0ff"/></linearGradient></defs>
+      <rect width="120" height="120" rx="28" fill="url(#lg1)"/>
+      <rect x="28" y="26" width="64" height="12" rx="5" fill="#fff" opacity="0.95"/>
+      <rect x="53" y="38" width="14" height="52" rx="5" fill="#fff" opacity="0.95"/>
+      <circle cx="106" cy="108" r="4" fill="#fff" opacity="0.9"/>
+      <path d="M97 100 Q106 92 115 100" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+      <path d="M91 94 Q106 82 121 94" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" opacity="0.45"/>
+    </svg>
+    <span class="brand-name">Tre<em>biq</em></span>
+  </a>
   <a href="/" class="back">← Retour</a>
 </div>
+
 <div class="container">
   <div class="page-title">Informations légales</div>
   <div class="page-sub">Dernière mise à jour : Mars 2025</div>
 
   <div class="tabs">
-    <div class="tab on" onclick="showTab('mentions')">Mentions légales</div>
-    <div class="tab" onclick="showTab('cgu')">CGU</div>
-    <div class="tab" onclick="showTab('privacy')">Confidentialité</div>
-    <div class="tab" onclick="showTab('cookies')">Cookies</div>
+    <div class="tab on" onclick="showTab(this,'mentions')">Mentions légales</div>
+    <div class="tab" onclick="showTab(this,'cgu')">CGU</div>
+    <div class="tab" onclick="showTab(this,'privacy')">Confidentialité</div>
+    <div class="tab" onclick="showTab(this,'cookies')">Cookies</div>
   </div>
 
   <!-- MENTIONS LÉGALES -->
   <div class="section on" id="tab-mentions">
     <h2>Mentions légales</h2>
+
+    <div class="contact-card">
+      <div class="contact-ico">✉️</div>
+      <div class="contact-info">
+        <div class="contact-label">Nous contacter</div>
+        <a href="mailto:contact@trebiq.app" class="contact-email">contact@trebiq.app</a>
+      </div>
+    </div>
+
     <h3>Éditeur du site</h3>
-    <p>Le site <strong>Trebiq</strong> (trebiq.vercel.app) est édité à titre personnel.</p>
-    <p><strong>Responsable de publication :</strong> L'équipe Trebiq<br>
-    <strong>Contact :</strong> <a href="/cdn-cgi/l/email-protection#b6d5d9d8c2d7d5c2f6c2c4d3d4dfc798d7c6c6"><span class="__cf_email__" data-cfemail="87e4e8e9f3e6e4f3c7f3f5e2e5eef6a9e6f7f7">[email&#160;protected]</span></a></p>
+    <p>Le site <strong>Trebiq</strong> (trebiq.vercel.app) est édité à titre personnel.<br>
+    <strong>Responsable de publication :</strong> L'équipe Trebiq</p>
 
     <h3>Hébergement</h3>
     <p><strong>Vercel Inc.</strong><br>340 Pine Street, Suite 701, San Francisco, CA 94104, USA<br>
@@ -85,7 +97,6 @@ a:hover{text-decoration:underline;}
 
     <h3>Base de données & Authentification</h3>
     <p><strong>Supabase Inc.</strong><br>
-    970 Toa Payoh North, Singapore<br>
     <a href="https://supabase.com" target="_blank">supabase.com</a></p>
 
     <h3>Intelligence Artificielle</h3>
@@ -127,10 +138,7 @@ a:hover{text-decoration:underline;}
     <h3>6. Limitation de responsabilité</h3>
     <p>Trebiq est un service fourni "tel quel". Nous ne garantissons pas une disponibilité continue du service. Trebiq ne peut être tenu responsable des contenus publiés par les utilisateurs.</p>
 
-    <h3>7. Modification des CGU</h3>
-    <p>Trebiq se réserve le droit de modifier ces CGU à tout moment. Les utilisateurs seront informés par email en cas de modification substantielle.</p>
-
-    <h3>8. Droit applicable</h3>
+    <h3>7. Droit applicable</h3>
     <p>Les présentes CGU sont soumises au droit français. Tout litige sera soumis aux tribunaux compétents.</p>
   </div>
 
@@ -140,7 +148,6 @@ a:hover{text-decoration:underline;}
     <div class="highlight"><p>Trebiq s'engage à protéger vos données personnelles conformément au RGPD.</p></div>
 
     <h3>1. Données collectées</h3>
-    <p>Lors de votre inscription et utilisation de Trebiq, nous collectons :</p>
     <ul>
       <li><strong>Données d'identification :</strong> adresse email, nom d'utilisateur, nom affiché</li>
       <li><strong>Données de profil :</strong> photo de profil, bio</li>
@@ -149,12 +156,10 @@ a:hover{text-decoration:underline;}
     </ul>
 
     <h3>2. Finalités du traitement</h3>
-    <p>Vos données sont utilisées pour :</p>
     <ul>
       <li>Fournir et améliorer le service Trebiq</li>
       <li>Gérer votre compte et authentification</li>
       <li>Afficher votre profil aux autres utilisateurs</li>
-      <li>Envoyer des notifications (si activées)</li>
       <li>Respecter nos obligations légales</li>
     </ul>
 
@@ -167,21 +172,15 @@ a:hover{text-decoration:underline;}
     </ul>
 
     <h3>4. Vos droits (RGPD)</h3>
-    <p>Conformément au RGPD, vous disposez des droits suivants :</p>
     <ul>
       <li><strong>Droit d'accès</strong> — obtenir une copie de vos données</li>
       <li><strong>Droit de rectification</strong> — corriger vos données</li>
       <li><strong>Droit à l'effacement</strong> — supprimer votre compte et données</li>
       <li><strong>Droit à la portabilité</strong> — recevoir vos données dans un format lisible</li>
-      <li><strong>Droit d'opposition</strong> — vous opposer au traitement</li>
     </ul>
-    <p>Pour exercer ces droits : <a href="/cdn-cgi/l/email-protection#c5a6aaabb1a4a6b185b1b7a0a7acb4eba4b5b5"><span class="__cf_email__" data-cfemail="aecdc1c0dacfcddaeedadccbccc7df80cfdede">[email&#160;protected]</span></a></p>
+    <p>Pour exercer ces droits : <a href="mailto:contact@trebiq.app">contact@trebiq.app</a></p>
 
-    <h3>5. Conservation des données</h3>
-    <p>Vos données sont conservées tant que votre compte est actif. Après suppression du compte, les données sont effacées sous <strong>30 jours</strong>.</p>
-
-    <h3>6. Sécurité</h3>
-    <p>Vos données sont protégées par :</p>
+    <h3>5. Sécurité</h3>
     <ul>
       <li>Chiffrement HTTPS (TLS) pour toutes les communications</li>
       <li>Authentification sécurisée via Supabase Auth</li>
@@ -194,14 +193,11 @@ a:hover{text-decoration:underline;}
   <div class="section" id="tab-cookies">
     <h2>Politique de Cookies</h2>
 
-    <h3>Qu'est-ce qu'un cookie ?</h3>
-    <p>Un cookie est un petit fichier texte stocké sur votre appareil lors de votre visite sur un site web.</p>
-
     <h3>Cookies utilisés par Trebiq</h3>
     <p>Trebiq utilise uniquement des cookies <strong>strictement nécessaires</strong> au fonctionnement du service :</p>
     <ul>
       <li><strong>Session d'authentification</strong> — maintient votre connexion (Supabase Auth)</li>
-      <li><strong>Préférences locales</strong> — stockage local pour les données temporaires</li>
+      <li><strong>Préférences locales</strong> — stockage local pour les données temporaires (jeux, quizz)</li>
     </ul>
 
     <h3>Cookies tiers</h3>
@@ -213,4 +209,19 @@ a:hover{text-decoration:underline;}
     <div class="highlight"><p>🍪 Trebiq ne place aucun cookie publicitaire. Votre navigation reste privée.</p></div>
   </div>
 
-  <div class="date">Ces documents ont été mis à jour le 1er Mars 2025. Pour toute question : <a href="/cdn-cgi/l/email-protection#84e7ebeaf0e5e7f0c4f0f6e1e6edf5aae5f4f4"><span class="__cf_email__" data-cfe
+  <div class="date">
+    Ces documents ont été mis à jour le 1er Mars 2025.<br>
+    Pour toute question : <a href="mailto:contact@trebiq.app">contact@trebiq.app</a>
+  </div>
+</div>
+
+<script>
+function showTab(el, id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.getElementById('tab-'+id).classList.add('on');
+  el.classList.add('on');
+}
+</script>
+</body>
+</html>
