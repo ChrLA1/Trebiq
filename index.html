@@ -423,10 +423,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
 .toast.ok{border-color:var(--green);color:var(--green);}
 .toast.err{border-color:var(--red);color:var(--red);}
-.cookie-banner{position:fixed;bottom:70px;left:12px;right:12px;background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;z-index:60;font-size:13px;color:var(--t2);box-shadow:0 4px 24px rgba(0,0,0,.4);}
-.cookie-banner.hidden{display:none;}
-.cookie-btn{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;}
-@media(max-width:580px){.cookie-banner{bottom:74px;left:8px;right:8px;flex-direction:column;text-align:center;}}
+
+
+
+@media(max-width:580px){}
 .mob-more-menu{display:none;position:fixed;bottom:65px;left:0;right:0;background:rgba(12,12,18,0.98);border-top:1px solid var(--border);backdrop-filter:blur(18px);z-index:49;padding:16px;}
 .mob-more-menu.open{display:block;}
 .mob-more-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
@@ -810,8 +810,11 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 </div>
 <button class="mfab" onclick="fc()">✏️</button>
 <div class="toast" id="toast"></div>
-<div class="cookie-banner hidden" id="cookie-banner">
-  <div class="cookie-txt">🍪 Trebiq utilise des cookies essentiels pour fonctionner. <a href="/legal" target="_blank" style="color:var(--accent2)">En savoir plus</a></div>
+<div id="cookie-bar" style="display:none;position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:10px 16px;z-index:55;font-size:13px;color:var(--t2);display:flex;align-items:center;gap:12px;box-shadow:0 4px 20px rgba(0,0,0,.5);white-space:nowrap;pointer-events:auto;">
+  🍪 Cookies essentiels utilisés. <a href="/legal" target="_blank" style="color:var(--accent2);text-decoration:none;">En savoir plus</a>
+  <button onclick="document.getElementById('cookie-bar').style.display='none';localStorage.setItem('ck','1')" style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">OK</button>
+</div>
+
   <button class="cookie-btn" onclick="acceptCookies()">Accepter</button>
 </div>
 
@@ -917,7 +920,7 @@ function showApp(){
   checkUnreadDMs();
   loadSuggestions();
   msgPollInterval=setInterval(()=>{checkUnreadDMs();if(curConvId)pollNewMessages();},10000);
-  showCookieBanner();
+  if(!localStorage.getItem('ck'))document.getElementById('cookie-bar').style.display='flex';
 }
 function updateNavAvatar(){
   const i=(myP?.display_name||'U')[0].toUpperCase();
@@ -2404,17 +2407,9 @@ function iac(){ins('@askClaude ');}
 function esc(t){return(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function ago(d){const s=(Date.now()-new Date(d))/1000;if(s<60)return'maintenant';if(s<3600)return Math.floor(s/60)+'m';if(s<86400)return Math.floor(s/3600)+'h';return Math.floor(s/86400)+'j';}
 function toast(m,t=''){const el=document.getElementById('toast');el.textContent=m;el.className=`toast ${t} show`;setTimeout(()=>el.className='toast',3200);}
-function acceptCookies(){
-  localStorage.setItem('cookies_accepted','1');
-  document.getElementById('cookie-banner').classList.add('hidden');
-}
-function showCookieBanner(){
-  if(!localStorage.getItem('cookies_accepted')){
-    document.getElementById('cookie-banner').classList.remove('hidden');
-  }
-}
 document.addEventListener('DOMContentLoaded',()=>{
-document.getElementById('ctxt').addEventListener('keydown',e=>{if(e.ctrlKey&&e.key==='Enter')pub();});});
+  document.getElementById('ctxt').addEventListener('keydown',e=>{if(e.ctrlKey&&e.key==='Enter')pub();});
+});
 </script>
 </body>
 </html>
