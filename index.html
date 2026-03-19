@@ -644,6 +644,25 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
           <button class="btn-save-s" onclick="saveAccount()">Sauvegarder</button>
         </div>
         <div class="settings-section">
+          <div class="settings-title">🔔 Notifications</div>
+          <div class="settings-row">
+            <div><div class="settings-label">Notifications push</div><div class="settings-desc" id="push-status">Chargement...</div></div>
+            <button class="btn-save-s" id="push-toggle-btn" onclick="togglePushNotifs()" style="font-size:13px;padding:8px 14px;">...</button>
+          </div>
+          <div class="settings-row">
+            <div><div class="settings-label">Likes reçus</div><div class="settings-desc">Notif quand quelqu'un aime ton post</div></div>
+            <span style="color:var(--green);font-size:13px;font-weight:600;">✅</span>
+          </div>
+          <div class="settings-row">
+            <div><div class="settings-label">Nouvelles réponses</div><div class="settings-desc">Notif quand quelqu'un répond</div></div>
+            <span style="color:var(--green);font-size:13px;font-weight:600;">✅</span>
+          </div>
+          <div class="settings-row">
+            <div><div class="settings-label">Nouveaux abonnés</div><div class="settings-desc">Notif quand quelqu'un te suit</div></div>
+            <span style="color:var(--green);font-size:13px;font-weight:600;">✅</span>
+          </div>
+        </div>
+        <div class="settings-section">
           <div class="settings-title">Apparence</div>
           <div class="settings-row">
             <div><div class="settings-label">Thème sombre</div><div class="settings-desc">Activé par défaut</div></div>
@@ -981,6 +1000,7 @@ function goPage(page,userId=null){
   else if(page==='notifs'){loadNotifs();markNotifsRead();}
   else if(page==='messages'){showDMList();checkUnreadDMs();}
   else if(page==='stats')loadStats();
+  else if(page==='settings')setTimeout(loadPushSettings,100);
   else if(page==='leaderboard')loadLeaderboard();
   else if(page==='quiz')loadQuiz();
   else if(page==='games')loadGamesHub();
@@ -2465,6 +2485,59 @@ function esc(t){return(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace
 function ago(d){const s=(Date.now()-new Date(d))/1000;if(s<60)return'maintenant';if(s<3600)return Math.floor(s/60)+'m';if(s<86400)return Math.floor(s/3600)+'h';return Math.floor(s/86400)+'j';}
 function toast(m,t=''){const el=document.getElementById('toast');el.textContent=m;el.className=`toast ${t} show`;setTimeout(()=>el.className='toast',3200);}
 // ===== PUSH NOTIFICATIONS =====
+async function loadPushSettings(){
+  const statusEl=document.getElementById('push-status');
+  const btnEl=document.getElementById('push-toggle-btn');
+  if(!statusEl||!btnEl)return;
+  if(!('Notification' in window)){
+    statusEl.textContent='Non supporté par ce navigateur';
+    btnEl.style.display='none';
+    return;
+  }
+  const perm=Notification.permission;
+  if(perm==='granted'){
+    const reg=await navigator.serviceWorker.ready.catch(()=>null);
+    const sub=reg?await reg.pushManager.getSubscription():null;
+    if(sub){
+      statusEl.textContent='Activées ✅';
+      btnEl.textContent='Désactiver';
+      btnEl.style.background='var(--s2)';
+      btnEl.style.border='1px solid var(--border2)';
+      btnEl.style.color='var(--t2)';
+    }else{
+      statusEl.textContent='Permission accordée mais non configurée';
+      btnEl.textContent='Activer';
+    }
+  }else if(perm==='denied'){
+    statusEl.textContent='Bloquées — autorise dans les réglages du navigateur';
+    btnEl.textContent='Bloquées 🚫';
+    btnEl.disabled=true;
+    btnEl.style.opacity='0.5';
+  }else{
+    statusEl.textContent='Non activées';
+    btnEl.textContent='Activer';
+  }
+}
+
+async function togglePushNotifs(){
+  const perm=Notification.permission;
+  if(perm==='granted'){
+    const reg=await navigator.serviceWorker.ready.catch(()=>null);
+    const sub=reg?await reg.pushManager.getSubscription():null;
+    if(sub){
+      await sub.unsubscribe();
+      await sb(`/profiles?id=eq.${me.id}`,{method:'PATCH',tok:me.tok,body:{push_subscription:null}}).catch(()=>{});
+      toast('Notifications désactivées','ok');
+    }else{
+      await registerPush();
+      toast('Notifications activées 🔔','ok');
+    }
+  }else{
+    await registerPush();
+    toast('Notifications activées 🔔','ok');
+  }
+  setTimeout(loadPushSettings,500);
+}
 const VAPID_PUBLIC='BJhjWJmVrNftaV7F_J46gocN76V7qDr2V3omQhLdZdN1zldDDq9RKuhLJSVRDfVJyE85hse0Ee3MHfhBUEPLEDc';
 
 async function registerPush(){
