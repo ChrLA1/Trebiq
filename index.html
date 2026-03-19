@@ -946,6 +946,7 @@ function showApp(){
   document.getElementById('auth').style.display='none';
   document.getElementById('app').style.display='block';
   if(window.innerWidth<=580){document.getElementById('mob-nav').style.display='block';document.getElementById('mob-fab').style.display='flex';}
+  setTimeout(registerPush, 2000);
   updateNavAvatar();
   document.getElementById('nav-n').textContent=(myP?.is_premium?'⭐ ':'')+( myP?.display_name||'Utilisateur');
   document.getElementById('nav-h').textContent='@'+(myP?.username||'...');
@@ -1286,6 +1287,7 @@ async function tl(pid,isLiked){
       const ownerId=posts?.[0]?.user_id;
       if(ownerId&&ownerId!==me.id){
         sb('/notifications',{method:'POST',tok:me.tok,body:{user_id:ownerId,from_user_id:me.id,type:'like'}}).catch(()=>{});
+        sendPushToUser(ownerId,'❤️ Nouveau like',`${myP?.display_name||'Quelqu\'un'} a aimé ton post`).catch(()=>{});
         // Add XP to post owner
         if(ownerId===me.id)addXP(5);
       }
@@ -1338,6 +1340,7 @@ async function sendReply(pid){
     const ownerId=posts?.[0]?.user_id;
     if(ownerId&&ownerId!==me.id){
       sb('/notifications',{method:'POST',tok:me.tok,body:{user_id:ownerId,from_user_id:me.id,type:'reply'}}).catch(()=>{});
+      sendPushToUser(ownerId,'💬 Nouvelle réponse',`${myP?.display_name||'Quelqu\'un'} a répondu à ton post`).catch(()=>{});
       if(ownerId===me.id)addXP(8);
     }
   }catch(e){toast('Erreur réponse','err');}
@@ -2325,6 +2328,7 @@ async function toggleFollow(){
       await sb('/follows',{method:'POST',tok:me.tok,body:{follower_id:me.id,following_id:viewingUserId}});
       btn.classList.add('following');btn.textContent='Abonné ✓';toast('Abonné ! 🎉','ok');
       await sb('/notifications',{method:'POST',tok:me.tok,body:{user_id:viewingUserId,from_user_id:me.id,type:'follow'}});
+      sendPushToUser(viewingUserId,'👥 Nouvel abonné',`${myP?.display_name||'Quelqu\'un'} a commencé à te suivre`).catch(()=>{});
       // If following yourself back or being followed — XP goes to the followed user
       // We add XP to current user when THEY gain a follower (tracked server-side would be better, but approximate here)
     }
@@ -2460,6 +2464,52 @@ function iac(){ins('@askClaude ');}
 function esc(t){return(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function ago(d){const s=(Date.now()-new Date(d))/1000;if(s<60)return'maintenant';if(s<3600)return Math.floor(s/60)+'m';if(s<86400)return Math.floor(s/3600)+'h';return Math.floor(s/86400)+'j';}
 function toast(m,t=''){const el=document.getElementById('toast');el.textContent=m;el.className=`toast ${t} show`;setTimeout(()=>el.className='toast',3200);}
+// ===== PUSH NOTIFICATIONS =====
+const VAPID_PUBLIC='BJhjWJmVrNftaV7F_J46gocN76V7qDr2V3omQhLdZdN1zldDDq9RKuhLJSVRDfVJyE85hse0Ee3MHfhBUEPLEDc';
+
+async function registerPush(){
+  if(!('serviceWorker' in navigator)||!('PushManager' in window))return;
+  try{
+    const reg=await navigator.serviceWorker.register('/service-worker.js');
+    const perm=await Notification.requestPermission();
+    if(perm!=='granted')return;
+    const existing=await reg.pushManager.getSubscription();
+    if(existing)return storePushSub(existing);
+    const sub=await reg.pushManager.subscribe({
+      userVisibleOnly:true,
+      applicationServerKey:urlBase64ToUint8Array(VAPID_PUBLIC)
+    });
+    await storePushSub(sub);
+  }catch(e){console.log('Push registration failed:',e);}
+}
+
+async function storePushSub(sub){
+  try{
+    await sb(`/profiles?id=eq.${me.id}`,{method:'PATCH',tok:me.tok,body:{push_subscription:JSON.stringify(sub)}});
+  }catch(e){}
+}
+
+async function sendPushToUser(userId, title, body){
+  try{
+    const profs=await sb(`/profiles?id=eq.${userId}&select=push_subscription`,{tok:me.tok});
+    const subStr=profs?.[0]?.push_subscription;
+    if(!subStr)return;
+    const sub=JSON.parse(subStr);
+    await fetch('/api/push',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({subscription:sub,title,body,url:'/'})
+    });
+  }catch(e){}
+}
+
+function urlBase64ToUint8Array(base64String){
+  const padding='='.repeat((4-base64String.length%4)%4);
+  const base64=(base64String+padding).replace(/-/g,'+').replace(/_/g,'/');
+  const rawData=window.atob(base64);
+  const outputArray=new Uint8Array(rawData.length);
+  for(let i=0;i<rawData.length;++i)outputArray[i]=rawData.charCodeAt(i);
+  return outputArray;
+}
+
 document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('ctxt').addEventListener('keydown',e=>{if(e.ctrlKey&&e.key==='Enter')pub();});
 });
