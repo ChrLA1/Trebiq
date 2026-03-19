@@ -427,18 +427,15 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 
 
 @media(max-width:580px){}
-.mob-more-menu{display:none;position:fixed;bottom:65px;left:0;right:0;background:rgba(12,12,18,0.98);border-top:1px solid var(--border);backdrop-filter:blur(18px);z-index:49;padding:16px;}
-.mob-more-menu.open{display:block;}
-.mob-more-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
-.mob-more-btn{display:flex;flex-direction:column;align-items:center;gap:6px;background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:14px 8px;font-size:22px;color:var(--text);cursor:pointer;font-family:'DM Sans',sans-serif;}
-.mob-more-btn span{font-size:11px;color:var(--t2);}
-.mob-more-btn.danger span{color:#f87171;}
-.mb-lbl{display:block;font-size:10px;color:var(--t3);margin-top:2px;font-family:'DM Sans',sans-serif;font-weight:500;}
-.mb.on .mb-lbl{color:var(--accent2);}
-.mnav{display:none;position:fixed;bottom:0;left:0;right:0;background:rgba(12,12,18,0.95);border-top:1px solid var(--border);backdrop-filter:blur(18px);z-index:50;padding:6px 0;}
-.mitems{display:flex;justify-content:space-around;}
-.mb{background:none;border:none;color:var(--t3);font-size:22px;cursor:pointer;padding:10px 14px;border-radius:10px;transition:color .2s;position:relative;}
-.mb.on{color:var(--accent2);}
+.drawer-item{background:none;border:none;color:var(--text);font-size:16px;font-weight:500;padding:14px 8px;text-align:left;cursor:pointer;border-radius:12px;transition:background .15s;font-family:'DM Sans',sans-serif;width:100%;}
+.drawer-item:hover{background:var(--s1);}
+.drawer-item.danger{color:#f87171;}
+.mb-lbl{display:none;}
+.mnav{display:none;position:fixed;bottom:0;left:0;right:0;background:rgba(5,5,8,0.96);border-top:1px solid rgba(255,255,255,0.06);backdrop-filter:blur(20px);z-index:50;padding:8px 0 calc(8px + env(safe-area-inset-bottom));}
+.mitems{display:flex;justify-content:space-around;align-items:center;}
+.mb{background:none;border:none;color:var(--t3);font-size:24px;cursor:pointer;padding:10px 16px;border-radius:12px;transition:all .15s;position:relative;display:flex;align-items:center;justify-content:center;}
+.mb.on{color:var(--white);}
+.mb:active{transform:scale(0.88);}
 .mb-badge{position:absolute;top:6px;right:8px;background:var(--red);color:#fff;border-radius:50%;width:14px;height:14px;font-size:9px;font-weight:700;display:none;align-items:center;justify-content:center;}
 .mb-badge.show{display:flex;}
 .mfab{position:fixed;bottom:76px;right:20px;width:50px;height:50px;background:linear-gradient(135deg,var(--accent),#9b87ff);border:none;border-radius:50%;font-size:22px;color:#fff;cursor:pointer;box-shadow:0 4px 20px var(--ag);z-index:50;display:none;align-items:center;justify-content:center;}
@@ -790,23 +787,55 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 
 <div class="mnav" id="mob-nav" style="display:none">
   <div class="mitems">
-    <button class="mb on" id="mob-home" onclick="goPage('home')">🏠<span class="mb-lbl">Accueil</span></button>
-    <button class="mb" id="mob-explore" onclick="goPage('explore')">🔍<span class="mb-lbl">Explorer</span></button>
-    <button class="mb" id="mob-notifs" onclick="goPage('notifs')">🔔<span class="mb-badge" id="mob-notif-badge"></span><span class="mb-lbl">Notifs</span></button>
-    <button class="mb" id="mob-messages" onclick="goPage('messages')">💬<span class="mb-badge" id="mob-dm-badge"></span><span class="mb-lbl">Messages</span></button>
-    <button class="mb" id="mob-profile" onclick="goPage('profile')">👤<span class="mb-lbl">Profil</span></button>
-    <button class="mb" id="mob-more" onclick="toggleMobMore()">⋯<span class="mb-lbl">Plus</span></button>
+    <button class="mb on" id="mob-home" onclick="goPage('home')">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H5a1 1 0 01-1-1V9.5z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 21V12h6v9" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+      <span class="mb-badge" style="display:none"></span>
+    </button>
+    <button class="mb" id="mob-explore" onclick="goPage('explore')">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="M20 20l-3-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    </button>
+    <button class="mb" id="mob-notifs" onclick="goPage('notifs')">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span class="mb-badge" id="mob-notif-badge"></span>
+    </button>
+    <button class="mb" id="mob-messages" onclick="goPage('messages')">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+      <span class="mb-badge" id="mob-dm-badge"></span>
+    </button>
+    <button class="mb" id="mob-drawer" onclick="openDrawer()">
+      <div id="mob-av" style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;overflow:hidden;border:2px solid transparent;transition:border-color .2s;"></div>
+    </button>
   </div>
 </div>
-<div class="mob-more-menu" id="mob-more-menu" style="display:none">
-  <div class="mob-more-grid">
-    <button class="mob-more-btn" onclick="goPage('stats');toggleMobMore()">📊<span>Stats</span></button>
-    <button class="mob-more-btn" onclick="goPage('leaderboard');toggleMobMore()">🏆<span>Classement</span></button>
-    <button class="mob-more-btn" onclick="goPage('quiz');toggleMobMore()">🧠<span>Quizz</span></button>
-    <button class="mob-more-btn" onclick="goPage('games');toggleMobMore()">🎮<span>Jeux</span></button>
-    <button class="mob-more-btn" onclick="window.open('/legal','_blank');toggleMobMore()">📄<span>Légal</span></button>
-    <button class="mob-more-btn danger" onclick="logout();toggleMobMore()">🚪<span>Déconnexion</span></button>
+<!-- Side Drawer -->
+<div id="drawer-overlay" onclick="closeDrawer()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:90;backdrop-filter:blur(2px);"></div>
+<div id="side-drawer" style="display:none;position:fixed;top:0;left:0;bottom:0;width:80%;max-width:300px;background:var(--bg);z-index:91;padding:48px 20px 40px;flex-direction:column;overflow-y:auto;transform:translateX(-100%);transition:transform .25s ease;">
+  <!-- Avatar + name -->
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
+    <div id="drawer-av" style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#fff;overflow:hidden;flex-shrink:0;"></div>
+    <div>
+      <div id="drawer-name" style="font-size:16px;font-weight:700;color:var(--white);"></div>
+      <div id="drawer-handle" style="font-size:13px;color:var(--t3);"></div>
+    </div>
   </div>
+  <!-- Followers -->
+  <div style="display:flex;gap:16px;margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid var(--border);">
+    <span id="drawer-following" style="font-size:13px;color:var(--t2);cursor:pointer;" onclick="closeDrawer();goPage('profile')"><strong style="color:var(--white)">-</strong> abonnements</span>
+    <span id="drawer-followers" style="font-size:13px;color:var(--t2);cursor:pointer;" onclick="closeDrawer();goPage('profile')"><strong style="color:var(--white)">-</strong> abonnés</span>
+  </div>
+  <!-- Nav items -->
+  <div style="display:flex;flex-direction:column;gap:4px;">
+    <button class="drawer-item" onclick="closeDrawer();goPage('profile')">👤 Profil</button>
+    <button class="drawer-item" onclick="closeDrawer();goPage('stats')">📊 Statistiques</button>
+    <button class="drawer-item" onclick="closeDrawer();goPage('leaderboard')">🏆 Classement</button>
+    <button class="drawer-item" onclick="closeDrawer();goPage('quiz')">🧠 Quizz du jour</button>
+    <button class="drawer-item" onclick="closeDrawer();goPage('games')">🎮 Mini-jeux</button>
+    <button class="drawer-item" onclick="window.open('/legal','_blank')">📄 Mentions légales</button>
+    <div style="height:1px;background:var(--border);margin:12px 0;"></div>
+    <button class="drawer-item danger" onclick="logout()">🚪 Se déconnecter</button>
+  </div>
+  <!-- XP bar -->
+  <div style="margin-top:auto;padding-top:24px;" id="drawer-xp"></div>
 </div>
 <button class="mfab" id="mob-fab" onclick="fc()" style="display:none">✏️</button>
 <div class="toast" id="toast"></div>
@@ -929,7 +958,10 @@ function showApp(){
 function updateNavAvatar(){
   const i=(myP?.display_name||'U')[0].toUpperCase();
   const url=myP?.avatar_url;
-  ['nav-av','cav'].forEach(id=>{const el=document.getElementById(id);el.innerHTML=url?`<img src="${url}" alt="">`:`${i}`;});
+  ['nav-av','cav'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=url?`<img src="${url}" alt="">`:`${i}`;});
+  // Update mobile avatar in nav
+  const mobAv=document.getElementById('mob-av');
+  if(mobAv)mobAv.innerHTML=url?`<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:`${i}`;
 }
 function goPage(page,userId=null){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
@@ -959,13 +991,32 @@ function goPage(page,userId=null){
     loadProfile(viewingUserId);
   }
 }
-function toggleMobMore(){
-  const m=document.getElementById('mob-more-menu');
-  if(m.style.display==='none'||m.style.display===''){
-    m.style.display='block';
-  } else {
-    m.style.display='none';
-  }
+function openDrawer(){
+  const d=document.getElementById('side-drawer');
+  const o=document.getElementById('drawer-overlay');
+  d.style.display='flex';
+  o.style.display='block';
+  setTimeout(()=>d.style.transform='translateX(0)',10);
+  // Fill drawer info
+  const ini=(myP?.display_name||'U')[0].toUpperCase();
+  const av=document.getElementById('drawer-av');
+  av.innerHTML=myP?.avatar_url?`<img src="${myP.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:`${ini}`;
+  document.getElementById('drawer-name').textContent=myP?.display_name||'Utilisateur';
+  document.getElementById('drawer-handle').textContent='@'+(myP?.username||'...');
+  document.getElementById('drawer-xp').innerHTML=renderLevelBar(myP?.xp||0);
+  // Load follow counts
+  fetch(`${SU}/rest/v1/follows?following_id=eq.${me.id}&select=id`,{headers:{'apikey':SK,'Authorization':`Bearer ${me.tok}`,'Prefer':'count=exact'}})
+    .then(r=>r.headers.get('content-range')?.split('/')[1]||'0')
+    .then(n=>document.getElementById('drawer-followers').innerHTML=`<strong style="color:var(--white)">${n}</strong> abonnés`);
+  fetch(`${SU}/rest/v1/follows?follower_id=eq.${me.id}&select=id`,{headers:{'apikey':SK,'Authorization':`Bearer ${me.tok}`,'Prefer':'count=exact'}})
+    .then(r=>r.headers.get('content-range')?.split('/')[1]||'0')
+    .then(n=>document.getElementById('drawer-following').innerHTML=`<strong style="color:var(--white)">${n}</strong> abonnements`);
+}
+function closeDrawer(){
+  const d=document.getElementById('side-drawer');
+  const o=document.getElementById('drawer-overlay');
+  d.style.transform='translateX(-100%)';
+  setTimeout(()=>{d.style.display='none';o.style.display='none';},250);
 }
 function goBack(){if(historyStack.length>0){const prev=historyStack.pop();goPage(prev);}else goPage('home');}
 function goUserProfile(uid){historyStack.push(curPage);goPage('profile',uid);}
