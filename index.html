@@ -810,8 +810,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 </div>
 
 <!-- Menu mobile "Plus" -->
-<div id="mob-menu-overlay" onclick="closeMobMenu()" style="display:none;position:fixed;inset:0;z-index:60;"></div>
-<div id="mob-menu" style="display:none;position:fixed;bottom:65px;left:0;right:0;background:var(--s1);border-top:1px solid var(--border);border-radius:20px 20px 0 0;z-index:61;padding:12px 0 20px;transform:translateY(100%);transition:transform .25s ease;">
+<div id="mob-menu-overlay" onclick="closeMobMenu()" style="display:none;position:fixed;inset:0;z-index:60;background:rgba(0,0,0,0.3);"></div>
+<div id="mob-menu" style="display:none;position:fixed;bottom:65px;left:0;right:0;background:var(--s1);border-top:1px solid var(--border);border-radius:20px 20px 0 0;z-index:61;padding:12px 0 20px;">
   <div style="width:40px;height:4px;background:var(--border2);border-radius:2px;margin:0 auto 16px;"></div>
   <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:0 16px 12px;border-bottom:1px solid var(--border);">
     <button class="mob-menu-item" onclick="goPageClose('profile')">
@@ -997,20 +997,18 @@ function goPage(page,userId=null){
 function toggleMobMenu(){
   const m=document.getElementById('mob-menu');
   const o=document.getElementById('mob-menu-overlay');
-  const isOpen=m.style.display==='block';
-  if(isOpen){closeMobMenu();}else{
+  if(m.style.display==='none'||!m.style.display){
     m.style.display='block';
     o.style.display='block';
-    setTimeout(()=>m.style.transform='translateY(0)',10);
     document.getElementById('mob-more-btn').classList.add('on');
+  } else {
+    closeMobMenu();
   }
 }
 function closeMobMenu(){
-  const m=document.getElementById('mob-menu');
-  const o=document.getElementById('mob-menu-overlay');
-  m.style.transform='translateY(100%)';
+  document.getElementById('mob-menu').style.display='none';
+  document.getElementById('mob-menu-overlay').style.display='none';
   document.getElementById('mob-more-btn').classList.remove('on');
-  setTimeout(()=>{m.style.display='none';o.style.display='none';},250);
 }
 function goPageClose(page){
   closeMobMenu();
