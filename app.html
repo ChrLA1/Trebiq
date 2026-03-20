@@ -682,6 +682,35 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
         <div id="quiz-content"><div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div></div>
       </div>
 
+      <div class="page" id="page-notifs">
+        <div class="ptop"><div class="ptitle">Notifications</div></div>
+        <div id="notifs-list"><div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div></div>
+      </div>
+
+      <div class="page" id="page-messages">
+        <div class="ptop"><div class="ptitle">Messages</div></div>
+        <div id="dm-list-wrap" style="display:block">
+          <div style="padding:12px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-weight:700;color:var(--white);">Messages privés</span>
+            <button onclick="openNewDM()" style="background:var(--accent);border:none;border-radius:20px;padding:6px 14px;color:#fff;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;">✏️ Nouveau</button>
+          </div>
+          <div id="dm-list"><div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div></div>
+        </div>
+        <div id="chat-wrap" style="display:none;flex-direction:column;height:calc(100vh - 60px);">
+          <div class="chat-header">
+            <button class="ptop-back" onclick="backToDMList()">←</button>
+            <div class="chat-name" id="chat-name">Chat</div>
+          </div>
+          <div class="chat-msgs" id="chat-msgs"></div>
+          <div class="chat-input-wrap">
+            <button class="ctool" onclick="document.getElementById('dm-img-file').click()" title="Image" style="flex-shrink:0;font-size:18px;">🖼️</button>
+            <input type="file" id="dm-img-file" accept="image/*" style="display:none" onchange="sendDMImg(event)">
+            <input class="chat-input" id="chat-input" placeholder="Envoyer un message..." onkeydown="if(event.key==='Enter')sendMsg()">
+            <button class="chat-send" id="chat-send-btn" onclick="sendMsg()">➤</button>
+          </div>
+        </div>
+      </div>
+
       <div class="page" id="page-settings">
         <div class="ptop"><div class="ptitle">Paramètres</div></div>
         <div class="settings-section">
