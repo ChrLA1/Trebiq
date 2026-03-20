@@ -2295,7 +2295,22 @@ function spdSpawnTarget(){
 }
 
 // ===== QUIZ =====
-const QUIZ_THEMES=['Culture générale','Histoire','Sciences','Technologie','Géographie','Sport','Cinéma','Musique','Nature','Mathématiques'];
+const QUIZ_THEMES=[
+  'Histoire ancienne','Histoire moderne','Histoire de France','Révolutions et guerres mondiales',
+  'Sciences physiques','Chimie','Biologie et corps humain','Astronomie et espace',
+  'Géographie mondiale','Capitales du monde','Géographie de France','Océans et mers',
+  'Cinéma français','Cinéma international','Séries TV','Musique et artistes','Jeux vidéo',
+  'Art et peinture','Architecture','BD et manga',
+  'Football','Sport et champions','Jeux olympiques',
+  'Cuisine française','Gastronomie mondiale','Vins et fromages',
+  'Technologie et informatique','Intelligence artificielle','Internet',
+  'Animaux et nature','Environnement et écologie','Plantes et jardins',
+  'Littérature française','Littérature mondiale','Mythologie grecque et romaine',
+  'Philosophie','Psychologie','Langues et linguistique',
+  'Économie et finance','Politique mondiale','Droit et justice',
+  'Inventions et découvertes','Transport et voyages','Mode et design',
+  'Culture pop','Religions du monde','Mathématiques','Médecine et santé'
+];
 
 async function loadQuiz(){
   const c=document.getElementById('quiz-content');
@@ -2323,10 +2338,18 @@ async function loadQuiz(){
   }
 
   // Generate quiz with Claude
-  const theme=QUIZ_THEMES[new Date().getDay()%QUIZ_THEMES.length];
+  // Anti-repetition: avoid last 7 themes
+  const usedThemesKey='quiz_used_themes_'+me.id;
+  const usedThemes=JSON.parse(localStorage.getItem(usedThemesKey)||'[]');
+  const availableThemes=QUIZ_THEMES.filter(t=>!usedThemes.includes(t));
+  const themePool=availableThemes.length>0?availableThemes:QUIZ_THEMES;
+  const dateSeed=parseInt(today.replace(/-/g,''))%themePool.length;
+  const theme=themePool[dateSeed];
+  const newUsed=[...usedThemes,theme].slice(-7);
+  localStorage.setItem(usedThemesKey,JSON.stringify(newUsed));
   try{
     const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({message:`Génère un quizz de culture générale sur le thème "${theme}". Réponds UNIQUEMENT en JSON valide (sans markdown) avec ce format exact: {"question":"...","options":["A. ...","B. ...","C. ...","D. ..."],"correct":0,"explanation":"..."}. correct est l'index (0-3) de la bonne réponse.`})
+      body:JSON.stringify({message:`Génère une question de quizz originale et précise sur le thème "${theme}". La question doit être intéressante et porter sur un fait précis. Réponds UNIQUEMENT en JSON valide (sans markdown) avec ce format exact: {"question":"...","options":["A. ...","B. ...","C. ...","D. ..."],"correct":0,"explanation":"..."} correct est l\'index (0-3) de la bonne réponse. Sois créatif et varie les types de questions.`})
     });
     const d=await r.json();
     let quiz;
