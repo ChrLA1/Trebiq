@@ -1365,6 +1365,22 @@ async function pub(){
   try{
     let image_url=null;
     if(postImgFile){toast('Upload...','');image_url=await uploadPostImg();}
+    // Check rate limit - 20 posts/hour
+    const hourBucket=new Date();hourBucket.setMinutes(0,0,0);
+    const bucketStr=hourBucket.toISOString();
+    const rl=await sb(`/post_rate_limit?user_id=eq.${me.id}&hour_bucket=eq.${bucketStr}`,{tok:me.tok});
+    const hourCount=rl?.[0]?.count||0;
+    if(hourCount>=20){
+      toast('Limite de 20 posts/heure atteinte ! Réessaie dans un peu ⏳','err');
+      btn.disabled=false;btn.textContent='Publier';
+      return;
+    }
+    // Increment rate limit counter
+    if(rl?.length){
+      await sb(`/post_rate_limit?user_id=eq.${me.id}&hour_bucket=eq.${bucketStr}`,{method:'PATCH',tok:me.tok,body:{count:hourCount+1}});
+    }else{
+      await sb('/post_rate_limit',{method:'POST',tok:me.tok,body:{user_id:me.id,hour_bucket:bucketStr,count:1}});
+    }
     const postBody={user_id:me.id,content:content||''};
     if(image_url)postBody.image_url=image_url;
     const posts=await sb('/posts',{method:'POST',tok:me.tok,body:postBody});
