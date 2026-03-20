@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trebiq — Le réseau social propulsé par l'IA</title>
+<meta name="description" content="Trebiq est le premier réseau social propulsé par l'IA. Publie, connecte-toi, joue et explore avec l'aide de Claude.">
+<meta name="theme-color" content="#050508">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#050508;--s1:#0c0c12;--s2:#13131c;--border:#1f1f2e;
+  --accent:#7c6af7;--accent2:#b8b0ff;--ag:rgba(124,106,247,0.15);
+  --text:#ddddf0;--t2:#9898b8;--t3:#5a5a78;--white:#fff;
+  --green:#34d399;--gold:#f59e0b;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;overflow-x:hidden;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 40px;display:flex;align-items:center;justify-content:space-between;background:rgba(5,5,8,0.7);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.04);}
+.nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-brand svg{flex-shrink:0;}
+.nav-brand-name{font-family:'Instrument Serif',serif;font-size:22px;color:var(--white);letter-spacing:-.5px;}
+.nav-brand-name em{color:var(--accent2);font-style:italic;}
+.nav-btns{display:flex;gap:10px;align-items:center;}
+.btn-login{background:transparent;border:1px solid var(--border);border-radius:20px;padding:8px 20px;color:var(--t2);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;text-decoration:none;transition:all .2s;}
+.btn-login:hover{border-color:var(--accent);color:var(--white);}
+.btn-signup{background:linear-gradient(135deg,var(--accent),#9b87ff);border:none;border-radius:20px;padding:8px 20px;color:#fff;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;text-decoration:none;transition:all .2s;}
+.btn-signup:hover{transform:translateY(-1px);box-shadow:0 6px 24px var(--ag);}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:120px 20px 80px;position:relative;overflow:hidden;}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(124,106,247,0.12) 0%,transparent 70%);pointer-events:none;}
+.hero-orb{position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(124,106,247,0.08),transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);animation:pulse 6s ease-in-out infinite;}
+@keyframes pulse{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.6;}50%{transform:translate(-50%,-50%) scale(1.1);opacity:1;}}
+.hero-content{position:relative;z-index:1;max-width:780px;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(124,106,247,0.1);border:1px solid rgba(124,106,247,0.25);border-radius:20px;padding:6px 16px;font-size:13px;color:var(--accent2);font-weight:600;margin-bottom:28px;animation:fadeUp .8s ease both;}
+.hero-title{font-family:'Instrument Serif',serif;font-size:clamp(48px,8vw,88px);color:var(--white);line-height:1.05;letter-spacing:-2px;margin-bottom:24px;animation:fadeUp .8s .1s ease both;}
+.hero-title em{color:var(--accent2);font-style:italic;}
+.hero-sub{font-size:clamp(16px,2.5vw,20px);color:var(--t2);line-height:1.7;max-width:560px;margin:0 auto 40px;animation:fadeUp .8s .2s ease both;}
+.hero-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;animation:fadeUp .8s .3s ease both;}
+.btn-hero{background:linear-gradient(135deg,var(--accent),#9b87ff);border:none;border-radius:14px;padding:16px 36px;color:#fff;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:700;cursor:pointer;text-decoration:none;transition:all .25s;display:inline-block;}
+.btn-hero:hover{transform:translateY(-2px);box-shadow:0 12px 40px var(--ag);}
+.btn-hero-ghost{background:transparent;border:1px solid var(--border);border-radius:14px;padding:16px 36px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;cursor:pointer;text-decoration:none;transition:all .25s;display:inline-block;}
+.btn-hero-ghost:hover{border-color:var(--accent);color:var(--white);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+
+/* MOCKUP */
+.mockup-section{padding:0 20px 100px;display:flex;justify-content:center;}
+.mockup{max-width:380px;width:100%;background:var(--s1);border:1px solid var(--border);border-radius:28px;overflow:hidden;box-shadow:0 40px 120px rgba(0,0,0,0.6);animation:fadeUp .8s .4s ease both;}
+.mockup-bar{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.mockup-title{font-size:16px;font-weight:700;color:var(--white);}
+.mockup-post{padding:16px 20px;border-bottom:1px solid var(--border);}
+.mockup-post-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.mockup-av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));flex-shrink:0;}
+.mockup-av2{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#ef4444);flex-shrink:0;}
+.mockup-av3{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#34d399,#3b82f6);flex-shrink:0;}
+.mockup-username{font-size:14px;font-weight:700;color:var(--white);}
+.mockup-handle{font-size:12px;color:var(--t3);}
+.mockup-text{font-size:14px;color:var(--text);line-height:1.6;}
+.mockup-mention{color:var(--accent2);font-weight:500;}
+.mockup-ai{margin-top:10px;padding:10px 14px;background:rgba(52,211,153,0.06);border:1px solid rgba(52,211,153,0.15);border-radius:12px;font-size:13px;color:#a8dfc8;line-height:1.5;}
+.mockup-ai-label{font-size:11px;font-weight:700;color:var(--green);font-family:monospace;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;}
+.mockup-actions{display:flex;gap:16px;margin-top:12px;}
+.mockup-action{font-size:12px;color:var(--t3);}
+
+/* FEATURES */
+.features{padding:80px 20px;max-width:1100px;margin:0 auto;}
+.section-label{font-size:12px;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:2px;text-align:center;margin-bottom:16px;}
+.section-title{font-family:'Instrument Serif',serif;font-size:clamp(32px,5vw,52px);color:var(--white);text-align:center;letter-spacing:-1px;margin-bottom:60px;line-height:1.1;}
+.section-title em{color:var(--accent2);font-style:italic;}
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.feature-card{background:var(--s1);border:1px solid var(--border);border-radius:20px;padding:28px;transition:all .25s;position:relative;overflow:hidden;}
+.feature-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at top left,var(--ag),transparent 60%);opacity:0;transition:opacity .3s;}
+.feature-card:hover{border-color:rgba(124,106,247,0.3);transform:translateY(-3px);}
+.feature-card:hover::before{opacity:1;}
+.feature-ico{font-size:32px;margin-bottom:16px;display:block;}
+.feature-title{font-size:17px;font-weight:700;color:var(--white);margin-bottom:8px;}
+.feature-desc{font-size:14px;color:var(--t2);line-height:1.7;}
+
+/* STATS */
+.stats{padding:80px 20px;background:var(--s1);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.stats-inner{max-width:900px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:32px;text-align:center;}
+.stat-num{font-family:'Instrument Serif',serif;font-size:48px;color:var(--white);letter-spacing:-2px;}
+.stat-num em{color:var(--accent2);font-style:normal;}
+.stat-label{font-size:14px;color:var(--t3);margin-top:4px;}
+
+/* PREMIUM */
+.premium{padding:80px 20px;max-width:900px;margin:0 auto;}
+.premium-card{background:linear-gradient(135deg,rgba(124,106,247,0.12),rgba(184,176,255,0.06));border:1px solid rgba(124,106,247,0.25);border-radius:28px;padding:48px;text-align:center;position:relative;overflow:hidden;}
+.premium-card::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle,rgba(124,106,247,0.06),transparent 60%);animation:pulse 8s ease-in-out infinite;}
+.premium-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.3);border-radius:20px;padding:6px 16px;font-size:13px;color:var(--gold);font-weight:700;margin-bottom:24px;}
+.premium-title{font-family:'Instrument Serif',serif;font-size:clamp(28px,4vw,44px);color:var(--white);letter-spacing:-1px;margin-bottom:16px;}
+.premium-price{font-size:52px;font-weight:800;color:var(--white);margin-bottom:8px;font-family:'Instrument Serif',serif;}
+.premium-price span{font-size:20px;color:var(--t2);font-weight:400;}
+.premium-desc{font-size:16px;color:var(--t2);margin-bottom:32px;}
+.premium-features{display:flex;flex-direction:column;gap:12px;margin-bottom:36px;text-align:left;max-width:360px;margin-left:auto;margin-right:auto;}
+.premium-feat{display:flex;align-items:center;gap:12px;font-size:15px;color:var(--text);}
+.premium-feat-ico{color:var(--green);font-size:16px;flex-shrink:0;}
+
+/* FOOTER */
+footer{padding:48px 40px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;}
+.footer-brand{font-family:'Instrument Serif',serif;font-size:20px;color:var(--white);}
+.footer-brand em{color:var(--accent2);font-style:italic;}
+.footer-links{display:flex;gap:24px;}
+.footer-links a{font-size:14px;color:var(--t3);text-decoration:none;transition:color .2s;}
+.footer-links a:hover{color:var(--text);}
+.footer-copy{font-size:13px;color:var(--t3);}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  nav{padding:14px 20px;}
+  .features-grid{grid-template-columns:1fr;}
+  .stats-inner{grid-template-columns:repeat(2,1fr);}
+  footer{flex-direction:column;align-items:flex-start;padding:32px 20px;}
+}
+@media(max-width:480px){
+  .hero-actions{flex-direction:column;align-items:center;}
+  .btn-hero,.btn-hero-ghost{width:100%;text-align:center;}
+  .stats-inner{grid-template-columns:repeat(2,1fr);gap:20px;}
+  .stat-num{font-size:36px;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="/" class="nav-brand">
+    <svg width="32" height="32" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+      <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7c6af7"/><stop offset="100%" stop-color="#b8b0ff"/></linearGradient></defs>
+      <rect width="120" height="120" rx="28" fill="url(#lg)"/>
+      <rect x="28" y="26" width="64" height="12" rx="5" fill="#fff" opacity="0.95"/>
+      <rect x="53" y="38" width="14" height="52" rx="5" fill="#fff" opacity="0.95"/>
+      <circle cx="106" cy="108" r="4" fill="#fff" opacity="0.9"/>
+      <path d="M97 100 Q106 92 115 100" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+      <path d="M91 94 Q106 82 121 94" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" opacity="0.45"/>
+    </svg>
+    <span class="nav-brand-name">Tre<em>biq</em></span>
+  </a>
+  <div class="nav-btns">
+    <a href="/index.html" class="btn-login">Connexion</a>
+    <a href="/index.html" class="btn-signup">S'inscrire</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-orb"></div>
+  <div class="hero-content">
+    <div class="hero-badge">🤖 Propulsé par Claude AI</div>
+    <h1 class="hero-title">Le réseau social<br>qui pense avec <em>toi</em></h1>
+    <p class="hero-sub">Publie, connecte-toi, joue et explore — avec l'intelligence artificielle intégrée à chaque interaction.</p>
+    <div class="hero-actions">
+      <a href="/index.html" class="btn-hero">Rejoindre Trebiq gratuitement</a>
+      <a href="#features" class="btn-hero-ghost">Découvrir →</a>
+    </div>
+  </div>
+</section>
+
+<!-- MOCKUP -->
+<div class="mockup-section">
+  <div class="mockup">
+    <div class="mockup-bar">
+      <span class="mockup-title">Accueil</span>
+      <span style="font-size:13px;color:var(--t3)">Pour toi · Abonnements</span>
+    </div>
+    <div class="mockup-post">
+      <div class="mockup-post-header">
+        <div class="mockup-av"></div>
+        <div><div class="mockup-username">Marie L.</div><div class="mockup-handle">@marie · 2m</div></div>
+      </div>
+      <div class="mockup-text"><span class="mockup-mention">@askClaude</span> explique-moi la relativité en 2 phrases</div>
+      <div class="mockup-ai">
+        <div class="mockup-ai-label">✦ askClaude</div>
+        Le temps s'écoule plus lentement quand on se déplace vite ou qu'on est proche d'une masse. Einstein a montré que l'espace et le temps sont liés et flexibles.
+      </div>
+      <div class="mockup-actions">
+        <span class="mockup-action">❤️ 24</span>
+        <span class="mockup-action">💬 8</span>
+        <span class="mockup-action">🔁 5</span>
+      </div>
+    </div>
+    <div class="mockup-post">
+      <div class="mockup-post-header">
+        <div class="mockup-av2"></div>
+        <div><div class="mockup-username">Alex K.</div><div class="mockup-handle">@alexk · 8m</div></div>
+      </div>
+      <div class="mockup-text">Viens de finir le quizz du jour 🧠 Score parfait ! #Challenge #Trebiq</div>
+      <div class="mockup-actions">
+        <span class="mockup-action">❤️ 12</span>
+        <span class="mockup-action">💬 3</span>
+        <span class="mockup-action">🔁 2</span>
+      </div>
+    </div>
+    <div class="mockup-post" style="border-bottom:none">
+      <div class="mockup-post-header">
+        <div class="mockup-av3"></div>
+        <div><div class="mockup-username">Sam R.</div><div class="mockup-handle">@samr · 15m</div></div>
+      </div>
+      <div class="mockup-text">Niveau 4 atteint 💎 Merci à tous pour les likes ! #XP #Trebiq</div>
+      <div class="mockup-actions">
+        <span class="mockup-action">❤️ 47</span>
+        <span class="mockup-action">💬 14</span>
+        <span class="mockup-action">🔁 9</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="section-label">Fonctionnalités</div>
+  <h2 class="section-title">Tout ce que tu aimes,<br><em>amplified</em> par l'IA</h2>
+  <div class="features-grid">
+    <div class="feature-card">
+      <span class="feature-ico">🤖</span>
+      <div class="feature-title">@askClaude intégré</div>
+      <div class="feature-desc">Mentionne @askClaude dans n'importe quel post pour obtenir une réponse IA instantanée. Explications, idées, créativité — l'IA répond directement dans le fil.</div>
+    </div>
+    <div class="feature-card">
+      <span class="feature-ico">🏆</span>
+      <div class="feature-title">Système XP & Niveaux</div>
+      <div class="feature-desc">Gagne de l'XP en publiant, recevant des likes et des réponses. Monte jusqu'au niveau Légende et débloque des récompenses exclusives.</div>
+    </div>
+    <div class="feature-card">
+      <span class="feature-ico">🧠</span>
+      <div class="feature-title">Quizz IA quotidien</div>
+      <div class="feature-desc">Chaque jour un nouveau quizz généré par l'IA sur un thème différent. Teste tes connaissances et grimpe dans le classement.</div>
+    </div>
+    <div class="feature-card">
+      <span class="feature-ico">🎮</span>
+      <div class="feature-title">Mini-jeux</div>
+      <div class="feature-desc">Wordle en français, Memory et jeu de rapidité — joue chaque jour pour gagner de l'XP et te mesurer aux autres utilisateurs.</div>
+    </div>
+    <div class="feature-card">
+      <span class="feature-ico">🌐</span>
+      <div class="feature-title">Traduction automatique</div>
+      <div class="feature-desc">Un post dans une autre langue ? Clique sur 🌐 pour le traduire instantanément en français grâce à l'IA intégrée.</div>
+    </div>
+    <div class="feature-card">
+      <span class="feature-ico">🔔</span>
+      <div class="feature-title">Notifications push</div>
+      <div class="feature-desc">Reçois des notifications en temps réel quand quelqu'un like ton post, te répond ou te suit. Même sur mobile.</div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="stats">
+  <div class="stats-inner">
+    <div>
+      <div class="stat-num">100<em>%</em></div>
+      <div class="stat-label">Gratuit pour commencer</div>
+    </div>
+    <div>
+      <div class="stat-num">6</div>
+      <div class="stat-label">Niveaux à débloquer</div>
+    </div>
+    <div>
+      <div class="stat-num">8</div>
+      <div class="stat-label">Badges à collecter</div>
+    </div>
+    <div>
+      <div class="stat-num">3</div>
+      <div class="stat-label">Mini-jeux disponibles</div>
+    </div>
+  </div>
+</section>
+
+<!-- PREMIUM -->
+<section class="premium">
+  <div class="premium-card">
+    <div class="premium-badge">⭐ Trebiq Premium</div>
+    <h2 class="premium-title">Débloque toute la puissance de l'IA</h2>
+    <div class="premium-price">5$<span>/mois</span></div>
+    <p class="premium-desc">Accède à @askClaude et toutes les fonctionnalités IA avancées.</p>
+    <div class="premium-features">
+      <div class="premium-feat"><span class="premium-feat-ico">✅</span> @askClaude — 15 appels/jour</div>
+      <div class="premium-feat"><span class="premium-feat-ico">✅</span> Badge Premium ⭐ sur ton profil</div>
+      <div class="premium-feat"><span class="premium-feat-ico">✅</span> Réponses IA sur tous tes posts</div>
+      <div class="premium-feat"><span class="premium-feat-ico">✅</span> Accès prioritaire aux nouvelles fonctionnalités</div>
+      <div class="premium-feat"><span class="premium-feat-ico">✅</span> Annulable à tout moment</div>
+    </div>
+    <a href="/index.html" class="btn-hero" style="display:inline-block;">Commencer gratuitement →</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">Tre<em>biq</em></div>
+  <div class="footer-links">
+    <a href="/legal.html">Mentions légales</a>
+    <a href="/legal.html">CGU</a>
+    <a href="/legal.html">Confidentialité</a>
+    <a href="mailto:contact@trebiq.app">Contact</a>
+  </div>
+  <div class="footer-copy">© 2025 Trebiq. Tous droits réservés.</div>
+</footer>
+
+</body>
+</html>
