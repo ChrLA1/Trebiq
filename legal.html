@@ -4,211 +4,218 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Trebiq — Mentions légales & CGU</title>
-<meta name="theme-color" content="#050508">
+<meta name="robots" content="index,follow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#050508;--s1:#0c0c12;--s2:#13131c;--border:#1f1f2e;--accent:#7c6af7;--accent2:#b8b0ff;--text:#ddddf0;--t2:#9898b8;--t3:#5a5a78;--white:#fff;--green:#34d399;}
+:root{--bg:#050508;--s1:#0c0c12;--s2:#13131c;--border:#1f1f2e;--accent:#7c6af7;--accent2:#b8b0ff;--text:#ddddf0;--t2:#9898b8;--t3:#5a5a78;--white:#fff;--red:#f87171;}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased;}
-body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;line-height:1.7;}
-.topbar{max-width:780px;margin:0 auto;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);}
-.brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
-.brand-icon{width:32px;height:32px;flex-shrink:0;}
-.brand-name{font-family:'Instrument Serif',serif;font-size:22px;color:var(--white);letter-spacing:-.5px;}
-.brand-name em{color:var(--accent2);font-style:italic;}
-.back{color:var(--t2);text-decoration:none;font-size:14px;display:flex;align-items:center;gap:6px;transition:color .2s;}
-.back:hover{color:var(--white);}
-.container{max-width:780px;margin:0 auto;padding:40px 20px 80px;}
-.page-title{font-family:'Instrument Serif',serif;font-size:36px;color:var(--white);margin-bottom:8px;letter-spacing:-.5px;}
-.page-sub{font-size:14px;color:var(--t3);margin-bottom:36px;}
-.tabs{display:flex;gap:8px;margin-bottom:32px;flex-wrap:wrap;}
-.tab{padding:8px 18px;border-radius:20px;border:1px solid var(--border);color:var(--t2);font-size:14px;font-weight:500;cursor:pointer;transition:all .2s;background:transparent;}
-.tab.on{background:var(--accent);border-color:var(--accent);color:#fff;}
-.tab:hover:not(.on){border-color:var(--accent);color:var(--accent2);}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
+.topbar{padding:14px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);background:rgba(5,5,8,0.9);backdrop-filter:blur(16px);position:sticky;top:0;z-index:10;}
+.brand{font-family:'Instrument Serif',serif;font-size:20px;color:var(--white);text-decoration:none;letter-spacing:-.5px;}
+.brand em{color:var(--accent2);font-style:italic;}
+.btn-back{background:transparent;border:1px solid var(--border);border-radius:20px;padding:7px 16px;color:var(--t2);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;text-decoration:none;transition:all .2s;}
+.btn-back:hover{color:var(--white);border-color:var(--accent);}
+.container{max-width:780px;margin:0 auto;padding:32px 20px;}
+.tabs{display:flex;gap:6px;margin-bottom:32px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:0;}
+.tab{padding:10px 18px;border-radius:10px 10px 0 0;border:1px solid transparent;color:var(--t2);font-size:14px;font-weight:500;cursor:pointer;transition:all .2s;margin-bottom:-1px;}
+.tab.on{background:var(--s1);border-color:var(--border);border-bottom-color:var(--bg);color:var(--white);font-weight:600;}
+.tab:hover:not(.on){color:var(--text);}
 .section{display:none;}
 .section.on{display:block;}
-h2{font-size:20px;font-weight:700;color:var(--white);margin:32px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--border);}
-h2:first-child{margin-top:0;}
-h3{font-size:16px;font-weight:600;color:var(--accent2);margin:20px 0 8px;}
-p{color:var(--t2);font-size:15px;margin-bottom:12px;}
-ul{color:var(--t2);font-size:15px;margin-bottom:12px;padding-left:20px;}
-li{margin-bottom:6px;}
-strong{color:var(--text);}
-a{color:var(--accent2);text-decoration:none;}
-a:hover{text-decoration:underline;}
-.highlight{background:rgba(124,106,247,0.08);border:1px solid rgba(124,106,247,0.2);border-radius:12px;padding:16px 20px;margin:16px 0;}
-.highlight p{margin:0;color:var(--text);}
-.date{font-size:12px;color:var(--t3);margin-top:40px;padding-top:16px;border-top:1px solid var(--border);}
-.contact-card{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:20px;margin:16px 0;display:flex;align-items:center;gap:14px;}
+h2{font-family:'Instrument Serif',serif;font-size:28px;color:var(--white);letter-spacing:-.5px;margin-bottom:8px;}
+h3{font-size:16px;font-weight:700;color:var(--white);margin:28px 0 10px;}
+h4{font-size:14px;font-weight:600;color:var(--accent2);margin:20px 0 8px;}
+p{font-size:14px;color:var(--t2);line-height:1.8;margin-bottom:12px;}
+ul{margin:8px 0 16px 20px;}
+ul li{font-size:14px;color:var(--t2);line-height:1.8;margin-bottom:4px;}
+.version{font-size:12px;color:var(--t3);margin-bottom:32px;}
+.warning{background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.25);border-radius:12px;padding:14px 18px;margin:24px 0;}
+.warning p{color:#f87171;margin:0;font-size:13px;}
+.contact-card{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:20px;margin:20px 0;display:flex;align-items:center;gap:14px;}
 .contact-ico{font-size:28px;}
-.contact-info{flex:1;}
-.contact-label{font-size:13px;color:var(--t3);margin-bottom:4px;}
-.contact-email{font-size:16px;font-weight:600;color:var(--accent2);}
-@media(max-width:580px){.container{padding:24px 14px 60px;}.page-title{font-size:28px;}.tabs{gap:6px;}.tab{padding:7px 14px;font-size:13px;}}
+.contact-label{font-size:12px;color:var(--t3);margin-bottom:3px;}
+.contact-value{font-size:15px;font-weight:600;color:var(--white);}
+.divider{border:none;border-top:1px solid var(--border);margin:28px 0;}
+@media(max-width:580px){.tabs{gap:4px;}.tab{padding:8px 12px;font-size:13px;}}
 </style>
 </head>
 <body>
+
 <div class="topbar">
-  <a href="/app.html" class="brand">
-    <svg class="brand-icon" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-      <defs><linearGradient id="lg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7c6af7"/><stop offset="100%" stop-color="#b8b0ff"/></linearGradient></defs>
-      <rect width="120" height="120" rx="28" fill="url(#lg1)"/>
-      <rect x="28" y="26" width="64" height="12" rx="5" fill="#fff" opacity="0.95"/>
-      <rect x="53" y="38" width="14" height="52" rx="5" fill="#fff" opacity="0.95"/>
-      <circle cx="106" cy="108" r="4" fill="#fff" opacity="0.9"/>
-      <path d="M97 100 Q106 92 115 100" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
-      <path d="M91 94 Q106 82 121 94" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" opacity="0.45"/>
-    </svg>
-    <span class="brand-name">Tre<em>biq</em></span>
-  </a>
-  <a href="/app.html" class="back">← Retour</a>
+  <a href="/" class="brand">Tre<em>biq</em></a>
+  <a href="/app.html" class="btn-back">← Retour à l'app</a>
 </div>
 
 <div class="container">
-  <div class="page-title">Informations légales</div>
-  <div class="page-sub">Dernière mise à jour : Mars 2025</div>
-
   <div class="tabs">
-    <div class="tab on" onclick="showTab(this,'mentions')">Mentions légales</div>
-    <div class="tab" onclick="showTab(this,'cgu')">CGU</div>
-    <div class="tab" onclick="showTab(this,'privacy')">Confidentialité</div>
-    <div class="tab" onclick="showTab(this,'cookies')">Cookies</div>
+    <div class="tab on" onclick="showTab(this,'mentions')">📋 Mentions légales</div>
+    <div class="tab" onclick="showTab(this,'cgu')">📜 CGU</div>
+    <div class="tab" onclick="showTab(this,'confidentialite')">🔒 Confidentialité</div>
+    <div class="tab" onclick="showTab(this,'cookies')">🍪 Cookies</div>
   </div>
 
   <!-- MENTIONS LÉGALES -->
   <div class="section on" id="tab-mentions">
     <h2>Mentions légales</h2>
+    <p class="version">Version du 20/03/2026</p>
 
+    <p>Conformément aux dispositions de la loi n° 2004-575 du 21 juin 2004 pour la confiance en l'économie numérique (LCEN).</p>
+
+    <h3>Éditeur</h3>
     <div class="contact-card">
       <div class="contact-ico">✉️</div>
-      <div class="contact-info">
-        <div class="contact-label">Nous contacter</div>
-        <a href="/cdn-cgi/l/email-protection#a4c7cbcad0c5c7d0e4d0d6c1c6cdd58ac5d4d4" class="contact-email"><span class="__cf_email__" data-cfemail="096a66677d686a7d497d7b6c6b607827687979">[email&#160;protected]</span></a>
+      <div>
+        <div class="contact-label">Contact</div>
+        <div class="contact-value">contact@trebiq.app</div>
       </div>
     </div>
-
-    <h3>Éditeur du site</h3>
-    <p>Le site <strong>Trebiq</strong> (trebiq.vercel.app) est édité à titre personnel.<br>
-    <strong>Responsable de publication :</strong> L'équipe Trebiq</p>
+    <p>Trebiq est édité à titre personnel. Les informations complètes de l'éditeur (nom, adresse) seront ajoutées avant le lancement officiel, conformément aux obligations légales.</p>
 
     <h3>Hébergement</h3>
-    <p><strong>Vercel Inc.</strong><br>340 Pine Street, Suite 701, San Francisco, CA 94104, USA<br>
-    <a href="https://vercel.com" target="_blank">vercel.com</a></p>
-
-    <h3>Base de données & Authentification</h3>
-    <p><strong>Supabase Inc.</strong><br>
-    <a href="https://supabase.com" target="_blank">supabase.com</a></p>
-
-    <h3>Intelligence Artificielle</h3>
-    <p>Les fonctionnalités IA (@askClaude) sont propulsées par l'<strong>API Claude d'Anthropic</strong>.<br>
-    <a href="https://anthropic.com" target="_blank">anthropic.com</a></p>
+    <ul>
+      <li><strong>Site web :</strong> Vercel Inc., 340 Pine Street Suite 900, San Francisco, CA 94104, États-Unis</li>
+      <li><strong>Base de données :</strong> Supabase Inc. — serveurs localisés en Europe de l'Ouest (Irlande) pour la conformité RGPD</li>
+    </ul>
 
     <h3>Propriété intellectuelle</h3>
-    <p>L'ensemble du contenu de ce site (textes, logos, design) est protégé par le droit d'auteur. Toute reproduction sans autorisation est interdite.</p>
-    <p>Les contenus publiés par les utilisateurs restent leur propriété. En les publiant, ils accordent à Trebiq une licence d'affichage non exclusive.</p>
+    <p>La marque "Trebiq", son logo et l'ensemble des éléments constituant la plateforme sont la propriété exclusive de l'éditeur. Toute reproduction sans autorisation préalable est interdite.</p>
+
+    <h3>Droit applicable</h3>
+    <p>Le présent site est soumis au droit français. En cas de litige, les tribunaux français seront seuls compétents.</p>
   </div>
 
   <!-- CGU -->
   <div class="section" id="tab-cgu">
     <h2>Conditions Générales d'Utilisation</h2>
-    <div class="highlight"><p>En créant un compte sur Trebiq, vous acceptez les présentes CGU dans leur intégralité.</p></div>
+    <p class="version">Version du 20/03/2026 — En utilisant Trebiq, vous acceptez ces conditions.</p>
 
-    <h3>1. Accès au service</h3>
-    <p>Trebiq est accessible à toute personne disposant d'une connexion internet. L'inscription est requise pour accéder à l'ensemble des fonctionnalités. Vous devez avoir <strong>au moins 13 ans</strong> pour créer un compte.</p>
+    <h3>1. Objet</h3>
+    <p>Trebiq est un réseau social en ligne proposant des fonctionnalités de publication de posts, messagerie privée, interactions sociales et fonctionnalités propulsées par l'intelligence artificielle via @askClaude.</p>
 
-    <h3>2. Compte utilisateur</h3>
-    <p>Vous êtes responsable de la confidentialité de vos identifiants. Toute activité effectuée depuis votre compte est sous votre responsabilité. Trebiq se réserve le droit de suspendre ou supprimer tout compte en cas de violation des présentes CGU.</p>
-
-    <h3>3. Contenu publié</h3>
-    <p>Il est strictement interdit de publier :</p>
+    <h3>2. Accès au service</h3>
+    <p>L'accès à Trebiq est gratuit. Certaines fonctionnalités nécessitent un abonnement Premium payant. Pour créer un compte, vous devez :</p>
     <ul>
-      <li>Du contenu illégal, haineux, discriminatoire ou violent</li>
-      <li>Du contenu sexuellement explicite</li>
-      <li>Du spam ou de la publicité non sollicitée</li>
-      <li>Des informations personnelles d'autrui sans consentement</li>
-      <li>Du contenu portant atteinte aux droits d'auteur</li>
+      <li>Être âgé d'au moins <strong>15 ans</strong> (loi française sur la protection des mineurs)</li>
+      <li>Fournir une adresse email valide et une date de naissance exacte</li>
+      <li>Accepter les présentes CGU et la Politique de Confidentialité</li>
+      <li>En créant un compte, vous déclarez sur l'honneur avoir au moins 15 ans</li>
     </ul>
 
-    <h3>4. Fonctionnalité @askClaude (Premium)</h3>
-    <p>L'accès à @askClaude est réservé aux abonnés Premium (<strong>5$/mois</strong>). Les réponses générées par l'IA sont automatiques et ne constituent pas un avis professionnel. Trebiq décline toute responsabilité quant au contenu généré par l'IA.</p>
+    <h3>3. Obligations de l'utilisateur</h3>
+    <p>L'utilisateur s'engage à ne pas :</p>
+    <ul>
+      <li>Publier de contenu illégal, haineux, violent, pornographique ou portant atteinte à la dignité humaine</li>
+      <li>Harceler, menacer ou intimider d'autres utilisateurs</li>
+      <li>Usurper l'identité d'une autre personne</li>
+      <li>Diffuser de fausses informations de manière délibérée</li>
+      <li>Utiliser la plateforme à des fins commerciales non autorisées</li>
+      <li>Tenter de contourner les systèmes de sécurité de la plateforme</li>
+    </ul>
 
-    <h3>5. Abonnement Premium</h3>
-    <p>L'abonnement Premium est facturé mensuellement. Vous pouvez annuler à tout moment. Le remboursement n'est pas garanti pour les périodes déjà facturées.</p>
+    <h3>4. Modération</h3>
+    <p>Trebiq dispose d'un système de modération automatique assisté par intelligence artificielle analysant les contenus avant publication. Les utilisateurs peuvent signaler tout contenu inapproprié. Tout compte recevant 3 signalements ou plus en 24 heures peut être suspendu automatiquement en attente de révision.</p>
 
-    <h3>6. Limitation de responsabilité</h3>
-    <p>Trebiq est un service fourni "tel quel". Nous ne garantissons pas une disponibilité continue du service. Trebiq ne peut être tenu responsable des contenus publiés par les utilisateurs.</p>
+    <h3>5. Sanctions</h3>
+    <p>En cas de violation des CGU, Trebiq se réserve le droit de supprimer le contenu, suspendre ou bannir le compte, et signaler le contenu illégal aux autorités compétentes.</p>
 
-    <h3>7. Droit applicable</h3>
-    <p>Les présentes CGU sont soumises au droit français. Tout litige sera soumis aux tribunaux compétents.</p>
+    <h3>6. Propriété intellectuelle</h3>
+    <p>Les contenus publiés par les utilisateurs restent leur propriété. En publiant sur Trebiq, l'utilisateur accorde à la plateforme une licence non exclusive d'utilisation pour afficher et distribuer ledit contenu dans le cadre du fonctionnement normal du service.</p>
+
+    <h3>7. Abonnement Premium</h3>
+    <p>L'abonnement Trebiq Premium est proposé au tarif de <strong>5 USD par mois</strong>. Il donne accès à la fonctionnalité @askClaude dans la limite de 15 appels par jour. L'abonnement est renouvelé automatiquement chaque mois et peut être résilié à tout moment. Conformément au droit européen, vous disposez d'un droit de rétractation de <strong>14 jours</strong> à compter de la souscription.</p>
+
+    <h3>8. Responsabilité</h3>
+    <p>Trebiq est un hébergeur de contenu au sens de la LCEN. La responsabilité de Trebiq ne saurait être engagée du fait des contenus publiés par les utilisateurs. Trebiq agit promptement pour retirer tout contenu manifestement illicite signalé.</p>
+
+    <h3>9. Modification des CGU</h3>
+    <p>Trebiq se réserve le droit de modifier les présentes CGU à tout moment. La poursuite de l'utilisation du service après notification vaut acceptation des nouvelles conditions.</p>
+
+    <div class="warning">
+      <p>⚠️ Ces CGU constituent une base de travail en cours de finalisation. Une révision par un avocat spécialisé en droit numérique est prévue avant le lancement officiel.</p>
+    </div>
   </div>
 
   <!-- CONFIDENTIALITÉ -->
-  <div class="section" id="tab-privacy">
+  <div class="section" id="tab-confidentialite">
     <h2>Politique de Confidentialité</h2>
-    <div class="highlight"><p>Trebiq s'engage à protéger vos données personnelles conformément au RGPD.</p></div>
+    <p class="version">Conformément au RGPD n° 2016/679 du 27 avril 2016</p>
 
-    <h3>1. Données collectées</h3>
+    <h3>Responsable du traitement</h3>
+    <p>L'éditeur de Trebiq — contact : contact@trebiq.app</p>
+
+    <h3>Données collectées</h3>
     <ul>
-      <li><strong>Données d'identification :</strong> adresse email, nom d'utilisateur, nom affiché</li>
-      <li><strong>Données de profil :</strong> photo de profil, bio</li>
-      <li><strong>Contenus publiés :</strong> posts, réponses, likes, reposts</li>
-      <li><strong>Données de connexion :</strong> date de création du compte</li>
+      <li><strong>Identification :</strong> email, nom d'utilisateur, nom affiché, date de naissance</li>
+      <li><strong>Profil :</strong> photo (optionnelle), biographie (optionnelle)</li>
+      <li><strong>Contenus :</strong> posts, réponses, images partagées</li>
+      <li><strong>Activité :</strong> likes, reposts, abonnements, messages privés</li>
+      <li><strong>Techniques :</strong> adresse IP, données de session</li>
     </ul>
 
-    <h3>2. Finalités du traitement</h3>
+    <h3>Vos droits (RGPD)</h3>
+    <p>Vous disposez des droits suivants, exerçables à contact@trebiq.app :</p>
     <ul>
-      <li>Fournir et améliorer le service Trebiq</li>
-      <li>Gérer votre compte et authentification</li>
-      <li>Afficher votre profil aux autres utilisateurs</li>
-      <li>Respecter nos obligations légales</li>
+      <li><strong>Accès :</strong> obtenir une copie de vos données</li>
+      <li><strong>Rectification :</strong> corriger des données inexactes</li>
+      <li><strong>Effacement :</strong> supprimer votre compte et vos données (disponible dans Paramètres)</li>
+      <li><strong>Portabilité :</strong> recevoir vos données dans un format structuré</li>
+      <li><strong>Opposition :</strong> s'opposer à certains traitements</li>
     </ul>
+    <p>Vous pouvez également introduire une réclamation auprès de la <strong>CNIL</strong> (www.cnil.fr).</p>
 
-    <h3>3. Partage des données</h3>
-    <p>Vos données ne sont <strong>jamais vendues</strong> à des tiers. Elles peuvent être partagées avec :</p>
-    <ul>
-      <li><strong>Supabase</strong> — hébergement et base de données</li>
-      <li><strong>Vercel</strong> — hébergement du site</li>
-      <li><strong>Anthropic</strong> — traitement des requêtes @askClaude (Premium uniquement)</li>
-    </ul>
+    <h3>Conservation des données</h3>
+    <p>Les données sont conservées pendant la durée d'activité du compte. En cas de suppression, elles sont effacées sous 30 jours (sauf obligations légales : logs de connexion conservés 1 an).</p>
 
-    <h3>4. Vos droits (RGPD)</h3>
-    <ul>
-      <li><strong>Droit d'accès</strong> — obtenir une copie de vos données</li>
-      <li><strong>Droit de rectification</strong> — corriger vos données</li>
-      <li><strong>Droit à l'effacement</strong> — supprimer votre compte et données</li>
-      <li><strong>Droit à la portabilité</strong> — recevoir vos données dans un format lisible</li>
-    </ul>
-    <p>Pour exercer ces droits : <a href="/cdn-cgi/l/email-protection#ee8d81809a8f8d9aae9a9c8b8c879fc08f9e9e"><span class="__cf_email__" data-cfemail="a9cac6c7ddc8cadde9dddbcccbc0d887c8d9d9">[email&#160;protected]</span></a></p>
+    <h3>Hébergement</h3>
+    <p>Les données sont hébergées par Supabase (serveurs en <strong>Irlande, UE</strong>) et Vercel. Aucune donnée n'est vendue à des tiers.</p>
 
-    <h3>5. Sécurité</h3>
-    <ul>
-      <li>Chiffrement HTTPS (TLS) pour toutes les communications</li>
-      <li>Authentification sécurisée via Supabase Auth</li>
-      <li>Politiques RLS (Row Level Security) sur la base de données</li>
-      <li>Mots de passe hachés (jamais stockés en clair)</li>
-    </ul>
+    <h3>Mineurs</h3>
+    <p>Trebiq est interdit aux moins de 15 ans. Si un compte appartenant à un mineur de moins de 15 ans est détecté, il sera supprimé. Contact : contact@trebiq.app</p>
   </div>
 
   <!-- COOKIES -->
   <div class="section" id="tab-cookies">
     <h2>Politique de Cookies</h2>
+    <p class="version">Version du 20/03/2026</p>
 
-    <h3>Cookies utilisés par Trebiq</h3>
-    <p>Trebiq utilise uniquement des cookies <strong>strictement nécessaires</strong> au fonctionnement du service :</p>
+    <h3>Utilisation des cookies</h3>
+    <p>Trebiq utilise uniquement des cookies et technologies similaires (localStorage) strictement nécessaires au fonctionnement du service :</p>
     <ul>
-      <li><strong>Session d'authentification</strong> — maintient votre connexion (Supabase Auth)</li>
-      <li><strong>Préférences locales</strong> — stockage local pour les données temporaires (jeux, quizz)</li>
+      <li><strong>Session utilisateur :</strong> maintien de la connexion</li>
+      <li><strong>Préférences :</strong> thème clair/sombre, paramètres d'affichage</li>
+      <li><strong>Fonctionnement :</strong> données de jeux, progression XP locale</li>
     </ul>
 
-    <h3>Cookies tiers</h3>
-    <p>Trebiq <strong>n'utilise pas</strong> de cookies publicitaires ou de tracking tiers. Aucune donnée n'est partagée avec des régies publicitaires.</p>
+    <h3>Aucun cookie tiers</h3>
+    <p>Trebiq <strong>n'utilise aucun cookie publicitaire, de tracking ou d'analyse tiers</strong>. Aucune donnée n'est partagée avec des régies publicitaires. Trebiq est une plateforme sans publicité.</p>
 
     <h3>Gestion des cookies</h3>
-    <p>Vous pouvez à tout moment effacer les cookies depuis les paramètres de votre navigateur. La désactivation des cookies essentiels peut empêcher le bon fonctionnement de Trebiq.</p>
+    <p>Vous pouvez supprimer les données stockées localement via les paramètres de votre navigateur. Cela entraînera votre déconnexion de Trebiq.</p>
 
-    <div class="highlight"><p>🍪 Trebiq ne place aucun cookie publicitaire. Votre navigation reste privée.</p></div>
+    <div class="contact-card">
+      <div class="contact-ico">🍪</div>
+      <div>
+        <div class="contact-label">Questions sur les cookies ?</div>
+        <div class="contact-value">contact@trebiq.app</div>
+      </div>
+    </div>
   </div>
+</div>
 
-  <div class="date">
-    Ces documents ont été mis à jour le 1er Mars 2025.<br>
-    Pour toute question : <a href="/cdn-cgi/l/email-protection#bbd8d4d5cfdad8cffbcfc9ded9d2ca95dacbcb"><span class="__cf_email__" data-
+<script>
+function showTab(el, id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.getElementById('tab-'+id).classList.add('on');
+  el.classList.add('on');
+}
+// Handle hash navigation
+if(location.hash){
+  const tab=location.hash.slice(1);
+  const el=document.querySelector(`[onclick*="${tab}"]`);
+  if(el)showTab(el,tab);
+}
+</script>
+</body>
+</html>
