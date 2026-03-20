@@ -956,14 +956,23 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 </div>
 <button class="mfab" id="mob-fab" onclick="fc()">✏️</button>
 <div class="toast" id="toast"></div>
-<div id="pwa-banner" style="display:none;position:fixed;bottom:70px;left:12px;right:12px;background:var(--s1);border:1px solid var(--accent);border-radius:16px;padding:14px 16px;z-index:55;display:flex;align-items:center;gap:12px;box-shadow:0 4px 24px rgba(0,0,0,.5);">
-  <div style="font-size:28px;">📱</div>
-  <div style="flex:1;">
-    <div style="font-size:14px;font-weight:700;color:var(--white);">Installer Trebiq</div>
-    <div style="font-size:12px;color:var(--t2);">Ajouter à l'écran d'accueil</div>
+<div id="pwa-banner" style="display:none !important;position:fixed;bottom:70px;left:12px;right:12px;background:var(--s1);border:1px solid var(--accent);border-radius:16px;padding:16px;z-index:55;box-shadow:0 4px 24px rgba(0,0,0,.5);">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+    <div style="font-size:28px;">📱</div>
+    <div style="flex:1;">
+      <div style="font-size:14px;font-weight:700;color:var(--white);">Installer Trebiq</div>
+      <div style="font-size:12px;color:var(--t2);">Accès rapide depuis ton écran d'accueil</div>
+    </div>
+    <button onclick="document.getElementById('pwa-banner').style.display='none';localStorage.setItem('pwa_dismissed','1')" style="background:none;border:none;color:var(--t3);font-size:20px;cursor:pointer;padding:4px;">×</button>
   </div>
-  <button onclick="installPWA()" style="background:var(--accent);border:none;border-radius:10px;padding:8px 14px;color:#fff;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Installer</button>
-  <button onclick="document.getElementById('pwa-banner').style.display='none'" style="background:none;border:none;color:var(--t3);font-size:20px;cursor:pointer;padding:4px;">×</button>
+  <div id="pwa-ios-guide" style="display:none;font-size:13px;color:var(--t2);line-height:2;">
+    1. Appuie sur <strong style="color:var(--white)">⎙ Partager</strong> en bas de Safari<br>
+    2. Descends et appuie sur <strong style="color:var(--white)">"Sur l'écran d'accueil"</strong><br>
+    3. Appuie sur <strong style="color:var(--white)">Ajouter</strong> ✅
+  </div>
+  <div id="pwa-android-btn" style="display:none;">
+    <button onclick="installPWA()" style="width:100%;background:var(--accent);border:none;border-radius:10px;padding:10px;color:#fff;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;">Installer l'app</button>
+  </div>
 </div>
 <div id="cookie-bar" style="display:none;position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:10px 16px;z-index:55;font-size:13px;color:var(--t2);display:flex;align-items:center;gap:12px;box-shadow:0 4px 20px rgba(0,0,0,.5);white-space:nowrap;pointer-events:auto;">
   🍪 Cookies essentiels utilisés. <a href="/legal" target="_blank" style="color:var(--accent2);text-decoration:none;">En savoir plus</a>
@@ -1070,11 +1079,8 @@ function showApp(){
   document.getElementById('app').style.display='block';
   if(window.innerWidth<=580){document.getElementById('mob-nav').style.display='block';document.getElementById('mob-fab').style.display='flex';}
   setTimeout(registerPush, 2000);
-  // Show PWA install prompt if available
-  setTimeout(()=>{
-    if(deferredPrompt&&!localStorage.getItem('pwa_installed'))
-      document.getElementById('pwa-banner').style.display='flex';
-  },5000);
+  // PWA banner disabled on mobile to avoid blocking UI
+  // setTimeout(showPWABanner, 5000);
   updateNavAvatar();
   document.getElementById('nav-n').textContent=(myP?.is_premium?'⭐ ':'')+(myP?.is_verified?'✓ ':'')+( myP?.display_name||'Utilisateur');
   document.getElementById('nav-h').textContent='@'+(myP?.username||'...');
@@ -3233,16 +3239,12 @@ window.addEventListener('offline', ()=>toast('Pas de connexion internet 📵','e
 
 // ===== PWA =====
 let deferredPrompt=null;
+const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)&&!window.MSStream;
+const isStandalone=window.navigator.standalone===true||window.matchMedia('(display-mode: standalone)').matches;
+
 window.addEventListener('beforeinstallprompt',(e)=>{
   e.preventDefault();
   deferredPrompt=e;
-  // Show install banner after login
-  if(document.getElementById('app').style.display==='block'){
-    setTimeout(()=>{
-      if(!localStorage.getItem('pwa_installed'))
-        document.getElementById('pwa-banner').style.display='flex';
-    },3000);
-  }
 });
 async function installPWA(){
   if(!deferredPrompt)return;
@@ -3254,6 +3256,17 @@ async function installPWA(){
   }
   document.getElementById('pwa-banner').style.display='none';
   deferredPrompt=null;
+}
+function showPWABanner(){
+  if(isStandalone||localStorage.getItem('pwa_installed')||localStorage.getItem('pwa_dismissed'))return;
+  const banner=document.getElementById('pwa-banner');
+  if(isIOS){
+    document.getElementById('pwa-ios-guide').style.display='block';
+    banner.style.display='block';
+  }else if(deferredPrompt){
+    document.getElementById('pwa-android-btn').style.display='block';
+    banner.style.display='block';
+  }
 }
 window.addEventListener('appinstalled',()=>{
   localStorage.setItem('pwa_installed','1');
