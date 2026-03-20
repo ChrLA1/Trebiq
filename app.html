@@ -920,7 +920,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 
 <script>
 const SU='https://rcqiioozqfbempxuyvzq.supabase.co',SK='sb_publishable_Djp3G_plOEtDeDT1GwNMrg_QtS3TljZ';
-let me=null,myP=null,pendingPoll=null,curPage='home',curFeed='foryou',viewingUserId=null,historyStack=[],deletePostId=null,editAvatarFile=null,postImgFile=null,curConvId=null,curConvUserId=null,msgPollInterval=null;
+let me=null,myP=null,pendingPoll=null,curPage='home',curFeed='foryou',viewingUserId=null,historyStack=[],deletePostId=null,editAvatarFile=null,postImgFile=null,curConvId=null,curConvUserId=null,msgPollInterval=null,feedOffset=0,feedLoading=false,feedDone=false;
 
 async function sb(path,o={}){
   const r=await fetch(`${SU}/rest/v1${path}`,{headers:{'apikey':SK,'Authorization':`Bearer ${o.tok||SK}`,'Content-Type':'application/json','Prefer':o.pref||'return=representation',...(o.h||{})},method:o.method||'GET',body:o.body?JSON.stringify(o.body):undefined});
@@ -1275,20 +1275,44 @@ function switchFeed(tab){
   document.getElementById('tab-following').classList.toggle('on',tab==='following');
   loadFeed();
 }
-async function loadFeed(){
+async function loadFeed(append=false){
+  if(feedLoading)return;
+  if(!append){feedOffset=0;feedDone=false;}
+  if(feedDone)return;
+  feedLoading=true;
   const c=document.getElementById('fp');
-  c.innerHTML='<div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div>';
+  if(!append)c.innerHTML='<div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div>';
+  else{
+    const loader=document.createElement('div');
+    loader.id='feed-loader';
+    loader.className='spin';
+    loader.innerHTML='<div class="sd"></div><div class="sd"></div><div class="sd"></div>';
+    c.appendChild(loader);
+  }
   try{
+    const limit=20;
     let posts;
     if(curFeed==='following'){
       const follows=await sb(`/follows?follower_id=eq.${me.id}&select=following_id`,{tok:me.tok});
-      if(!follows?.length){c.innerHTML='<div class="empty"><div class="empty-ico">👥</div><div class="empty-t">Aucun abonnement</div><div class="empty-s">Suis des utilisateurs pour voir leurs posts ici.</div></div>';return;}
+      if(!follows?.length){c.innerHTML='<div class="empty"><div class="empty-ico">👥</div><div class="empty-t">Aucun abonnement</div><div class="empty-s">Suis des utilisateurs pour voir leurs posts ici.</div></div>';feedLoading=false;return;}
       const ids=follows.map(f=>f.following_id).join(',');
-      posts=await sb(`/posts?user_id=in.(${ids})&order=created_at.desc&limit=60`,{tok:me.tok});
+      posts=await sb(`/posts?user_id=in.(${ids})&order=created_at.desc&limit=${limit}&offset=${feedOffset}`,{tok:me.tok});
     }else{
-      posts=await sb('/posts?order=created_at.desc&limit=60',{tok:me.tok});
+      posts=await sb(`/posts?order=created_at.desc&limit=${limit}&offset=${feedOffset}`,{tok:me.tok});
     }
-    if(!posts?.length){c.innerHTML='<div class="empty"><div class="empty-ico">✨</div><div class="empty-t">Aucun post</div></div>';return;}
+    document.getElementById('feed-loader')?.remove();
+    if(!posts?.length){
+      if(!append)c.innerHTML='<div class="empty"><div class="empty-ico">✨</div><div class="empty-t">Aucun post</div></div>';
+      else{
+        const done=document.createElement('div');
+        done.style.cssText='text-align:center;padding:24px;color:var(--t3);font-size:13px;';
+        done.textContent='Vous avez tout vu ! 🎉';
+        c.appendChild(done);
+      }
+      feedDone=true;feedLoading=false;return;
+    }
+    feedOffset+=posts.length;
+    if(posts.length<20)feedDone=true;
     const pids=posts.map(p=>p.id);
     const uids=[...new Set(posts.map(p=>p.user_id))];
     const profs=uids.length?await sb(`/profiles?id=in.(${uids.join(',')})`,{tok:me.tok}):[];
@@ -1304,7 +1328,8 @@ async function loadFeed(){
     const myVotes=pollIds.length?await sb(`/poll_votes?poll_id=in.(${pollIds.join(',')})&user_id=eq.${me.id}`,{tok:me.tok}).catch(()=>[]):[];
     const myVoteByPoll={};(myVotes||[]).forEach(v=>myVoteByPoll[v.poll_id]=v.option_index);
     posts.forEach(p=>{if(pollsByPost[p.id])p._poll=pollsByPost[p.id];});
-    c.innerHTML=posts.map(p=>rp(p,pm[p.user_id],liked.has(p.id),reposted.has(p.id))).join('');
+    const html=posts.map(p=>rp(p,pm[p.user_id],liked.has(p.id),reposted.has(p.id))).join('');
+    if(append){c.insertAdjacentHTML('beforeend',html);}else{c.innerHTML=html;}
     posts.forEach(p=>{
       llc(p.id);lrc(p.id);lrpc(p.id);
       if(p._poll){
@@ -1315,7 +1340,8 @@ async function loadFeed(){
         });
       }
     });
-  }catch(e){c.innerHTML=`<div class="empty"><div class="empty-t">Erreur: ${e.message}</div></div>`;}
+  }catch(e){document.getElementById('feed-loader')?.remove();if(!append)c.innerHTML=`<div class="empty"><div class="empty-t">Erreur: ${e.message}</div></div>`;}
+  feedLoading=false;
 }
 function rp(p,prof,liked,reposted){
   const i=(prof?.display_name||'U')[0].toUpperCase();
@@ -3015,6 +3041,13 @@ window.addEventListener('offline', ()=>toast('Pas de connexion internet 📵','e
 
 document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('ctxt').addEventListener('keydown',e=>{if(e.ctrlKey&&e.key==='Enter')pub();});
+  // Infinite scroll
+  window.addEventListener('scroll',()=>{
+    if(curPage!=='home')return;
+    if(feedLoading||feedDone)return;
+    const scrollBottom=document.documentElement.scrollHeight-window.scrollY-window.innerHeight;
+    if(scrollBottom<300)loadFeed(true);
+  });
 });
 </script>
 </body>
