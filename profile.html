@@ -5,214 +5,221 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Trebiq — Profil</title>
 <meta name="theme-color" content="#050508">
-<meta property="og:type" content="profile">
-<meta property="og:site_name" content="Trebiq">
-<meta id="og-title" property="og:title" content="Trebiq">
-<meta id="og-desc" property="og:description" content="Retrouve-moi sur Trebiq !">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#050508;--s1:#0c0c12;--s2:#13131c;--s3:#1a1a26;--border:#1f1f2e;--border2:#2a2a3d;--accent:#7c6af7;--ag:rgba(124,106,247,0.18);--accent2:#b8b0ff;--green:#34d399;--red:#f87171;--text:#ddddf0;--t2:#9898b8;--t3:#5a5a78;--white:#fff;}
+:root{--bg:#050508;--s1:#0c0c12;--s2:#13131c;--border:#1f1f2e;--border2:#2a2a3d;--accent:#7c6af7;--ag:rgba(124,106,247,0.15);--accent2:#b8b0ff;--green:#34d399;--red:#f87171;--text:#ddddf0;--t2:#9898b8;--t3:#5a5a78;--white:#fff;}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased;}
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
-.topbar{max-width:640px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);}
-.brand{font-family:'Instrument Serif',serif;font-size:24px;color:var(--white);text-decoration:none;letter-spacing:-.5px;}
-.brand em{color:var(--accent2);font-style:italic;}
-.btn-join{background:linear-gradient(135deg,var(--accent),#9b87ff);border:none;border-radius:20px;padding:8px 20px;color:#fff;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;text-decoration:none;}
-.btn-join:hover{opacity:.9;}
-.container{max-width:640px;margin:0 auto;}
-.prof-banner{height:120px;background:linear-gradient(135deg,var(--accent),#9b87ff,var(--accent2));}
-.prof-info{padding:16px 20px 0;}
-.prof-av{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:30px;color:#fff;border:4px solid var(--bg);overflow:hidden;margin-top:-46px;margin-bottom:12px;}
-.prof-av img{width:100%;height:100%;object-fit:cover;}
-.prof-name{font-size:22px;font-weight:700;color:var(--white);}
-.prof-handle{font-size:14px;color:var(--t3);margin-bottom:8px;}
-.prof-bio{font-size:15px;color:var(--t2);line-height:1.6;margin-bottom:12px;}
-.prof-stats{display:flex;gap:20px;padding-bottom:14px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.topbar{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);background:rgba(5,5,8,0.9);backdrop-filter:blur(16px);position:sticky;top:0;z-index:10;}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.brand-name{font-family:'Instrument Serif',serif;font-size:20px;color:var(--white);letter-spacing:-.5px;}
+.brand-name em{color:var(--accent2);font-style:italic;}
+.btn-join{background:linear-gradient(135deg,var(--accent),#9b87ff);border:none;border-radius:20px;padding:8px 20px;color:#fff;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;text-decoration:none;transition:all .2s;}
+.btn-join:hover{transform:translateY(-1px);box-shadow:0 6px 20px var(--ag);}
+.container{max-width:680px;margin:0 auto;}
+/* Banner */
+.banner{height:160px;background:linear-gradient(135deg,var(--accent),#9b87ff,var(--accent2));position:relative;}
+.banner-overlay{position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(5,5,8,0.4));}
+/* Profile info */
+.prof-info{padding:0 20px 20px;}
+.prof-av-wrap{margin-top:-44px;margin-bottom:12px;display:flex;align-items:flex-end;justify-content:space-between;}
+.prof-av{width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));border:4px solid var(--bg);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:32px;color:#fff;overflow:hidden;flex-shrink:0;}
+.prof-av img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.prof-name{font-size:22px;font-weight:700;color:var(--white);margin-bottom:2px;}
+.prof-handle{font-size:14px;color:var(--t3);margin-bottom:10px;}
+.prof-bio{font-size:15px;color:var(--t2);line-height:1.6;margin-bottom:14px;}
+/* XP bar */
+.xp-bar-wrap{margin-bottom:14px;}
+.xp-bar-info{display:flex;justify-content:space-between;font-size:12px;color:var(--t3);margin-bottom:5px;}
+.xp-bar-bg{background:var(--s2);border-radius:6px;height:5px;overflow:hidden;}
+.xp-bar-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .6s ease;}
+/* Badges */
+.badges-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;}
+.badge-item{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:5px 10px;font-size:12px;}
+/* Stats */
+.prof-stats{display:flex;gap:20px;padding:14px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin-bottom:20px;}
 .pstat{font-size:14px;color:var(--t3);}
 .pstat strong{color:var(--white);font-weight:700;}
-.join-banner{margin:16px 20px;padding:16px 20px;background:linear-gradient(135deg,rgba(124,106,247,0.12),rgba(124,106,247,0.06));border:1px solid rgba(124,106,247,0.25);border-radius:16px;text-align:center;}
-.join-title{font-size:16px;font-weight:700;color:var(--white);margin-bottom:6px;}
-.join-sub{font-size:13px;color:var(--t2);margin-bottom:14px;}
-.join-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
-.btn-primary{background:linear-gradient(135deg,var(--accent),#9b87ff);border:none;border-radius:20px;padding:10px 24px;color:#fff;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block;}
-.btn-secondary{background:transparent;border:1px solid var(--border2);border-radius:20px;padding:10px 24px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-block;}
-.posts-title{padding:14px 20px;font-size:15px;font-weight:700;border-bottom:1px solid var(--border);}
+/* Posts */
 .post{padding:16px 20px;border-bottom:1px solid var(--border);}
 .prow{display:flex;gap:12px;}
-.pav-s{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex-shrink:0;color:#fff;overflow:hidden;}
-.pav-s img{width:100%;height:100%;object-fit:cover;}
+.pav{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex-shrink:0;color:#fff;overflow:hidden;}
+.pav img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
 .pb{flex:1;min-width:0;}
 .pm{display:flex;align-items:baseline;gap:6px;margin-bottom:5px;flex-wrap:wrap;}
 .pname{font-weight:700;font-size:15px;color:var(--white);}
 .phdl{font-size:13px;color:var(--t3);}
-.ptm{font-size:12px;color:var(--t3);font-family:'DM Mono',monospace;}
+.ptm{font-size:12px;color:var(--t3);}
 .ptxt{font-size:15px;line-height:1.65;color:var(--text);white-space:pre-wrap;word-break:break-word;}
-.ptxt .men{color:var(--accent2);font-weight:500;}
-.ptxt .htag{color:var(--accent2);font-weight:500;}
-.post-img{margin-top:10px;border-radius:14px;overflow:hidden;border:1px solid var(--border);}
-.post-img img{width:100%;max-height:360px;object-fit:cover;display:block;}
-.pstats{display:flex;gap:16px;margin-top:10px;font-size:13px;color:var(--t3);}
+.pacts{display:flex;gap:4px;margin-top:10px;}
+.pa{font-size:13px;color:var(--t3);padding:4px 8px;}
 .spin{display:flex;justify-content:center;gap:8px;padding:48px;}
 .sd{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:tp 1s infinite;}
 .sd:nth-child(2){animation-delay:.15s;}.sd:nth-child(3){animation-delay:.3s;}
 @keyframes tp{0%,60%,100%{opacity:.25;transform:scale(1)}30%{opacity:1;transform:scale(1.3)}}
 .empty{text-align:center;padding:48px 20px;color:var(--t3);}
-.not-found{text-align:center;padding:80px 20px;}
-.nf-ico{font-size:48px;margin-bottom:16px;}
-.nf-t{font-size:20px;font-weight:700;color:var(--white);margin-bottom:8px;}
-.nf-s{font-size:14px;color:var(--t3);}
-.blur-overlay{filter:blur(4px);pointer-events:none;user-select:none;opacity:.5;}
-@media(max-width:580px){.topbar{padding:12px 14px;}.prof-info{padding:12px 14px 0;}.post{padding:14px 14px;}.join-banner{margin:12px 14px;}}
+/* CTA Banner */
+.cta-banner{margin:24px 20px;background:linear-gradient(135deg,rgba(124,106,247,0.12),rgba(184,176,255,0.06));border:1px solid rgba(124,106,247,0.25);border-radius:20px;padding:24px;text-align:center;}
+.cta-title{font-family:'Instrument Serif',serif;font-size:22px;color:var(--white);margin-bottom:8px;letter-spacing:-.5px;}
+.cta-sub{font-size:14px;color:var(--t2);margin-bottom:16px;line-height:1.6;}
+@media(max-width:580px){.container{max-width:100%;}.banner{height:130px;}}
 </style>
 </head>
 <body>
-
 <div class="topbar">
-  <a href="/" class="brand">Tre<em>biq</em></a>
-  <a href="/" class="btn-join">Rejoindre</a>
+  <a href="/" class="brand">
+    <svg width="28" height="28" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+      <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#7c6af7"/><stop offset="100%" stop-color="#b8b0ff"/></linearGradient></defs>
+      <rect width="120" height="120" rx="28" fill="url(#lg)"/>
+      <rect x="28" y="26" width="64" height="12" rx="5" fill="#fff" opacity="0.95"/>
+      <rect x="53" y="38" width="14" height="52" rx="5" fill="#fff" opacity="0.95"/>
+      <circle cx="106" cy="108" r="4" fill="#fff" opacity="0.9"/>
+      <path d="M97 100 Q106 92 115 100" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity="0.7"/>
+    </svg>
+    <span class="brand-name">Tre<em>biq</em></span>
+  </a>
+  <a href="/app.html" class="btn-join">Rejoindre Trebiq</a>
 </div>
 
 <div class="container">
-  <div id="main-content">
-    <div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div>
+  <div class="banner"><div class="banner-overlay"></div></div>
+  <div class="prof-info">
+    <div class="prof-av-wrap">
+      <div class="prof-av" id="pub-av">?</div>
+    </div>
+    <div class="prof-name" id="pub-name">Chargement...</div>
+    <div class="prof-handle" id="pub-handle">@...</div>
+    <div class="prof-bio" id="pub-bio"></div>
+    <div id="pub-xp-bar"></div>
+    <div class="badges-wrap" id="pub-badges"></div>
+    <div class="prof-stats">
+      <div class="pstat"><strong id="pub-posts">0</strong> Posts</div>
+      <div class="pstat"><strong id="pub-followers">0</strong> Abonnés</div>
+      <div class="pstat"><strong id="pub-following">0</strong> Abonnements</div>
+      <div class="pstat"><strong id="pub-likes">0</strong> Likes</div>
+    </div>
+  </div>
+
+  <div id="pub-posts-list"><div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div></div>
+
+  <div class="cta-banner">
+    <div class="cta-title">Rejoins Trebiq gratuitement</div>
+    <div class="cta-sub">Publie, connecte-toi et explore avec l'IA intégrée.</div>
+    <a href="/app.html" class="btn-join">Créer un compte →</a>
   </div>
 </div>
 
 <script>
-const SU='https://rcqiioozqfbempxuyvzq.supabase.co',SK='sb_publishable_Djp3G_plOEtDeDT1GwNMrg_QtS3TljZ';
+const SU='https://rcqiioozqfbempxuyvzq.supabase.co';
+const SK='sb_publishable_Djp3G_plOEtDeDT1GwNMrg_QtS3TljZ';
+
+const LEVELS=[
+  {level:1,name:'Novice',emoji:'🌱',xp:0},
+  {level:2,name:'Actif',emoji:'⚡',xp:200},
+  {level:3,name:'Créateur',emoji:'🔥',xp:800},
+  {level:4,name:'Influenceur',emoji:'💎',xp:2500},
+  {level:5,name:'Expert',emoji:'🌟',xp:6000},
+  {level:6,name:'Légende',emoji:'👑',xp:15000},
+];
+const BADGES_DEF=[
+  {id:'first_post',emoji:'🎉',name:'Premier pas'},{id:'posts_10',emoji:'🔥',name:'En feu'},
+  {id:'posts_50',emoji:'📢',name:'Prolifique'},{id:'likes_50',emoji:'❤️',name:'Populaire'},
+  {id:'likes_100',emoji:'💯',name:'Centenaire'},{id:'followers_10',emoji:'👥',name:'Entouré'},
+  {id:'followers_100',emoji:'👑',name:'Star'},{id:'premium',emoji:'⭐',name:'Premium'},
+];
+
+function getLevel(xp){let c=LEVELS[0];for(const l of LEVELS){if(xp>=l.xp)c=l;else break;}return c;}
+function getNextLevel(xp){for(const l of LEVELS){if(xp<l.xp)return l;}return null;}
+function xpPct(xp){const c=getLevel(xp);const n=getNextLevel(xp);if(!n)return 100;return Math.round(((xp-c.xp)/(n.xp-c.xp))*100);}
 
 async function sb(path){
-  const r=await fetch(`${SU}/rest/v1${path}`,{headers:{'apikey':SK,'Authorization':`Bearer ${SK}`,'Content-Type':'application/json'}});
-  if(!r.ok)throw new Error('Erreur');return r.json();
+  const r=await fetch(`${SU}/rest/v1${path}`,{headers:{'apikey':SK,'Authorization':`Bearer ${SK}`}});
+  if(!r.ok)return null;
+  return r.json();
 }
 
 function esc(t){return(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-function ago(d){const s=(Date.now()-new Date(d))/1000;if(s<60)return'maintenant';if(s<3600)return Math.floor(s/60)+'min';if(s<86400)return Math.floor(s/3600)+'h';return Math.floor(s/86400)+'j';}
-
-function formatTxt(txt){
-  return esc(txt)
-    .replace(/@askClaude/gi,'<span class="men">@askClaude</span>')
-    .replace(/#(\w+)/g,'<span class="htag">#$1</span>');
-}
+function ago(d){const s=(Date.now()-new Date(d))/1000;if(s<60)return'maintenant';if(s<3600)return Math.floor(s/60)+'m';if(s<86400)return Math.floor(s/3600)+'h';return Math.floor(s/86400)+'j';}
 
 async function loadProfile(){
-  const c=document.getElementById('main-content');
-  // Get username from URL: /profile/username or ?u=username
-  const path=window.location.pathname;
-  const parts=path.split('/').filter(Boolean);
-  const username=parts[parts.length-1]||new URLSearchParams(window.location.search).get('u');
+  // Handle /profile/username or direct /username
+  const parts=location.pathname.split('/').filter(Boolean);
+  const username=parts[parts.length-1];
+  if(!username||username==='profile.html')return;
 
-  if(!username||username==='profile'){
-    c.innerHTML='<div class="not-found"><div class="nf-ico">🔍</div><div class="nf-t">Aucun profil</div><div class="nf-s">Aucun nom d\'utilisateur spécifié.</div></div>';
-    return;
+  const profs=await sb(`/profiles?username=eq.${username}`);
+  const prof=profs?.[0];
+  if(!prof){document.getElementById('pub-name').textContent='Utilisateur introuvable';return;}
+
+  document.title=`${prof.display_name} (@${prof.username}) — Trebiq`;
+
+  // Avatar
+  const av=document.getElementById('pub-av');
+  av.innerHTML=prof.avatar_url?`<img src="${prof.avatar_url}" alt="">`:(prof.display_name||'U')[0].toUpperCase();
+
+  document.getElementById('pub-name').textContent=(prof.is_premium?'⭐ ':'')+( prof.display_name||'Utilisateur');
+  document.getElementById('pub-handle').textContent='@'+(prof.username||'');
+  document.getElementById('pub-bio').textContent=prof.bio||'';
+
+  // XP bar
+  const xp=prof.xp||0;
+  const lvl=getLevel(xp);
+  const nextLvl=getNextLevel(xp);
+  const pct=xpPct(xp);
+  document.getElementById('pub-xp-bar').innerHTML=`
+    <div class="xp-bar-wrap">
+      <div class="xp-bar-info">
+        <span>${lvl.emoji} ${lvl.name} (Lv.${lvl.level})</span>
+        <span>${xp} XP${nextLvl?' / '+nextLvl.xp+' XP':' — Max'}</span>
+      </div>
+      <div class="xp-bar-bg"><div class="xp-bar-fill" style="width:${pct}%"></div></div>
+    </div>`;
+
+  // Badges
+  const badges=prof.badges||[];
+  if(badges.length){
+    document.getElementById('pub-badges').innerHTML=badges.map(bid=>{
+      const def=BADGES_DEF.find(b=>b.id===bid);
+      return def?`<div class="badge-item">${def.emoji} ${def.name}</div>`:'';
+    }).join('');
   }
 
-  try{
-    const profs=await sb(`/profiles?username=eq.${encodeURIComponent(username)}&limit=1`);
-    const prof=profs?.[0];
-    if(!prof){
-      c.innerHTML=`<div class="not-found"><div class="nf-ico">👤</div><div class="nf-t">Profil introuvable</div><div class="nf-s">@${esc(username)} n'existe pas sur Trebiq.</div></div>`;
-      return;
-    }
+  // Stats
+  const [posts,followers,following]=await Promise.all([
+    sb(`/posts?user_id=eq.${prof.id}&select=id,content,created_at,image_url,ai_reply&order=created_at.desc&limit=10`),
+    fetch(`${SU}/rest/v1/follows?following_id=eq.${prof.id}&select=id`,{headers:{'apikey':SK,'Prefer':'count=exact'}}).then(r=>r.headers.get('content-range')?.split('/')[1]||'0'),
+    fetch(`${SU}/rest/v1/follows?follower_id=eq.${prof.id}&select=id`,{headers:{'apikey':SK,'Prefer':'count=exact'}}).then(r=>r.headers.get('content-range')?.split('/')[1]||'0'),
+  ]);
 
-    // Update meta tags
-    document.title=`${prof.display_name} (@${prof.username}) — Trebiq`;
-    document.getElementById('og-title').content=`${prof.display_name} (@${prof.username}) sur Trebiq`;
-    document.getElementById('og-desc').content=prof.bio||`Retrouve ${prof.display_name} sur Trebiq !`;
-
-    const ini=(prof.display_name||'U')[0].toUpperCase();
-    const avC=prof.avatar_url?`<img src="${prof.avatar_url}" alt="">`:`${ini}`;
-
-    // Fetch stats
-    const posts=await sb(`/posts?user_id=eq.${prof.id}&order=created_at.desc&limit=6`);
-    const pids=(posts||[]).map(p=>p.id);
-
-    const [followersR,followingR]=await Promise.all([
-      fetch(`${SU}/rest/v1/follows?following_id=eq.${prof.id}&select=id`,{headers:{'apikey':SK,'Prefer':'count=exact'}}),
-      fetch(`${SU}/rest/v1/follows?follower_id=eq.${prof.id}&select=id`,{headers:{'apikey':SK,'Prefer':'count=exact'}}),
-    ]);
-    const followers=parseInt((await followersR).headers.get('content-range')?.split('/')[1]||'0');
-    const following=parseInt((await followingR).headers.get('content-range')?.split('/')[1]||'0');
-
-    let totalLikes=0;
-    if(pids.length){
-      const lks=await sb(`/likes?post_id=in.(${pids.join(',')})&select=id`);
-      totalLikes=(lks||[]).length;
-    }
-
-    // Get like counts per post
-    const likesByPost={};
-    if(pids.length){
-      const allLikes=await sb(`/likes?post_id=in.(${pids.join(',')})&select=post_id`);
-      (allLikes||[]).forEach(l=>{likesByPost[l.post_id]=(likesByPost[l.post_id]||0)+1;});
-    }
-    const repliesByPost={};
-    if(pids.length){
-      const allReplies=await sb(`/replies?post_id=in.(${pids.join(',')})&select=post_id`);
-      (allReplies||[]).forEach(r=>{repliesByPost[r.post_id]=(repliesByPost[r.post_id]||0)+1;});
-    }
-
-    const postsHtml=(posts||[]).slice(0,3).map(p=>`
-      <div class="post">
-        <div class="prow">
-          <div class="pav-s">${avC}</div>
-          <div class="pb">
-            <div class="pm">
-              <span class="pname">${esc(prof.display_name)}</span>
-              <span class="phdl">@${esc(prof.username)}</span>
-              <span class="ptm">· ${ago(p.created_at)}</span>
-            </div>
-            <div class="ptxt">${formatTxt(p.content)}</div>
-            ${p.image_url?`<div class="post-img"><img src="${p.image_url}" alt="image" loading="lazy"></div>`:''}
-            <div class="pstats">
-              <span>❤️ ${likesByPost[p.id]||0}</span>
-              <span>💬 ${repliesByPost[p.id]||0}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    `).join('');
-
-    const blurredPosts=(posts||[]).slice(3).map(p=>`
-      <div class="post blur-overlay">
-        <div class="prow">
-          <div class="pav-s">${avC}</div>
-          <div class="pb">
-            <div class="pm"><span class="pname">${esc(prof.display_name)}</span><span class="phdl">@${esc(prof.username)}</span></div>
-            <div class="ptxt">${esc(p.content?.slice(0,60))}...</div>
-          </div>
-        </div>
-      </div>
-    `).join('');
-
-    c.innerHTML=`
-      <div class="prof-banner"></div>
-      <div class="prof-info">
-        <div class="prof-av">${avC}</div>
-        <div class="prof-name">${esc(prof.display_name||'Utilisateur')}</div>
-        <div class="prof-handle">@${esc(prof.username)}</div>
-        ${prof.bio?`<div class="prof-bio">${esc(prof.bio)}</div>`:''}
-        <div class="prof-stats">
-          <div class="pstat"><strong>${posts?.length||0}</strong> Posts</div>
-          <div class="pstat"><strong>${totalLikes}</strong> Likes reçus</div>
-          <div class="pstat"><strong>${followers}</strong> Abonnés</div>
-          <div class="pstat"><strong>${following}</strong> Abonnements</div>
-        </div>
-      </div>
-      <div class="join-banner">
-        <div class="join-title">Rejoins Trebiq pour voir plus 👀</div>
-        <div class="join-sub">Connecte-toi pour voir tous les posts, liker, répondre et suivre ${esc(prof.display_name)} !</div>
-        <div class="join-btns">
-          <a href="/" class="btn-primary">Créer un compte</a>
-          <a href="/" class="btn-secondary">Se connecter</a>
-        </div>
-      </div>
-      ${posts?.length?`<div class="posts-title">📝 Posts récents</div>${postsHtml}${blurredPosts}`:'<div class="empty">Aucun post pour l\'instant.</div>'}
-    `;
-  }catch(e){
-    c.innerHTML=`<div class="not-found"><div class="nf-ico">⚠️</div><div class="nf-t">Erreur</div><div class="nf-s">${e.message}</div></div>`;
+  const pids=(posts||[]).map(p=>p.id);
+  let totalLikes=0;
+  if(pids.length){
+    const lks=await fetch(`${SU}/rest/v1/likes?post_id=in.(${pids.join(',')})&select=id`,{headers:{'apikey':SK,'Prefer':'count=exact'}});
+    totalLikes=parseInt(lks.headers.get('content-range')?.split('/')[1]||'0');
   }
+
+  document.getElementById('pub-posts').textContent=posts?.length||0;
+  document.getElementById('pub-followers').textContent=followers;
+  document.getElementById('pub-following').textContent=following;
+  document.getElementById('pub-likes').textContent=totalLikes;
+
+  // Posts
+  const c=document.getElementById('pub-posts-list');
+  if(!posts?.length){c.innerHTML='<div class="empty">Aucun post pour le moment.</div>';return;}
+  c.innerHTML=posts.map(p=>{
+    const txt=esc(p.content||'').replace(/#(\w+)/g,'<span style="color:var(--accent2)">#$1</span>');
+    return`<div class="post"><div class="prow">
+      <div class="pav">${prof.avatar_url?`<img src="${prof.avatar_url}" alt="">`:(prof.display_name||'U')[0].toUpperCase()}</div>
+      <div class="pb">
+        <div class="pm"><span class="pname">${esc(prof.display_name)}</span><span class="phdl">@${esc(prof.username)}</span><span class="ptm">· ${ago(p.created_at)}</span></div>
+        <div class="ptxt">${txt}</div>
+        ${p.image_url?`<div style="margin-top:10px;border-radius:12px;overflow:hidden;"><img src="${p.image_url}" style="width:100%;max-height:300px;object-fit:cover;" loading="lazy"></div>`:''}
+        ${p.ai_reply?`<div style="margin-top:10px;padding:10px 14px;background:rgba(52,211,153,0.06);border:1px solid rgba(52,211,153,0.15);border-radius:12px;font-size:13px;color:#a8dfc8;"><div style="font-size:11px;font-weight:700;color:#34d399;font-family:monospace;margin-bottom:4px;">✦ askClaude</div>${esc(p.ai_reply)}</div>`:''}
+        <div class="pacts"><span class="pa">❤️</span><span class="pa">💬</span><span class="pa">🔁</span></div>
+      </div>
+    </div></div>`;
+  }).join('');
 }
 
 loadProfile();
