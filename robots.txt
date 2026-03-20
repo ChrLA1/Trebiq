@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Allow: /legal.html
+
+Disallow: /app.html
+Disallow: /admin.html
+Disallow: /api/
+
+Sitemap: https://trebiq.vercel.app/sitemap.xml
