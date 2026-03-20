@@ -118,6 +118,14 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .aidot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);}
 .ailbl{font-size:11px;font-weight:700;color:var(--green);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.5px;}
 .aitxt{font-size:14px;line-height:1.65;color:#a8dfc8;}
+.mention-dropdown{position:absolute;background:var(--s1);border:1px solid var(--border);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,0.4);z-index:50;max-height:220px;overflow-y:auto;width:240px;display:none;}
+.mention-item{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;transition:background .15s;}
+.mention-item:hover,.mention-item.active{background:var(--s2);}
+.mention-av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;overflow:hidden;}
+.mention-av img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.mention-name{font-size:14px;font-weight:600;color:var(--white);}
+.mention-handle{font-size:12px;color:var(--t3);}
+.compose-wrap{position:relative;}
 .reply-section{border-top:1px solid var(--border);background:rgba(255,255,255,0.01);}
 .reply-compose{padding:12px 20px;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:flex-start;}
 .reply-av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0;color:#fff;overflow:hidden;}
@@ -556,10 +564,12 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
           <div class="ftab on" id="tab-foryou" onclick="switchFeed('foryou')">Pour toi</div>
           <div class="ftab" id="tab-following" onclick="switchFeed('following')">Abonnements</div>
         </div>
+        <div class="compose-wrap">
+        <div class="mention-dropdown" id="mention-dropdown"></div>
         <div class="compose">
           <div class="cav" id="cav">?</div>
           <div class="cr">
-            <textarea class="ctxt" id="ctxt" placeholder="Quoi de neuf ? Tape @askClaude pour une réponse IA..." maxlength="280" oninput="oty()"></textarea>
+            <textarea class="ctxt" id="ctxt" placeholder="Quoi de neuf ? Tape @askClaude pour une réponse IA..." maxlength="280" oninput="oty();handleMention(this)" onkeydown="handleMentionKey(event)"></textarea>
             <div id="cimg-preview" class="cimg-preview" style="display:none">
               <img id="cimg-thumb" src="" alt="">
               <button class="cimg-remove" onclick="removePostImg()">×</button>
@@ -578,6 +588,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
             </div>
           </div>
         </div>
+        </div><!-- /compose-wrap -->
         <div class="hint" id="hint">🤖 Tape <span class="htag">@askClaude</span> pour obtenir une réponse de l'IA</div>
         <div id="fp"><div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div></div>
       </div>
@@ -1100,6 +1111,13 @@ function goPageClose(page){
   closeMobMenu();
   setTimeout(()=>goPage(page),50);
 }
+async function searchUserByUsername(username){
+  try{
+    const profs=await sb(`/profiles?username=eq.${username}`,{tok:me.tok});
+    if(profs?.[0])goUserProfile(profs[0].id);
+    else toast('Utilisateur introuvable','err');
+  }catch(e){}
+}
 function goBack(){if(historyStack.length>0){const prev=historyStack.pop();goPage(prev);}else goPage('home');}
 function goUserProfile(uid){historyStack.push(curPage);goPage('profile',uid);}
 
@@ -1365,6 +1383,7 @@ function rp(p,prof,liked,reposted){
   const avContent=url?`<img src="${url}" alt="">`:`${i}`;
   const txt=esc(p.content)
     .replace(/@askClaude/gi,'<span class="men">@askClaude</span>')
+    .replace(/@([a-zA-Z0-9_]+)/g,(match,user)=>user.toLowerCase()==='askclaude'?match:'<span class="men" onclick="event.stopPropagation();searchUserByUsername(\''+user+'\')" style="cursor:pointer;">@'+user+'</span>')
     .replace(/#(\w+)/g,'<span class="htag" onclick="searchHashtag(\'$1\')">#$1</span>');
   const uid=prof?.id||'';
   const isOwn=p.user_id===me.id;
@@ -2881,6 +2900,99 @@ function closeStory(){
   if(storyTimer)clearTimeout(storyTimer);
   loadStories();
 }
+
+// ===== MENTIONS =====
+let mentionQuery=null,mentionStart=0,mentionIndex=0,mentionUsers=[];
+
+async function handleMention(el){
+  const txt=el.value;
+  const pos=el.selectionStart;
+  // Find @ before cursor
+  let start=-1;
+  for(let i=pos-1;i>=0;i--){
+    if(txt[i]==='@'){start=i;break;}
+    if(txt[i]===' '||txt[i]==='\n')break;
+  }
+  if(start===-1){closeMentionDropdown();return;}
+  const query=txt.slice(start+1,pos);
+  if(query.length===0){closeMentionDropdown();return;}
+  mentionQuery=query;
+  mentionStart=start;
+  mentionIndex=0;
+  // Search users
+  try{
+    const users=await sb(`/profiles?or=(username.ilike.*${query}*,display_name.ilike.*${query}*)&limit=6`,{tok:me.tok});
+    mentionUsers=users||[];
+    if(!mentionUsers.length){closeMentionDropdown();return;}
+    const dd=document.getElementById('mention-dropdown');
+    dd.style.display='block';
+    dd.innerHTML=mentionUsers.map((u,i)=>{
+      const ini=(u.display_name||'U')[0].toUpperCase();
+      const avC=u.avatar_url?`<img src="${u.avatar_url}" alt="">`:`${ini}`;
+      return`<div class="mention-item ${i===0?'active':''}" onclick="insertMention('${u.username}')" data-idx="${i}">
+        <div class="mention-av">${avC}</div>
+        <div><div class="mention-name">${esc(u.display_name||'?')}</div><div class="mention-handle">@${esc(u.username||'?')}</div></div>
+      </div>`;
+    }).join('');
+  }catch(e){closeMentionDropdown();}
+}
+
+function handleMentionKey(e){
+  const dd=document.getElementById('mention-dropdown');
+  if(dd.style.display==='none')return;
+  if(e.key==='ArrowDown'){
+    e.preventDefault();
+    mentionIndex=Math.min(mentionIndex+1,mentionUsers.length-1);
+    updateMentionActive();
+  }else if(e.key==='ArrowUp'){
+    e.preventDefault();
+    mentionIndex=Math.max(mentionIndex-1,0);
+    updateMentionActive();
+  }else if(e.key==='Enter'||e.key==='Tab'){
+    if(mentionUsers[mentionIndex]){
+      e.preventDefault();
+      insertMention(mentionUsers[mentionIndex].username);
+    }
+  }else if(e.key==='Escape'){
+    closeMentionDropdown();
+  }
+}
+
+function updateMentionActive(){
+  document.querySelectorAll('.mention-item').forEach((el,i)=>{
+    el.classList.toggle('active',i===mentionIndex);
+  });
+}
+
+function insertMention(username){
+  const el=document.getElementById('ctxt');
+  const txt=el.value;
+  const pos=el.selectionStart;
+  const before=txt.slice(0,mentionStart);
+  const after=txt.slice(pos);
+  el.value=before+'@'+username+' '+after;
+  el.selectionStart=el.selectionEnd=mentionStart+username.length+2;
+  closeMentionDropdown();
+  oty();
+  el.focus();
+  // Send notification to mentioned user
+  sb(`/profiles?username=eq.${username}&select=id`,{tok:me.tok}).then(profs=>{
+    const uid=profs?.[0]?.id;
+    if(uid&&uid!==me.id){
+      sendPushToUser(uid,'💬 Mention',(myP?.display_name||'Quelqu\'un')+' t\'a mentionné dans un post').catch(()=>{});
+    }
+  }).catch(()=>{});
+}
+
+function closeMentionDropdown(){
+  document.getElementById('mention-dropdown').style.display='none';
+  mentionUsers=[];mentionIndex=0;
+}
+
+// Also hide dropdown when clicking outside
+document.addEventListener('click',(e)=>{
+  if(!e.target.closest('.compose-wrap'))closeMentionDropdown();
+});
 
 // ===== EDIT POST =====
 let editPostId=null;
