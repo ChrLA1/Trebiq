@@ -188,6 +188,13 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .aidot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);}
 .ailbl{font-size:11px;font-weight:700;color:var(--green);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.5px;}
 .aitxt{font-size:14px;line-height:1.65;color:#a8dfc8;}
+/* Story editor */
+.filter-btn{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;flex-shrink:0;}
+.filter-btn span{font-size:10px;color:var(--t2);white-space:nowrap;}
+.filter-btn.active span{color:var(--accent2);font-weight:600;}
+.filter-preview{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:2px solid transparent;transition:border-color .2s;}
+.filter-btn.active .filter-preview{border-color:var(--accent2);}
+
 /* Level borders */
 .av-border-electric{background:linear-gradient(135deg,#7c6af7,#b8b0ff,#7c6af7) !important;background-size:200% 200% !important;animation:electricBorder 2s linear infinite !important;padding:3px !important;}
 .av-border-fire{background:linear-gradient(135deg,#f97316,#ef4444,#f59e0b,#f97316) !important;background-size:200% 200% !important;animation:electricBorder 2s linear infinite !important;padding:3px !important;}
@@ -897,6 +904,79 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
         Propulsé par l'API Claude (Anthropic)
       </div>
     </aside>
+  </div>
+</div>
+
+<!-- Story Editor Modal -->
+<div class="modal-bg" id="story-editor-modal">
+  <div class="modal" style="max-width:420px;padding:0;overflow:hidden;border-radius:20px;">
+    <!-- Preview -->
+    <div id="story-preview-wrap" style="position:relative;width:100%;aspect-ratio:9/16;max-height:60vh;background:#000;overflow:hidden;display:flex;align-items:center;justify-content:center;">
+      <img id="story-preview-img" src="" alt="" style="width:100%;height:100%;object-fit:cover;">
+      <div id="story-text-overlay" style="position:absolute;bottom:80px;left:0;right:0;text-align:center;padding:0 16px;pointer-events:none;"></div>
+    </div>
+    <!-- Filters -->
+    <div style="padding:12px 16px;border-bottom:1px solid var(--border);overflow-x:auto;display:flex;gap:8px;scrollbar-width:none;">
+      <div class="filter-btn active" onclick="applyFilter(this,'none')" style="flex-shrink:0;">
+        <div class="filter-preview" style="filter:none;"></div>
+        <span>Original</span>
+      </div>
+      <div class="filter-btn" onclick="applyFilter(this,'saturate(1.8) contrast(1.1)')">
+        <div class="filter-preview" style="filter:saturate(1.8) contrast(1.1);background:linear-gradient(135deg,#ff6b6b,#ffd93d);"></div>
+        <span>Vivid</span>
+      </div>
+      <div class="filter-btn" onclick="applyFilter(this,'grayscale(1) contrast(1.2)')">
+        <div class="filter-preview" style="filter:grayscale(1);background:linear-gradient(135deg,#888,#333);"></div>
+        <span>Noir</span>
+      </div>
+      <div class="filter-btn" onclick="applyFilter(this,'sepia(0.4) saturate(1.3) brightness(1.05)')">
+        <div class="filter-preview" style="filter:sepia(0.4);background:linear-gradient(135deg,#f4a460,#daa520);"></div>
+        <span>Warm</span>
+      </div>
+      <div class="filter-btn" onclick="applyFilter(this,'hue-rotate(200deg) saturate(1.4) brightness(1.1)')">
+        <div class="filter-preview" style="background:linear-gradient(135deg,#4fc3f7,#0277bd);"></div>
+        <span>Cool</span>
+      </div>
+      <div class="filter-btn" onclick="applyFilter(this,'sepia(0.6) contrast(0.9) brightness(0.9) saturate(1.5)')">
+        <div class="filter-preview" style="filter:sepia(0.6);background:linear-gradient(135deg,#d4a574,#8b6914);"></div>
+        <span>Vintage</span>
+      </div>
+      <div class="filter-btn" onclick="applyFilter(this,'brightness(1.1) contrast(0.9) saturate(0.8) blur(0.3px)')">
+        <div class="filter-preview" style="background:linear-gradient(135deg,#e8d5f5,#b39ddb);"></div>
+        <span>Dreamy</span>
+      </div>
+      <div class="filter-btn" onclick="applyFilter(this,'saturate(1.6) hue-rotate(340deg) brightness(1.05)')">
+        <div class="filter-preview" style="background:linear-gradient(135deg,#ff7043,#ffa726);"></div>
+        <span>Sunset</span>
+      </div>
+      <div class="filter-btn" onclick="applyFilter(this,'saturate(1.5) hue-rotate(90deg) brightness(0.95)')">
+        <div class="filter-preview" style="background:linear-gradient(135deg,#4caf50,#1b5e20);"></div>
+        <span>Forest</span>
+      </div>
+      <div class="filter-btn" onclick="applyFilter(this,'saturate(2) contrast(1.3) brightness(1.1) hue-rotate(270deg)')">
+        <div class="filter-preview" style="background:linear-gradient(135deg,#e040fb,#00e5ff);"></div>
+        <span>Neon</span>
+      </div>
+      <div class="filter-btn" onclick="applyFilter(this,'saturate(0.7) brightness(1.15) contrast(0.9)')">
+        <div class="filter-preview" style="background:linear-gradient(135deg,#f8bbd0,#bbdefb);"></div>
+        <span>Pastel</span>
+      </div>
+    </div>
+    <!-- Text input -->
+    <div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:center;">
+      <input id="story-text-input" placeholder="Ajoute du texte..." style="flex:1;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:8px 12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;" oninput="updateStoryText()">
+      <div style="display:flex;gap:4px;">
+        <button onclick="setTextStyle('white')" style="width:24px;height:24px;border-radius:50%;background:#fff;border:2px solid var(--border);cursor:pointer;"></button>
+        <button onclick="setTextStyle('black')" style="width:24px;height:24px;border-radius:50%;background:#000;border:2px solid var(--border);cursor:pointer;"></button>
+        <button onclick="setTextStyle('#7c6af7')" style="width:24px;height:24px;border-radius:50%;background:#7c6af7;border:2px solid var(--border);cursor:pointer;"></button>
+        <button onclick="setTextStyle('#f59e0b')" style="width:24px;height:24px;border-radius:50%;background:#f59e0b;border:2px solid var(--border);cursor:pointer;"></button>
+      </div>
+    </div>
+    <!-- Actions -->
+    <div style="padding:14px 16px;display:flex;gap:10px;">
+      <button onclick="closeStoryEditor()" class="btn-cancel" style="flex:1;">Annuler</button>
+      <button onclick="publishStoryFromEditor()" class="btn-save" style="flex:1;">Publier 🚀</button>
+    </div>
   </div>
 </div>
 
@@ -3277,25 +3357,141 @@ async function loadStories(){
   }catch(e){bar.innerHTML='';}
 }
 
+let storyFile=null,storyFilter='none',storyTextColor='#ffffff';
+
 function addStory(){
   const input=document.createElement('input');
   input.type='file';input.accept='image/*';
-  input.onchange=async(e)=>{
+  input.onchange=(e)=>{
     const file=e.target.files[0];if(!file)return;
     if(file.size>5*1024*1024){toast('Image trop lourde (max 5MB)','err');return;}
-    toast('Publication...','');
-    try{
-      const ext=file.name.split('.').pop();
-      const path=`stories/${me.id}-${Date.now()}.${ext}`;
-      const r=await fetch(`${SU}/storage/v1/object/avatars/${path}`,{method:'POST',headers:{'apikey':SK,'Authorization':`Bearer ${me.tok}`,'Content-Type':file.type,'x-upsert':'true'},body:file});
-      if(!r.ok)throw new Error('Erreur upload');
-      const url=`${SU}/storage/v1/object/public/avatars/${path}`;
-      await sb('/stories',{method:'POST',tok:me.tok,body:{user_id:me.id,image_url:url}});
-      toast('Story publiée ! 🎉','ok');
-      loadStories();
-    }catch(e){toast('Erreur: '+e.message,'err');}
+    storyFile=file;
+    const reader=new FileReader();
+    reader.onload=(ev)=>{
+      document.getElementById('story-preview-img').src=ev.target.result;
+      document.getElementById('story-preview-img').style.filter='none';
+      document.getElementById('story-text-input').value='';
+      document.getElementById('story-text-overlay').innerHTML='';
+      storyFilter='none';storyTextColor='#ffffff';
+      // Reset filter buttons
+      document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+      document.querySelectorAll('.filter-btn')[0].classList.add('active');
+      document.getElementById('story-editor-modal').classList.add('on');
+    };
+    reader.readAsDataURL(file);
   };
-  input.click();
+  // Try camera first on mobile
+  if(/Android|iPhone|iPad/i.test(navigator.userAgent)){
+    const sheet=document.createElement('div');
+    sheet.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:300;display:flex;align-items:flex-end;';
+    sheet.innerHTML=`<div style="background:var(--s1);border-radius:20px 20px 0 0;padding:20px;width:100%;">
+      <div onclick="openCamera()" style="padding:14px;font-size:15px;font-weight:600;color:var(--white);cursor:pointer;border-bottom:1px solid var(--border);">📷 Prendre une photo</div>
+      <div onclick="openGallery()" style="padding:14px;font-size:15px;font-weight:600;color:var(--white);cursor:pointer;border-bottom:1px solid var(--border);">🖼️ Choisir depuis la galerie</div>
+      <div onclick="this.closest('[style]').remove()" style="padding:14px;font-size:15px;color:var(--t3);cursor:pointer;text-align:center;">Annuler</div>
+    </div>`;
+    document.body.appendChild(sheet);
+    window._storyInput=input;
+    window._storySheet=sheet;
+  }else{
+    input.click();
+  }
+}
+
+function openCamera(){
+  window._storySheet?.remove();
+  const input=window._storyInput||document.createElement('input');
+  input.type='file';input.accept='image/*';input.capture='environment';
+  input.onchange=window._storyInput?.onchange||(()=>{});
+  // Re-attach handler
+  const origInput=document.createElement('input');
+  origInput.type='file';origInput.accept='image/*';origInput.capture='environment';
+  origInput.onchange=(e)=>{
+    const file=e.target.files[0];if(!file)return;
+    if(file.size>5*1024*1024){toast('Image trop lourde','err');return;}
+    storyFile=file;
+    const reader=new FileReader();
+    reader.onload=(ev)=>{
+      document.getElementById('story-preview-img').src=ev.target.result;
+      document.getElementById('story-preview-img').style.filter='none';
+      document.getElementById('story-text-input').value='';
+      document.getElementById('story-text-overlay').innerHTML='';
+      storyFilter='none';storyTextColor='#ffffff';
+      document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+      document.querySelectorAll('.filter-btn')[0].classList.add('active');
+      document.getElementById('story-editor-modal').classList.add('on');
+    };
+    reader.readAsDataURL(file);
+  };
+  origInput.click();
+}
+
+function openGallery(){
+  window._storySheet?.remove();
+  window._storyInput?.click();
+}
+
+function applyFilter(btn,filter){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  storyFilter=filter;
+  document.getElementById('story-preview-img').style.filter=filter==='none'?'':filter;
+}
+
+function updateStoryText(){
+  const txt=document.getElementById('story-text-input').value;
+  const overlay=document.getElementById('story-text-overlay');
+  if(txt){
+    overlay.innerHTML=`<span style="color:${storyTextColor};font-family:'DM Sans',sans-serif;font-size:20px;font-weight:700;text-shadow:0 2px 8px rgba(0,0,0,0.8);padding:6px 12px;border-radius:8px;">${txt}</span>`;
+  }else{
+    overlay.innerHTML='';
+  }
+}
+
+function setTextStyle(color){
+  storyTextColor=color;
+  updateStoryText();
+}
+
+function closeStoryEditor(){
+  document.getElementById('story-editor-modal').classList.remove('on');
+  storyFile=null;
+}
+
+async function publishStoryFromEditor(){
+  if(!storyFile){toast('Aucune image sélectionnée','err');return;}
+  toast('Publication...','');
+  try{
+    // Create canvas with filter applied
+    const img=document.getElementById('story-preview-img');
+    const canvas=document.createElement('canvas');
+    canvas.width=img.naturalWidth||img.width;
+    canvas.height=img.naturalHeight||img.height;
+    const ctx=canvas.getContext('2d');
+    if(storyFilter!=='none')ctx.filter=storyFilter;
+    ctx.drawImage(img,0,0,canvas.width,canvas.height);
+    // Add text overlay if any
+    const txt=document.getElementById('story-text-input').value;
+    if(txt){
+      ctx.filter='none';
+      ctx.font='bold 40px DM Sans, sans-serif';
+      ctx.fillStyle=storyTextColor;
+      ctx.shadowColor='rgba(0,0,0,0.8)';
+      ctx.shadowBlur=10;
+      ctx.textAlign='center';
+      ctx.fillText(txt,canvas.width/2,canvas.height*0.75);
+    }
+    // Convert to blob
+    const blob=await new Promise(res=>canvas.toBlob(res,'image/jpeg',0.9));
+    const ext='jpg';
+    const path=`stories/${me.id}-${Date.now()}.${ext}`;
+    const r=await fetch(`${SU}/storage/v1/object/avatars/${path}`,{method:'POST',headers:{'apikey':SK,'Authorization':`Bearer ${me.tok}`,'Content-Type':'image/jpeg','x-upsert':'true'},body:blob});
+    if(!r.ok)throw new Error('Erreur upload');
+    const url=`${SU}/storage/v1/object/public/avatars/${path}`;
+    await sb('/stories',{method:'POST',tok:me.tok,body:{user_id:me.id,image_url:url}});
+    closeStoryEditor();
+    toast('Story publiée ! 🎉','ok');
+    loadStories();
+  }catch(e){toast('Erreur: '+e.message,'err');}
 }
 
 async function viewStory(id,imgUrl,userId,createdAt){
