@@ -271,20 +271,20 @@ footer{padding:48px 40px;border-top:1px solid var(--border);display:flex;align-i
 <section class="stats">
   <div class="stats-inner">
     <div>
-      <div class="stat-num">100<em>%</em></div>
-      <div class="stat-label">Gratuit pour commencer</div>
+      <div class="stat-num" id="stat-users">-</div>
+      <div class="stat-label">Utilisateurs inscrits</div>
     </div>
     <div>
-      <div class="stat-num">6</div>
-      <div class="stat-label">Niveaux à débloquer</div>
+      <div class="stat-num" id="stat-posts">-</div>
+      <div class="stat-label">Posts publiés</div>
     </div>
     <div>
       <div class="stat-num">8</div>
       <div class="stat-label">Badges à collecter</div>
     </div>
     <div>
-      <div class="stat-num">3</div>
-      <div class="stat-label">Mini-jeux disponibles</div>
+      <div class="stat-num">100<em>%</em></div>
+      <div class="stat-label">Gratuit pour commencer</div>
     </div>
   </div>
 </section>
@@ -316,4 +316,33 @@ footer{padding:48px 40px;border-top:1px solid var(--border);display:flex;align-i
     <a href="/legal.html">Confidentialité</a>
     <a href="/cdn-cgi/l/email-protection#d8bbb7b6acb9bbac98acaabdbab1a9f6b9a8a8">Contact</a>
   </div>
-  <div class="footer-copy">© 2025 Trebiq. Tous droits rés
+  <div class="footer-copy">© 2025 Trebiq. Tous droits ré
+<script>
+const SU='https://rcqiioozqfbempxuyvzq.supabase.co';
+const SK='sb_publishable_Djp3G_plOEtDeDT1GwNMrg_QtS3TljZ';
+
+async function loadPublicStats(){
+  try{
+    const [usersR,postsR]=await Promise.all([
+      fetch(`${SU}/rest/v1/profiles?select=id`,{headers:{'apikey':SK,'Prefer':'count=exact'}}),
+      fetch(`${SU}/rest/v1/posts?select=id`,{headers:{'apikey':SK,'Prefer':'count=exact'}}),
+    ]);
+    const users=parseInt(usersR.headers.get('content-range')?.split('/')[1]||'0');
+    const posts=parseInt(postsR.headers.get('content-range')?.split('/')[1]||'0');
+    function animateNum(el,target){
+      if(!el||target===0)return;
+      let current=0;const step=Math.ceil(target/30);
+      const timer=setInterval(()=>{current=Math.min(current+step,target);el.textContent=current.toLocaleString('fr');if(current>=target)clearInterval(timer);},40);
+    }
+    animateNum(document.getElementById('stat-users'),users);
+    animateNum(document.getElementById('stat-posts'),posts);
+  }catch(e){}
+}
+
+const observer=new IntersectionObserver((entries)=>{
+  if(entries[0].isIntersecting){loadPublicStats();observer.disconnect();}
+},{threshold:0.3});
+const statsEl=document.querySelector('.stats');
+if(statsEl)observer.observe(statsEl);
+</script>
+s
