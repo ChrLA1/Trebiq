@@ -1292,6 +1292,21 @@ async function pub(){
         btn.disabled=false;btn.textContent='Publier';
         return;
       }
+      // Check rate limit server-side via Supabase
+      const today=new Date().toISOString().slice(0,10);
+      const usage=await sb(`/ai_usage?user_id=eq.${me.id}&date=eq.${today}`,{tok:me.tok});
+      const todayCount=usage?.[0]?.count||0;
+      if(todayCount>=15){
+        toast('Limite de 15 @askClaude atteinte aujourd\'hui. Réessaie demain ! ⏳','err');
+        btn.disabled=false;btn.textContent='Publier';
+        return;
+      }
+      // Increment usage count server-side
+      if(usage?.length){
+        await sb(`/ai_usage?user_id=eq.${me.id}&date=eq.${today}`,{method:'PATCH',tok:me.tok,body:{count:todayCount+1}});
+      }else{
+        await sb('/ai_usage',{method:'POST',tok:me.tok,body:{user_id:me.id,date:today,count:1}});
+      }
       const aiR=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:content.replace(/@askClaude/gi,'').trim()||content})});
       const aiD=await aiR.json();
       if(aiD.reply){await sb(`/posts?id=eq.${post.id}`,{method:'PATCH',tok:me.tok,body:{ai_reply:aiD.reply}});loadFeed();}
@@ -2493,6 +2508,15 @@ function oty(){
   el.className='cct'+(r<30?' w':'')+(r<0?' ov':'');
   document.getElementById('cpub').disabled=(v.trim().length===0&&!postImgFile)||r<0;
   document.getElementById('hint').classList.toggle('active',/@askClaude/i.test(v));
+  if(/@askClaude/i.test(v)&&myP?.is_premium){
+    const today=new Date().toISOString().slice(0,10);
+    sb(`/ai_usage?user_id=eq.${me.id}&date=eq.${today}`,{tok:me.tok}).then(u=>{
+      const count=u?.[0]?.count||0;
+      const remaining=15-count;
+      const hintEl=document.getElementById('hint');
+      if(hintEl)hintEl.innerHTML=`🤖 <span class="htag">@askClaude</span> — <strong style="color:${remaining<=3?'var(--red)':'var(--accent2)'}">${remaining} appel${remaining>1?'s':''} restant${remaining>1?'s':''}</strong> aujourd'hui`;
+    }).catch(()=>{});
+  }
 }
 function fc(){goPage('home');setTimeout(()=>{document.getElementById('ctxt').focus();window.scrollTo({top:0,behavior:'smooth'});},100);}
 function ins(t){goPage('home');setTimeout(()=>{const el=document.getElementById('ctxt');el.value+=t;oty();el.focus();},100);}
