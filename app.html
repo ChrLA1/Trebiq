@@ -582,40 +582,22 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
         <div id="fp"><div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div></div>
       </div>
 
-      <div class="page" id="page-explore">
+      <div <div class="page" id="page-explore">
         <div class="ptop"><div class="ptitle">Explorer</div></div>
-        <div class="search-bar"><input class="search-input" id="search-input" placeholder="Rechercher..." oninput="onSearch()" type="text"></div>
-        <div class="feed-tabs">
-          <div class="ftab on" id="etab-users" onclick="switchExplore('users')">👤 Personnes</div>
-          <div class="ftab" id="etab-posts" onclick="switchExplore('posts')">📝 Posts</div>
-        </div>
-        <div id="explore-results"><div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div></div>
-      </div>
-
-      <div class="page" id="page-notifs">
-        <div class="ptop"><div class="ptitle">Notifications</div></div>
-        <div id="notifs-list"><div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div></div>
-      </div>
-
-      <div class="page" id="page-messages">
-        <div class="ptop">
-          <button class="ptop-back" id="chat-back" onclick="goPage('messages')" style="display:none">←</button>
-          <div><div class="ptitle" id="messages-title">Messages</div></div>
-        </div>
-        <div id="messages-content">
-          <button class="new-dm-btn" onclick="openNewDM()">✉️ Nouveau message</button>
-          <div id="dm-list"><div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div></div>
-        </div>
-        <div id="chat-content" style="display:none" class="chat-wrap">
-          <div class="chat-msgs" id="chat-msgs"></div>
-          <div class="chat-input-wrap">
-            <button class="ctool" onclick="document.getElementById('dm-img-file').click()" title="Image" style="flex-shrink:0;font-size:18px;">🖼️</button>
-            <input type="file" id="dm-img-file" accept="image/*" style="display:none" onchange="sendDMImg(event)">
-            <input class="chat-input" id="chat-input" placeholder="Envoyer un message..." onkeydown="if(event.key==='Enter')sendMsg()">
-            <button class="chat-send" id="chat-send-btn" onclick="sendMsg()">➤</button>
+        <div class="search-bar" style="padding:12px 20px;border-bottom:1px solid var(--border);">
+          <div style="position:relative;">
+            <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--t3);font-size:16px;">🔍</span>
+            <input class="search-input" id="search-input" placeholder="Rechercher posts, @utilisateurs, #hashtags..." oninput="onSearch()" type="text" style="padding-left:42px;">
           </div>
         </div>
-      </div>
+        <div style="display:flex;border-bottom:1px solid var(--border);">
+          <div class="ftab on" id="etab-users" onclick="switchExplore('users')" style="flex:1;text-align:center;">👤 Personnes</div>
+          <div class="ftab" id="etab-posts" onclick="switchExplore('posts')" style="flex:1;text-align:center;">📝 Posts</div>
+          <div class="ftab" id="etab-tags" onclick="switchExplore('tags')" style="flex:1;text-align:center;">🔥 Tendances</div>
+        </div>
+        <div id="explore-trending" style="display:none;"></div>
+        <div id="explore-trending-list" style="display:none;"></div>
+        <div id="explore-results"><div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div></div></div>
 
       <div class="page" id="page-profile">
         <div class="ptop">
@@ -2361,15 +2343,60 @@ function switchExplore(tab){
   curExploreTab=tab;
   document.getElementById('etab-users').classList.toggle('on',tab==='users');
   document.getElementById('etab-posts').classList.toggle('on',tab==='posts');
-  document.getElementById('search-input').placeholder=tab==='users'?'Rechercher des personnes...':'Rechercher des posts...';
+  document.getElementById('etab-tags').classList.toggle('on',tab==='tags');
+  const placeholders={users:'Rechercher des @utilisateurs...',posts:'Rechercher des posts...',tags:'Rechercher un #hashtag...'};
+  document.getElementById('search-input').placeholder=placeholders[tab]||'Rechercher...';
   onSearch();
 }
 function onSearch(){
+  const q=document.getElementById('search-input').value.trim();
+  // Auto-detect type from input
+  if(q.startsWith('@')&&curExploreTab!=='posts'){
+    if(curExploreTab!=='users')switchExplore('users');
+    return searchUsers();
+  }
+  if(q.startsWith('#')&&curExploreTab!=='users'){
+    if(curExploreTab!=='tags')switchExplore('tags');
+    return searchTags();
+  }
   if(curExploreTab==='users')searchUsers();
-  else searchPosts();
+  else if(curExploreTab==='posts')searchPosts();
+  else searchTags();
 }
 async function loadExplore(){
   switchExplore('users');
+  loadTrending();
+}
+async function searchTags(){
+  const q=document.getElementById('search-input').value.trim().replace('#','').toLowerCase();
+  const c=document.getElementById('explore-results');
+  c.innerHTML='<div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div>';
+  try{
+    const posts=await sb(`/posts?order=created_at.desc&limit=500&select=content,created_at`,{tok:me.tok});
+    const counts={};
+    const regex=/#([\w\u00C0-\u017E]+)/g;
+    (posts||[]).forEach(p=>{
+      const matches=[...(p.content?.matchAll(regex)||[])];
+      matches.forEach(m=>{
+        const tag=m[1].toLowerCase();
+        if(tag.length>1&&(!q||tag.includes(q)))counts[tag]=(counts[tag]||0)+1;
+      });
+    });
+    const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,20);
+    if(!sorted.length){c.innerHTML='<div class="empty"><div class="empty-ico">🔍</div><div class="empty-t">Aucun hashtag trouvé</div></div>';return;}
+    c.innerHTML=`<div style="padding:16px 20px;">${sorted.map(([tag,count],i)=>`
+      <div class="tr" onclick="searchHashtag('${tag}')" style="padding:14px 0;">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div>
+            <div style="font-size:12px;color:var(--t3);margin-bottom:3px;">${i+1} · Tendance</div>
+            <div style="font-size:16px;font-weight:700;color:var(--accent2);">#${tag}</div>
+            <div style="font-size:12px;color:var(--t3);margin-top:2px;">${count} post${count>1?'s':''}</div>
+          </div>
+          <div style="font-size:20px;opacity:.4;">→</div>
+        </div>
+      </div>`).join('')}
+    </div>`;
+  }catch(e){c.innerHTML=`<div class="empty"><div class="empty-t">Erreur</div></div>`;}
 }
 function renderUsers(users,c){
   if(!users?.length){c.innerHTML='<div class="empty"><div class="empty-ico">👥</div><div class="empty-t">Aucun utilisateur</div></div>';return;}
@@ -2380,7 +2407,8 @@ function renderUsers(users,c){
   }).join('');
 }
 async function searchUsers(){
-  const q=document.getElementById('search-input').value.trim().toLowerCase();
+  const raw=document.getElementById('search-input').value.trim();
+  const q=raw.startsWith('@')?raw.slice(1).toLowerCase():raw.toLowerCase();
   const c=document.getElementById('explore-results');
   c.innerHTML='<div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div>';
   try{
