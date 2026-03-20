@@ -4001,27 +4001,32 @@ document.addEventListener('DOMContentLoaded',()=>{
           const d=await r.json();
           if(d.access_token&&d.user){
             me={id:d.user.id,tok:d.access_token,email:d.user.email||''};
-            // Save updated tokens
-            localStorage.setItem('trebiq_session',JSON.stringify({
+            // CRITICAL: Always save the NEW refresh_token returned by Supabase
+            const newSession={
               id:d.user.id,
               tok:d.access_token,
               email:d.user.email||'',
-              refresh_token:d.refresh_token||sess.refresh_token
-            }));
+              refresh_token:d.refresh_token  // Supabase rotates this every time
+            };
+            localStorage.setItem('trebiq_session',JSON.stringify(newSession));
             await loadMe();
             if(myP)showApp();
             else localStorage.removeItem('trebiq_session');
           }else{
-            // Refresh failed - try existing token
-            me={id:sess.id,tok:sess.tok,email:sess.email||''};
-            await loadMe();
-            if(myP)showApp();
-            else localStorage.removeItem('trebiq_session');
+            // Refresh token expired - clear and show login
+            localStorage.removeItem('trebiq_session');
+            const splash=document.getElementById('splash');
+            if(splash){splash.style.opacity='0';setTimeout(()=>splash.style.display='none',300);}
           }
         }).catch(async()=>{
           // Network error - try existing token
           me={id:sess.id,tok:sess.tok,email:sess.email||''};
-          try{await loadMe();if(myP)showApp();}catch(e){localStorage.removeItem('trebiq_session');}
+          try{await loadMe();if(myP)showApp();}
+          catch(e){
+            localStorage.removeItem('trebiq_session');
+            const splash=document.getElementById('splash');
+            if(splash){splash.style.opacity='0';setTimeout(()=>splash.style.display='none',300);}
+          }
         });
       }else{
         // No refresh token - try existing token
