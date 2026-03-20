@@ -686,11 +686,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
     <aside class="rnav">
       <div class="rw">
         <div class="rwt">🔥 Tendances</div>
-        <div class="tr" onclick="ins('#IA ')"><div class="trc">Technologie</div><div class="trn">#IA</div></div>
-        <div class="tr" onclick="ins('#Dev ')"><div class="trc">Développement</div><div class="trn">#Dev</div></div>
-        <div class="tr" onclick="ins('#Cybersécurité ')"><div class="trc">Sécurité</div><div class="trn">#Cybersécurité</div></div>
-        <div class="tr" onclick="ins('#Trebiq ')"><div class="trc">Réseau social</div><div class="trn">#Trebiq</div></div>
-        <div class="tr" onclick="iac()"><div class="trc">IA</div><div class="trn">@askClaude</div></div>
+        <div id="trending-list"><div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div></div>
       </div>
       <div class="rw" id="sugg-widget">
         <div class="rwt">💡 Suggestions</div>
@@ -977,6 +973,7 @@ function showApp(){
   checkUnreadNotifs();
   checkUnreadDMs();
   loadSuggestions();
+  loadTrending();
   msgPollInterval=setInterval(()=>{checkUnreadDMs();if(curConvId)pollNewMessages();},10000);
   if(!localStorage.getItem('ck'))document.getElementById('cookie-bar').style.display='flex';
 }
@@ -1312,6 +1309,7 @@ async function pub(){
       if(aiD.reply){await sb(`/posts?id=eq.${post.id}`,{method:'PATCH',tok:me.tok,body:{ai_reply:aiD.reply}});loadFeed();}
     }
     toast('Publié ! 🎉','ok');
+    loadTrending();
     notifyFollowersOnPost(content).catch(()=>{});
     addXP(10);
   }catch(e){toast('Erreur: '+e.message,'err');}
@@ -2260,6 +2258,50 @@ async function searchPosts(){
     posts.forEach(p=>{llc(p.id);lrc(p.id);lrpc(p.id);});
   }catch(e){c.innerHTML=`<div class="empty"><div class="empty-t">Erreur</div></div>`;}
 }
+async function loadTrending(){
+  const c=document.getElementById('trending-list');
+  if(!c)return;
+  try{
+    // Get recent posts (last 500) and extract hashtags
+    const posts=await sb('/posts?order=created_at.desc&limit=500&select=content,created_at',{tok:me.tok});
+    if(!posts?.length){
+      c.innerHTML='<div style="color:var(--t3);font-size:13px;padding:4px 0">Aucune tendance pour le moment.</div>';
+      return;
+    }
+    // Count hashtags
+    const counts={};
+    const regex=/#([\wÀ-ÿa-zA-Z0-9_]+)/g;
+    posts.forEach(p=>{
+      const matches=p.content?.matchAll(regex)||[];
+      for(const m of matches){
+        const tag=m[1].toLowerCase();
+        if(tag.length>1)counts[tag]=(counts[tag]||0)+1;
+      }
+    });
+    // Sort by count
+    const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,8);
+    if(!sorted.length){
+      c.innerHTML='<div style="color:var(--t3);font-size:13px;padding:4px 0">Publie des posts avec #hashtags !</div>';
+      return;
+    }
+    c.innerHTML=sorted.map(([tag,count],i)=>`
+      <div class="tr" onclick="searchHashtag('${esc(tag)}')">
+        <div class="trc">${i+1} · Tendance</div>
+        <div class="trn">#${esc(tag)}</div>
+        <div style="font-size:12px;color:var(--t3);margin-top:2px;">${count} post${count>1?'s':''}</div>
+      </div>`).join('');
+    // Also fill explore trending pills
+    const expTrend=document.getElementById('explore-trending-list');
+    const expWrap=document.getElementById('explore-trending');
+    if(expTrend&&sorted.length){
+      expWrap.style.display='block';
+      expTrend.innerHTML=sorted.map(([tag])=>`<button onclick="searchHashtag('${esc(tag)}')" style="background:var(--s2);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:13px;color:var(--accent2);cursor:pointer;font-family:'DM Sans',sans-serif;">#${esc(tag)}</button>`).join('');
+    }
+  }catch(e){
+    c.innerHTML='<div style="color:var(--t3);font-size:13px;">Erreur chargement</div>';
+  }
+}
+
 async function loadSuggestions(){
   const c=document.getElementById('sugg-list');
   if(!c)return;
