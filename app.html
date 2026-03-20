@@ -1263,6 +1263,7 @@ async function login(){
   try{
     const d=await sba('/token?grant_type=password',{email:e,password:p});
     me=d.user;me.tok=d.access_token;
+    localStorage.setItem('trebiq_session',JSON.stringify({id:d.user.id,tok:d.access_token,refresh_token:d.refresh_token||''}));
     await loadMe();
     // Create profile if pending from email confirmation
     if(!myP){
@@ -1301,12 +1302,14 @@ async function register(){
       return;
     }
     me=d.user;me.tok=d.access_token;
+    localStorage.setItem('trebiq_session',JSON.stringify({id:d.user.id,tok:d.access_token,refresh_token:d.refresh_token||''}));
     const birth=document.getElementById('ubirth')?.value;
     await sb('/profiles',{method:'POST',tok:me.tok,body:{id:me.id,username:u,display_name:n,birthdate:birth||null}});
     await loadMe();showApp();toast('Bienvenue sur Trebiq ! 🎉','ok');
   }catch(e){serr(e.message);}
 }
 function logout(){
+  localStorage.removeItem('trebiq_session');
   me=null;myP=null;
   if(msgPollInterval)clearInterval(msgPollInterval);
   document.getElementById('app').style.display='none';
@@ -3958,6 +3961,22 @@ window.addEventListener('appinstalled',()=>{
 
 document.addEventListener('DOMContentLoaded',()=>{
   initTheme();
+  // Auto-login from saved session
+  const saved=localStorage.getItem('trebiq_session');
+  if(saved){
+    try{
+      const sess=JSON.parse(saved);
+      if(sess.tok&&sess.id){
+        me={id:sess.id,tok:sess.tok,email:sess.email||''};
+        loadMe().then(()=>{
+          if(myP)showApp();
+          else localStorage.removeItem('trebiq_session');
+        }).catch(()=>{
+          localStorage.removeItem('trebiq_session');
+        });
+      }
+    }catch(e){localStorage.removeItem('trebiq_session');}
+  }
   const bi=document.getElementById('ubirth');
   if(bi)bi.max=new Date().toISOString().slice(0,10);
   document.getElementById('ctxt').addEventListener('keydown',e=>{if(e.ctrlKey&&e.key==='Enter')pub();});
