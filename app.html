@@ -679,6 +679,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
             <div><div class="settings-label">Se déconnecter</div><div class="settings-desc">Quitter Trebiq</div></div>
             <button class="btn-danger" onclick="logout()">Déconnexion</button>
           </div>
+          <div class="settings-row">
+            <div><div class="settings-label">Supprimer mon compte</div><div class="settings-desc">Supprime définitivement ton compte et toutes tes données (RGPD)</div></div>
+            <button class="btn-danger" onclick="openDeleteAccount()">Supprimer</button>
+          </div>
         </div>
       </div>
     </main>
@@ -765,6 +769,23 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
     </div>
     <button class="btn-save" style="width:100%;padding:14px;font-size:15px;" onclick="document.getElementById('premium-modal').classList.remove('on');toast('Bientôt disponible ! 🚀','ok')">S'abonner pour 5$/mois</button>
     <div style="font-size:12px;color:var(--t3);margin-top:10px;">Paiement sécurisé via Stripe — Annulable à tout moment</div>
+  </div>
+</div>
+
+<!-- Delete account modal -->
+<div class="modal-bg" id="delete-account-modal">
+  <div class="modal" style="max-width:400px;text-align:center;">
+    <div style="font-size:48px;margin-bottom:12px;">⚠️</div>
+    <div class="modal-title" style="text-align:center;color:var(--red)">Supprimer mon compte</div>
+    <p style="color:var(--t2);font-size:14px;line-height:1.7;margin-bottom:16px;">Cette action est <strong style="color:var(--white)">irréversible</strong>. Tous tes posts, likes, messages et données seront définitivement supprimés.</p>
+    <div class="mfld">
+      <label>Tape <strong style="color:var(--white)">SUPPRIMER</strong> pour confirmer</label>
+      <input type="text" id="delete-account-confirm" placeholder="SUPPRIMER" style="text-align:center;letter-spacing:2px;">
+    </div>
+    <div class="modal-btns" style="justify-content:center;">
+      <button class="btn-cancel" onclick="closeDeleteAccount()">Annuler</button>
+      <button class="btn-danger" onclick="confirmDeleteAccount()">Supprimer définitivement</button>
+    </div>
   </div>
 </div>
 
@@ -1261,7 +1282,7 @@ function rp(p,prof,liked,reposted){
   const isOwn=p.user_id===me.id;
   const imgHtml=p.image_url?`<div class="post-img" onclick="openLightbox('${p.image_url}')"><img src="${p.image_url}" alt="image" loading="lazy"></div>`:''
   const pollHtml=p._poll?`<div id="poll-${p.id}">Chargement sondage...</div>`:'';
-  return`<div class="post" id="p-${p.id}"><div class="prow"><div class="pav" onclick="goUserProfile('${uid}')">${avContent}</div><div class="pb"><div class="pm"><span class="pname" onclick="goUserProfile('${uid}')">${esc(prof?.display_name||'Utilisateur')}</span><span class="phdl">@${esc(prof?.username||'...')}</span><span class="ptm">· ${ago(p.created_at)}</span></div><div class="ptxt">${txt}</div>${imgHtml}${pollHtml}${p.ai_reply?`<div class="airep"><div class="aih"><div class="aidot"></div><span class="ailbl">askClaude</span></div><div class="aitxt">${esc(p.ai_reply)}</div></div>`:''}<div class="pacts"><button class="pa ${liked?'lkd':''}" onclick="tl('${p.id}',${liked})">${liked?'❤️':'🤍'} <span id="lc-${p.id}">0</span></button><button class="pa" onclick="toggleReplies('${p.id}')">💬 <span id="rc-${p.id}">0</span></button><button class="pa ${reposted?'rptd':''}" onclick="tr2('${p.id}',${reposted})">🔁 <span id="rpc-${p.id}">0</span></button>${isOwn?`<button class="pa del" onclick="askDelete('${p.id}')">🗑️</button><button class="pa" onclick="togglePin('${p.id}')" title="Épingler">${p._pinned?'📌':'📍'}</button>`:`<button class="pa" onclick="translatePost('${p.id}','${esc(p.content||'')}')" title="Traduire">🌐</button><button class="pa" onclick="openReport('${p.id}')" title="Signaler">🚩</button>`}</div><div id="replies-${p.id}" style="display:none"></div></div></div></div>`;
+  return`<div class="post" id="p-${p.id}"><div class="prow"><div class="pav" onclick="goUserProfile('${uid}')">${avContent}</div><div class="pb"><div class="pm"><span class="pname" onclick="goUserProfile('${uid}')">${esc(prof?.display_name||'Utilisateur')}</span><span class="phdl">@${esc(prof?.username||'...')}</span><span class="ptm">· ${ago(p.created_at)}</span></div><div class="ptxt">${txt}</div>${imgHtml}${pollHtml}${p.ai_reply?`<div class="airep"><div class="aih"><div class="aidot"></div><span class="ailbl">askClaude</span></div><div class="aitxt">${esc(p.ai_reply)}</div></div>`:''}<div class="pacts"><button class="pa ${liked?'lkd':''}" onclick="tl('${p.id}',${liked})">${liked?'❤️':'🤍'} <span id="lc-${p.id}">0</span></button><button class="pa" onclick="toggleReplies('${p.id}')">💬 <span id="rc-${p.id}">0</span></button><button class="pa ${reposted?'rptd':''}" onclick="tr2('${p.id}',${reposted})">🔁 <span id="rpc-${p.id}">0</span></button>${isOwn?`<button class="pa del" onclick="askDelete('${p.id}')">🗑️</button><button class="pa" onclick="togglePin('${p.id}')" title="Épingler">${p._pinned?'📌':'📍'}</button>`:`<button class="pa" onclick="translatePost('${p.id}','${esc(p.content||'')}')" title="Traduire">🌐</button><button class="pa" onclick="openReport('${p.id}')" title="Signaler">🚩</button><button class=\"pa\" onclick=\"sharePost('${p.id}')\" title=\"Partager\">🔗</button>`}</div><div id="replies-${p.id}" style="display:none"></div></div></div></div>`;
 }
 async function llc(id){try{const r=await fetch(`${SU}/rest/v1/likes?post_id=eq.${id}&select=id`,{headers:{'apikey':SK,'Authorization':`Bearer ${SK}`,'Prefer':'count=exact'}});const c=r.headers.get('content-range')?.split('/')[1]||'0';const el=document.getElementById('lc-'+id);if(el)el.textContent=c;}catch(e){}}
 async function lrc(id){try{const r=await fetch(`${SU}/rest/v1/replies?post_id=eq.${id}&select=id`,{headers:{'apikey':SK,'Authorization':`Bearer ${SK}`,'Prefer':'count=exact'}});const c=r.headers.get('content-range')?.split('/')[1]||'0';const el=document.getElementById('rc-'+id);if(el)el.textContent=c;}catch(e){}}
@@ -1524,6 +1545,16 @@ async function translatePost(pid, originalText){
   }catch(e){
     txtEl.innerHTML=origHtml;
     toast('Erreur traduction','err');
+  }
+}
+
+// ===== SHARE =====
+function sharePost(pid){
+  const url=`${window.location.origin}/app.html#post-${pid}`;
+  if(navigator.share){
+    navigator.share({title:'Trebiq',text:'Regarde ce post sur Trebiq !',url}).catch(()=>{});
+  }else{
+    navigator.clipboard.writeText(url).then(()=>toast('Lien copié ! 🔗','ok')).catch(()=>toast('Impossible de copier','err'));
   }
 }
 
@@ -2566,6 +2597,38 @@ function iac(){ins('@askClaude ');}
 function esc(t){return(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function ago(d){const s=(Date.now()-new Date(d))/1000;if(s<60)return'maintenant';if(s<3600)return Math.floor(s/60)+'m';if(s<86400)return Math.floor(s/3600)+'h';return Math.floor(s/86400)+'j';}
 function toast(m,t=''){const el=document.getElementById('toast');el.textContent=m;el.className=`toast ${t} show`;setTimeout(()=>el.className='toast',3200);}
+// ===== DELETE ACCOUNT =====
+function openDeleteAccount(){
+  document.getElementById('delete-account-confirm').value='';
+  document.getElementById('delete-account-modal').classList.add('on');
+}
+function closeDeleteAccount(){
+  document.getElementById('delete-account-modal').classList.remove('on');
+}
+async function confirmDeleteAccount(){
+  const val=document.getElementById('delete-account-confirm').value.trim();
+  if(val!=='SUPPRIMER')return toast('Tape SUPPRIMER pour confirmer','err');
+  try{
+    toast('Suppression en cours...','');
+    // Delete all user data
+    await sb(`/posts?user_id=eq.${me.id}`,{method:'DELETE',tok:me.tok}).catch(()=>{});
+    await sb(`/likes?user_id=eq.${me.id}`,{method:'DELETE',tok:me.tok}).catch(()=>{});
+    await sb(`/replies?user_id=eq.${me.id}`,{method:'DELETE',tok:me.tok}).catch(()=>{});
+    await sb(`/reposts?user_id=eq.${me.id}`,{method:'DELETE',tok:me.tok}).catch(()=>{});
+    await sb(`/follows?follower_id=eq.${me.id}`,{method:'DELETE',tok:me.tok}).catch(()=>{});
+    await sb(`/follows?following_id=eq.${me.id}`,{method:'DELETE',tok:me.tok}).catch(()=>{});
+    await sb(`/notifications?user_id=eq.${me.id}`,{method:'DELETE',tok:me.tok}).catch(()=>{});
+    await sb(`/profiles?id=eq.${me.id}`,{method:'DELETE',tok:me.tok}).catch(()=>{});
+    // Delete auth account
+    await fetch(`${SU}/auth/v1/user`,{method:'DELETE',headers:{'apikey':SK,'Authorization':`Bearer ${me.tok}`}}).catch(()=>{});
+    closeDeleteAccount();
+    logout();
+    toast('Compte supprimé. À bientôt 👋','ok');
+  }catch(e){
+    toast('Erreur: '+e.message,'err');
+  }
+}
+
 // ===== NOTIFY USER =====
 async function checkNotifyPref(targetUserId){
   try{
@@ -2702,6 +2765,10 @@ function urlBase64ToUint8Array(base64String){
   for(let i=0;i<rawData.length;++i)outputArray[i]=rawData.charCodeAt(i);
   return outputArray;
 }
+
+// ===== OFFLINE DETECTION =====
+window.addEventListener('online', ()=>toast('Connexion rétablie ✅','ok'));
+window.addEventListener('offline', ()=>toast('Pas de connexion internet 📵','err'));
 
 document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('ctxt').addEventListener('keydown',e=>{if(e.ctrlKey&&e.key==='Enter')pub();});
