@@ -188,6 +188,15 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .aidot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);}
 .ailbl{font-size:11px;font-weight:700;color:var(--green);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.5px;}
 .aitxt{font-size:14px;line-height:1.65;color:#a8dfc8;}
+/* Level borders */
+.av-border-electric{background:linear-gradient(135deg,#7c6af7,#b8b0ff,#7c6af7) !important;background-size:200% 200% !important;animation:electricBorder 2s linear infinite !important;padding:3px !important;}
+.av-border-fire{background:linear-gradient(135deg,#f97316,#ef4444,#f59e0b,#f97316) !important;background-size:200% 200% !important;animation:electricBorder 2s linear infinite !important;padding:3px !important;}
+.av-border-gold{background:linear-gradient(135deg,#f59e0b,#fde68a,#f59e0b) !important;background-size:200% 200% !important;animation:electricBorder 2s linear infinite !important;padding:3px !important;}
+.av-border-star{background:linear-gradient(135deg,#6366f1,#8b5cf6,#d946ef,#6366f1) !important;background-size:200% 200% !important;animation:electricBorder 2s linear infinite !important;padding:3px !important;}
+.av-border-rainbow{background:linear-gradient(135deg,#ef4444,#f97316,#eab308,#22c55e,#3b82f6,#8b5cf6,#ef4444) !important;background-size:300% 300% !important;animation:electricBorder 1.5s linear infinite !important;padding:3px !important;}
+@keyframes electricBorder{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
+.name-expert{color:var(--accent2) !important;font-weight:700 !important;}
+.name-legend{background:linear-gradient(90deg,#ef4444,#f97316,#eab308,#22c55e,#3b82f6,#8b5cf6) !important;-webkit-background-clip:text !important;-webkit-text-fill-color:transparent !important;font-weight:700 !important;}
 .mention-dropdown{position:absolute;background:var(--s1);border:1px solid var(--border);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,0.4);z-index:50;max-height:220px;overflow-y:auto;width:240px;display:none;}
 .mention-item{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;transition:background .15s;}
 .mention-item:hover,.mention-item.active{background:var(--s2);}
@@ -1525,6 +1534,8 @@ function rp(p,prof,liked,reposted){
   const i=(prof?.display_name||'U')[0].toUpperCase();
   const url=prof?.avatar_url;
   const avContent=url?`<img src="${url}" alt="">`:`${i}`;
+  const borderCls=getBorderClass(prof?.xp||0);
+  const nameCls=getNameClass(prof?.xp||0);
   const txt=esc(p.content)
     .replace(/@askClaude/gi,'<span class="men">@askClaude</span>')
     .replace(/@([a-zA-Z0-9_]+)/g,(match,user)=>user.toLowerCase()==='askclaude'?match:'<span class="men" onclick="event.stopPropagation();searchUserByUsername(\''+user+'\')" style="cursor:pointer;">@'+user+'</span>')
@@ -1538,7 +1549,7 @@ function rp(p,prof,liked,reposted){
   const pinBtn=isOwn?`<button class="pa" onclick="togglePin('${p.id}')" title="Epingler">${p._pinned?'📌':'📍'}</button>`:'';
   const delBtn=isOwn?`<button class="pa del" onclick="askDelete('${p.id}')">🗑️</button><button class="pa" onclick="openEditPost('${p.id}','${esc(p.content||'')}')" title="Modifier">✏️</button>`:'';
   const otherBtns=isOwn?'':`<button class="pa" onclick="translatePost('${p.id}','${esc(p.content||'')}')" title="Traduire">🌐</button><button class="pa" onclick="openReport('${p.id}')" title="Signaler">🚩</button><button class="pa" onclick="sharePost('${p.id}')" title="Partager">🔗</button>`;
-  return`<div class="post" id="p-${p.id}"><div class="prow"><div class="pav" onclick="goUserProfile('${uid}')">${avContent}</div><div class="pb"><div class="pm"><span class="pname" onclick="goUserProfile('${uid}')">${esc(prof?.display_name||'Utilisateur')}${verified}${premium}</span><span class="phdl">@${esc(prof?.username||'...')}</span><span class="ptm">· ${ago(p.created_at)}</span></div><div class="ptxt">${txt}</div>${imgHtml}${pollHtml}${p.ai_reply?`<div class="airep"><div class="aih"><div class="aidot"></div><span class="ailbl">askClaude</span></div><div class="aitxt">${esc(p.ai_reply)}</div></div>`:''}<div class="pacts"><button class="pa ${liked?'lkd':''}" onclick="tl('${p.id}',${liked})">${liked?'❤️':'🤍'} <span id="lc-${p.id}">0</span></button><button class="pa" onclick="toggleReplies('${p.id}')">💬 <span id="rc-${p.id}">0</span></button><button class="pa ${reposted?'rptd':''}" onclick="tr2('${p.id}',${reposted})">🔁 <span id="rpc-${p.id}">0</span></button>${delBtn}${pinBtn}${otherBtns}</div><div id="replies-${p.id}" style="display:none"></div></div></div></div>`;
+  return`<div class="post" id="p-${p.id}"><div class="prow"><div class="pav ${borderCls}" onclick="goUserProfile('${uid}')">${avContent}</div><div class="pb"><div class="pm"><span class="pname ${nameCls}" onclick="goUserProfile('${uid}')">${esc(prof?.display_name||'Utilisateur')}${verified}${premium}</span><span class="phdl">@${esc(prof?.username||'...')}</span><span class="ptm">· ${ago(p.created_at)}</span></div><div class="ptxt">${txt}</div>${imgHtml}${pollHtml}${p.ai_reply?`<div class="airep"><div class="aih"><div class="aidot"></div><span class="ailbl">askClaude</span></div><div class="aitxt">${esc(p.ai_reply)}</div></div>`:''}<div class="pacts"><button class="pa ${liked?'lkd':''}" onclick="tl('${p.id}',${liked})">${liked?'❤️':'🤍'} <span id="lc-${p.id}">0</span></button><button class="pa" onclick="toggleReplies('${p.id}')">💬 <span id="rc-${p.id}">0</span></button><button class="pa ${reposted?'rptd':''}" onclick="tr2('${p.id}',${reposted})">🔁 <span id="rpc-${p.id}">0</span></button>${delBtn}${pinBtn}${otherBtns}</div><div id="replies-${p.id}" style="display:none"></div></div></div></div>`;
 }
 
 async function llc(id){try{const r=await fetch(`${SU}/rest/v1/likes?post_id=eq.${id}&select=id`,{headers:{'apikey':SK,'Authorization':`Bearer ${SK}`,'Prefer':'count=exact'}});const c=r.headers.get('content-range')?.split('/')[1]||'0';const el=document.getElementById('lc-'+id);if(el)el.textContent=c;}catch(e){}}
@@ -1612,8 +1623,9 @@ async function pub(){
       const today=new Date().toISOString().slice(0,10);
       const usage=await sb(`/ai_usage?user_id=eq.${me.id}&date=eq.${today}`,{tok:me.tok});
       const todayCount=usage?.[0]?.count||0;
-      if(todayCount>=15){
-        toast('Limite de 15 @askClaude atteinte aujourd\'hui. Réessaie demain ! ⏳','err');
+      const aiLimit=getAskClaudeLimit(myP?.xp||0);
+    if(todayCount>=aiLimit){
+        toast('Limite de '+aiLimit+' @askClaude atteinte aujourd\'hui. Réessaie demain ! ⏳','err');
         btn.disabled=false;btn.textContent='Publier';
         return;
       }
@@ -1704,12 +1716,12 @@ async function sendReply(pid){
 }
 // ===== XP & LEVELS =====
 const LEVELS=[
-  {level:1,name:'Novice',emoji:'🌱',xp:0},
-  {level:2,name:'Actif',emoji:'⚡',xp:200},
-  {level:3,name:'Créateur',emoji:'🔥',xp:800},
-  {level:4,name:'Influenceur',emoji:'💎',xp:2500},
-  {level:5,name:'Expert',emoji:'🌟',xp:6000},
-  {level:6,name:'Légende',emoji:'👑',xp:15000},
+  {level:1,name:'Novice',emoji:'🌱',xp:0,border:'none',reward:'Accès à Trebiq',askClaude:15},
+  {level:2,name:'Actif',emoji:'⚡',xp:200,border:'electric',reward:'Bordure ⚡ animée sur l\'avatar',askClaude:15},
+  {level:3,name:'Créateur',emoji:'🔥',xp:800,border:'fire',reward:'Badge 🔥 sur le profil',askClaude:15},
+  {level:4,name:'Influenceur',emoji:'💎',xp:2500,border:'gold',reward:'Bordure 💎 dorée animée',askClaude:15},
+  {level:5,name:'Expert',emoji:'🌟',xp:6000,border:'star',reward:'Nom en couleur accent dans le feed',askClaude:15},
+  {level:6,name:'Légende',emoji:'👑',xp:15000,border:'rainbow',reward:'Bordure arc-en-ciel + 30 appels @askClaude/jour',askClaude:30},
 ];
 const BADGES_DEF=[
   {id:'first_post',emoji:'🎉',name:'Premier pas',desc:'Publier ton premier post'},
@@ -1721,6 +1733,24 @@ const BADGES_DEF=[
   {id:'followers_100',emoji:'👑',name:'Star',desc:'Avoir 100 abonnés'},
   {id:'premium',emoji:'⭐',name:'Premium',desc:'Abonné Trebiq Premium'},
 ];
+
+function getBorderClass(xp){
+  const lvl=getLevel(xp);
+  if(lvl.border==='none')return '';
+  return 'av-border-'+lvl.border;
+}
+
+function getNameClass(xp){
+  const lvl=getLevel(xp);
+  if(lvl.level>=6)return 'name-legend';
+  if(lvl.level>=5)return 'name-expert';
+  return '';
+}
+
+function getAskClaudeLimit(xp){
+  const lvl=getLevel(xp);
+  return lvl.askClaude||15;
+}
 
 function getLevel(xp){
   let cur=LEVELS[0];
@@ -2426,12 +2456,12 @@ async function answerQuiz(chosen,correct,today,theme){
 }
 
 const REWARDS=[
-  {level:1,emoji:'🌱',name:'Graine Trebiq',desc:'Titre de départ pour tout nouvel utilisateur',unlocked:true},
-  {level:2,emoji:'⚡',name:'Cadre Trebiq',desc:'Bordure de profil électrique',unlocked:false},
-  {level:3,emoji:'🔥',name:'Titre Créateur',desc:'Badge "Créateur" visible sur ton profil',unlocked:false},
-  {level:4,emoji:'💎',name:'Fond de profil Diamant',desc:'Arrière-plan exclusif sur ta page profil',unlocked:false},
-  {level:5,emoji:'🌟',name:'Titre Expert',desc:'Badge "Expert" animé sur ton profil',unlocked:false},
-  {level:6,emoji:'👑',name:'Couronne Légende',desc:'Couronne dorée exclusive + accès VIP',unlocked:false},
+  {level:1,emoji:'🌱',title:'Badge Novice',desc:'Bienvenue ! Tu es un tout nouvel utilisateur',unlocked:true},
+  {level:2,emoji:'⚡',title:'Bordure électrique ⚡',desc:'Bordure violette animée sur ton avatar dans le feed',unlocked:false},
+  {level:3,emoji:'🔥',title:'Badge Créateur',desc:'Badge 🔥 visible sur ton profil public',unlocked:false},
+  {level:4,emoji:'💎',title:'Bordure dorée 💎',desc:'Bordure dorée animée sur ton avatar dans le feed',unlocked:false},
+  {level:5,emoji:'🌟',title:'Nom coloré',desc:'Ton nom apparaît en couleur accent dans tous les posts',unlocked:false},
+  {level:6,emoji:'👑',title:'Légende — 30 appels/jour',desc:'Bordure arc-en-ciel + nom dégradé + 30 @askClaude/jour (Premium)',unlocked:false},
 ];
 
 async function loadLeaderboard(){
