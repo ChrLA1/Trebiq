@@ -3999,6 +3999,10 @@ document.addEventListener('DOMContentLoaded',()=>{
           body:JSON.stringify({refresh_token:sess.refresh_token})
         }).then(async r=>{
           const d=await r.json();
+          console.log('Supabase refresh response keys:', Object.keys(d));
+          console.log('Has access_token:', !!d.access_token);
+          console.log('Has refresh_token:', !!d.refresh_token);
+          console.log('Has user:', !!d.user);
           if(d.access_token&&d.user){
             me={id:d.user.id,tok:d.access_token,email:d.user.email||''};
             // CRITICAL: Always save the NEW refresh_token returned by Supabase
