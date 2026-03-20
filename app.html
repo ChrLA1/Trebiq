@@ -1284,6 +1284,7 @@ async function login(){
   try{
     const d=await sba('/token?grant_type=password',{email:e,password:p});
     me=d.user;me.tok=d.access_token;
+    console.log('Login - refresh_token saved:', !!d.refresh_token, d.refresh_token?.slice(0,10));
     localStorage.setItem('trebiq_session',JSON.stringify({id:d.user.id,tok:d.access_token,refresh_token:d.refresh_token||''}));
     await loadMe();
     // Create profile if pending from email confirmation
@@ -3990,6 +3991,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   if(saved){
     try{
       const sess=JSON.parse(saved);
+      console.log('Session found - has refresh_token:', !!sess.refresh_token, sess.refresh_token?.slice(0,10));
       if(!sess.id||!sess.tok)throw new Error('Invalid session');
       // Try refresh token first (long-lived)
       if(sess.refresh_token){
