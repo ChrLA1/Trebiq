@@ -694,6 +694,9 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
             <span style="font-weight:700;color:var(--white);">Messages privés</span>
             <button onclick="openNewDM()" style="background:var(--accent);border:none;border-radius:20px;padding:6px 14px;color:#fff;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;">✏️ Nouveau</button>
           </div>
+          <div style="padding:10px 16px;border-bottom:1px solid var(--border);">
+            <input id="dm-search" class="search-input" placeholder="🔍 Rechercher une conversation..." oninput="searchDMs()" style="width:100%;">
+          </div>
           <div id="dm-list"><div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div></div>
         </div>
         <div id="chat-wrap" style="display:none;flex-direction:column;height:calc(100vh - 60px);">
@@ -2880,6 +2883,38 @@ function iac(){ins('@askClaude ');}
 function esc(t){return(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function ago(d){const s=(Date.now()-new Date(d))/1000;if(s<60)return'maintenant';if(s<3600)return Math.floor(s/60)+'m';if(s<86400)return Math.floor(s/3600)+'h';return Math.floor(s/86400)+'j';}
 function toast(m,t=''){const el=document.getElementById('toast');el.textContent=m;el.className=`toast ${t} show`;setTimeout(()=>el.className='toast',3200);}
+// ===== DM SEARCH =====
+async function searchDMs(){
+  const q=document.getElementById('dm-search')?.value.trim().toLowerCase();
+  if(!q){showDMList();return;}
+  const c=document.getElementById('dm-list');
+  c.innerHTML='<div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div>';
+  try{
+    // Search in profiles by name/username
+    const users=await sb(`/profiles?or=(username.ilike.*${q}*,display_name.ilike.*${q}*)&limit=10`,{tok:me.tok});
+    if(!users?.length){c.innerHTML='<div class="empty"><div class="empty-t">Aucune conversation trouvée</div></div>';return;}
+    // Find conversations with these users
+    const convos=await sb(`/conversations?or=(user1_id.eq.${me.id},user2_id.eq.${me.id})&order=updated_at.desc`,{tok:me.tok});
+    const userIds=new Set(users.map(u=>u.id));
+    const filtered=(convos||[]).filter(cv=>userIds.has(cv.user1_id===me.id?cv.user2_id:cv.user1_id));
+    if(!filtered.length){c.innerHTML='<div class="empty"><div class="empty-t">Aucune conversation trouvée</div></div>';return;}
+    const pm={};users.forEach(u=>pm[u.id]=u);
+    c.innerHTML=filtered.map(cv=>{
+      const otherId=cv.user1_id===me.id?cv.user2_id:cv.user1_id;
+      const prof=pm[otherId]||{};
+      const ini=(prof.display_name||'U')[0].toUpperCase();
+      const avC=prof.avatar_url?`<img src="${prof.avatar_url}" alt="">`:`${ini}`;
+      return`<div class="dm-item" onclick="openChat('${cv.id}','${otherId}')">
+        <div class="dm-av">${avC}</div>
+        <div class="dm-info">
+          <div class="dm-name">${esc(prof.display_name||'?')}</div>
+          <div class="dm-preview">@${esc(prof.username||'?')}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }catch(e){c.innerHTML='<div class="empty"><div class="empty-t">Erreur</div></div>';}
+}
+
 // ===== REAL-TIME NOTIFICATIONS =====
 let notifPollInterval=null;
 let lastNotifCount=0;
