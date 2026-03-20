@@ -583,6 +583,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
         <div class="fld"><label>Nom d'utilisateur</label><input type="text" id="uu" placeholder="trebiquser"></div>
         <div class="fld"><label>Nom affiché</label><input type="text" id="un2" placeholder="Ton prénom"></div>
         <div class="fld"><label>Email</label><input type="email" id="ue" placeholder="ton@email.com"></div>
+        <div class="fld"><label>Date de naissance *</label><input type="date" id="ubirth" style="width:100%;background:var(--bg);border:1px solid var(--border2);border-radius:10px;padding:10px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;outline:none;" max=""></div>
         <div class="fld"><label>Mot de passe</label><input type="password" id="up2" placeholder="•••••• (6 min)" onkeydown="if(event.key==='Enter')register()"></div>
         <button class="btn-a" onclick="register()">Créer mon compte</button>
       </div>
@@ -1127,7 +1128,14 @@ async function register(){
   const n=document.getElementById('un2').value.trim();
   const e=document.getElementById('ue').value.trim();
   const p=document.getElementById('up2').value;
-  if(!u||!n||!e||!p)return serr('Remplis tous les champs');
+  const birth=document.getElementById('ubirth')?.value;
+  if(!u||!n||!e||!p||!birth)return serr('Remplis tous les champs');
+  // Age verification - minimum 15 years
+  const birthDate=new Date(birth);
+  const today=new Date();
+  const age=today.getFullYear()-birthDate.getFullYear()-(today<new Date(today.getFullYear(),birthDate.getMonth(),birthDate.getDate())?1:0);
+  if(age<15)return serr('Tu dois avoir au moins 15 ans pour créer un compte (loi française)');
+  if(age>120)return serr('Date de naissance invalide');
   if(p.length<6)return serr('Mot de passe trop court (6 min)');
   if(!/^[a-z0-9_]+$/.test(u))return serr('Lettres, chiffres, _ uniquement');
   try{
@@ -1138,7 +1146,8 @@ async function register(){
       return;
     }
     me=d.user;me.tok=d.access_token;
-    await sb('/profiles',{method:'POST',tok:me.tok,body:{id:me.id,username:u,display_name:n}});
+    const birth=document.getElementById('ubirth')?.value;
+    await sb('/profiles',{method:'POST',tok:me.tok,body:{id:me.id,username:u,display_name:n,birthdate:birth||null}});
     await loadMe();showApp();toast('Bienvenue sur Trebiq ! 🎉','ok');
   }catch(e){serr(e.message);}
 }
@@ -1174,6 +1183,9 @@ function showApp(){
   loadTrending();
   loadStories();
   initTheme();
+  // Set max date for birthdate input
+  const birthInput=document.getElementById('ubirth');
+  if(birthInput)birthInput.max=new Date().toISOString().slice(0,10);
   startNotifPolling();
   // Check DM badge every 15 seconds
   if(dmPollInterval)clearInterval(dmPollInterval);
@@ -1344,6 +1356,11 @@ async function sendDMImg(e){
 async function sendMsg(){
   const inp=document.getElementById('chat-input');
   const content=inp.value.trim();if(!content)return;
+  // DM rate limit: max 30 messages/hour
+  const dmKey='dm_'+me.id+'_'+new Date().getHours();
+  const dmCount=parseInt(localStorage.getItem(dmKey)||'0');
+  if(dmCount>=30){toast('Limite de 30 messages/heure atteinte ⏳','err');return;}
+  localStorage.setItem(dmKey,dmCount+1);
   inp.value='';
   try{
     await sb('/messages',{method:'POST',tok:me.tok,body:{conversation_id:curConvId,sender_id:me.id,content}});
@@ -1551,6 +1568,31 @@ async function pub(){
     }else{
       await sb('/post_rate_limit',{method:'POST',tok:me.tok,body:{user_id:me.id,hour_bucket:bucketStr,count:1}});
     }
+    // AI Moderation check
+    toast('Vérification du contenu...','');
+    try{
+      const modRes=await fetch('https://api.anthropic.com/v1/messages',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          model:'claude-sonnet-4-20250514',
+          max_tokens:100,
+          messages:[{role:'user',content:`Analyse ce post pour un réseau social français. Réponds UNIQUEMENT par "OK" si le contenu est acceptable, ou "REFUSE: [raison courte]" si le contenu contient: contenu illégal, incitation à la haine, violence explicite, contenu sexuel, harcèlement grave, informations personnelles d'autrui, ou contenu très choquant. Sois tolérant pour les opinions, débats, humour, critiques normales. Post à analyser: "${content.replace(/"/g,'\"').slice(0,500)}"`}]
+        })
+      });
+      const modData=await modRes.json();
+      const modResult=modData.content?.[0]?.text||'OK';
+      if(modResult.startsWith('REFUSE')){
+        const reason=modResult.replace('REFUSE:','').trim();
+        toast('Post refusé : '+reason,'err');
+        btn.disabled=false;btn.textContent='Publier';
+        return;
+      }
+    }catch(modErr){
+      // If moderation fails, allow post (fail open)
+      console.log('Moderation check failed, allowing post');
+    }
+
     const postBody={user_id:me.id,content:content||''};
     if(image_url)postBody.image_url=image_url;
     const posts=await sb('/posts',{method:'POST',tok:me.tok,body:postBody});
@@ -1835,6 +1877,20 @@ async function submitReport(){
     await sb('/reports',{method:'POST',tok:me.tok,body:{post_id:reportPostId,reporter_id:me.id,reason:reportReason}});
     closeReport();
     toast('Signalement envoyé ✅','ok');
+    // Auto-ban check: 3+ reports in 24h
+    const post=await sb(`/posts?id=eq.${reportPostId}&select=user_id`,{tok:me.tok});
+    const ownerId=post?.[0]?.user_id;
+    if(ownerId&&ownerId!==me.id){
+      const since=new Date(Date.now()-86400000).toISOString();
+      const ownerPosts=await sb(`/posts?user_id=eq.${ownerId}&select=id`,{tok:me.tok});
+      if(ownerPosts?.length){
+        const pids=ownerPosts.map(p=>p.id).join(',');
+        const recentReports=await sb(`/reports?post_id=in.(${pids})&created_at=gt.${since}&select=id`,{tok:me.tok});
+        if(recentReports?.length>=3){
+          await sb('/bans',{method:'POST',tok:me.tok,body:{user_id:ownerId,reason:'Suspension automatique : 3+ signalements en 24h'}}).catch(()=>{});
+        }
+      }
+    }
   }catch(e){
     if(e.message.includes('unique'))toast('Tu as déjà signalé ce post','err');
     else toast('Erreur: '+e.message,'err');
@@ -3486,6 +3542,8 @@ window.addEventListener('appinstalled',()=>{
 
 document.addEventListener('DOMContentLoaded',()=>{
   initTheme();
+  const bi=document.getElementById('ubirth');
+  if(bi)bi.max=new Date().toISOString().slice(0,10);
   document.getElementById('ctxt').addEventListener('keydown',e=>{if(e.ctrlKey&&e.key==='Enter')pub();});
   // Infinite scroll
   window.addEventListener('scroll',()=>{
