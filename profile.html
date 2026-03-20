@@ -4,6 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Trebiq — Profil</title>
+<meta name="description" content="Découvrez ce profil sur Trebiq, le réseau social propulsé par l'IA.">
+<meta name="robots" content="index,follow">
+<!-- Open Graph (updated dynamically via JS) -->
+<meta property="og:type" content="profile">
+<meta property="og:site_name" content="Trebiq">
+<meta property="og:url" id="og-url" content="https://trebiq.vercel.app">
+<meta property="og:title" id="og-title" content="Trebiq — Profil">
+<meta property="og:description" id="og-desc" content="Découvrez ce profil sur Trebiq.">
+<meta name="twitter:card" content="summary">
 <meta name="theme-color" content="#050508">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
@@ -153,6 +162,9 @@ async function loadProfile(){
   if(!prof){document.getElementById('pub-name').textContent='Utilisateur introuvable';return;}
 
   document.title=`${prof.display_name} (@${prof.username}) — Trebiq`;
+  document.getElementById('og-title')?.setAttribute('content',`${prof.display_name} (@${prof.username}) — Trebiq`);
+  document.getElementById('og-desc')?.setAttribute('content',prof.bio||`Découvrez le profil de ${prof.display_name} sur Trebiq.`);
+  document.getElementById('og-url')?.setAttribute('content',`https://trebiq.vercel.app/profile/${prof.username}`);
 
   // Avatar
   const av=document.getElementById('pub-av');
