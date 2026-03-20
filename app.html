@@ -3966,14 +3966,32 @@ document.addEventListener('DOMContentLoaded',()=>{
   if(saved){
     try{
       const sess=JSON.parse(saved);
-      if(sess.tok&&sess.id){
+      if(sess.refresh_token){
+        // Refresh the session using Supabase refresh token
+        fetch(`${SU}/auth/v1/token?grant_type=refresh_token`,{
+          method:'POST',
+          headers:{'apikey':SK,'Content-Type':'application/json'},
+          body:JSON.stringify({refresh_token:sess.refresh_token})
+        }).then(r=>r.json()).then(d=>{
+          if(d.access_token){
+            me={id:d.user.id,tok:d.access_token,email:d.user.email||''};
+            localStorage.setItem('trebiq_session',JSON.stringify({
+              id:d.user.id,tok:d.access_token,
+              email:d.user.email||'',
+              refresh_token:d.refresh_token||sess.refresh_token
+            }));
+            loadMe().then(()=>{if(myP)showApp();else localStorage.removeItem('trebiq_session');}).catch(()=>localStorage.removeItem('trebiq_session'));
+          }else{
+            localStorage.removeItem('trebiq_session');
+          }
+        }).catch(()=>localStorage.removeItem('trebiq_session'));
+      }else if(sess.tok&&sess.id){
+        // Fallback: try with existing token
         me={id:sess.id,tok:sess.tok,email:sess.email||''};
         loadMe().then(()=>{
           if(myP)showApp();
           else localStorage.removeItem('trebiq_session');
-        }).catch(()=>{
-          localStorage.removeItem('trebiq_session');
-        });
+        }).catch(()=>localStorage.removeItem('trebiq_session'));
       }
     }catch(e){localStorage.removeItem('trebiq_session');}
   }
