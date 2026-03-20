@@ -1119,6 +1119,10 @@ function showApp(){
   loadSuggestions();
   loadTrending();
   loadStories();
+  startNotifPolling();
+  // Check DM badge every 15 seconds
+  if(dmPollInterval)clearInterval(dmPollInterval);
+  dmPollInterval=setInterval(checkUnreadDMs,15000);
   msgPollInterval=setInterval(()=>{checkUnreadDMs();if(curConvId)pollNewMessages();},10000);
   if(!localStorage.getItem('ck'))document.getElementById('cookie-bar').style.display='flex';
 }
@@ -1143,7 +1147,7 @@ function goPage(page,userId=null){
   curPage=page;
   if(page==='home')loadFeed();
   else if(page==='explore')loadExplore();
-  else if(page==='notifs'){loadNotifs();markNotifsRead();}
+  else if(page==='notifs'){loadNotifs();markNotifsRead();lastNotifCount=0;}
   else if(page==='messages'){showDMList();checkUnreadDMs();}
   else if(page==='stats')loadStats();
   else if(page==='settings')setTimeout(loadPushSettings,100);
@@ -2876,6 +2880,49 @@ function iac(){ins('@askClaude ');}
 function esc(t){return(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function ago(d){const s=(Date.now()-new Date(d))/1000;if(s<60)return'maintenant';if(s<3600)return Math.floor(s/60)+'m';if(s<86400)return Math.floor(s/3600)+'h';return Math.floor(s/86400)+'j';}
 function toast(m,t=''){const el=document.getElementById('toast');el.textContent=m;el.className=`toast ${t} show`;setTimeout(()=>el.className='toast',3200);}
+// ===== REAL-TIME NOTIFICATIONS =====
+let notifPollInterval=null;
+let lastNotifCount=0;
+
+async function startNotifPolling(){
+  if(notifPollInterval)clearInterval(notifPollInterval);
+  await checkUnreadNotifs();
+  notifPollInterval=setInterval(async()=>{
+    const prev=lastNotifCount;
+    await checkUnreadNotifs();
+    // If new notifs arrived and we're not on notifs page - play sound/vibrate
+    if(lastNotifCount>prev&&curPage!=='notifs'){
+      try{navigator.vibrate&&navigator.vibrate(100);}catch(e){}
+    }
+  },30000); // every 30 seconds
+}
+
+function stopNotifPolling(){
+  if(notifPollInterval)clearInterval(notifPollInterval);
+  notifPollInterval=null;
+}
+
+// Override checkUnreadNotifs to track count
+const _origCheckNotifs=checkUnreadNotifs;
+async function checkUnreadNotifs(){
+  try{
+    const r=await fetch(`${SU}/rest/v1/notifications?user_id=eq.${me.id}&read=eq.false&select=id`,{
+      headers:{'apikey':SK,'Authorization':`Bearer ${me.tok}`,'Prefer':'count=exact'}
+    });
+    const count=parseInt(r.headers.get('content-range')?.split('/')[1]||'0');
+    lastNotifCount=count;
+    const badge=document.getElementById('notif-badge');
+    const mobBadge=document.getElementById('mob-notif-badge');
+    if(count>0){
+      if(badge){badge.textContent=count>9?'9+':count;badge.classList.add('show');}
+      if(mobBadge){mobBadge.textContent=count>9?'9+':count;mobBadge.classList.add('show');}
+    }else{
+      if(badge)badge.classList.remove('show');
+      if(mobBadge)mobBadge.classList.remove('show');
+    }
+  }catch(e){}
+}
+
 // ===== STORIES =====
 let storyTimer=null;
 
