@@ -29,6 +29,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#050508;--s1:#0c0c12;--s2:#13131c;--s3:#1a1a26;--border:#1f1f2e;--border2:#2a2a3d;--accent:#7c6af7;--ag:rgba(124,106,247,0.18);--accent2:#b8b0ff;--green:#34d399;--red:#f87171;--gold:#f59e0b;--text:#ddddf0;--t2:#9898b8;--t3:#5a5a78;--white:#fff;}
+[data-theme="light"]{
+  --bg:#f0f0f5;--s1:#e8e8f0;--s2:#dcdce8;--s3:#d0d0e0;--border:#c8c8d8;--border2:#b8b8cc;
+  --accent:#6b5ce7;--ag:rgba(107,92,231,0.12);--accent2:#5b4dd4;
+  --green:#2aad7d;--red:#e05555;--gold:#d4820a;
+  --text:#1a1a2e;--t2:#4a4a68;--t3:#8888a8;--white:#1a1a2e;
+}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased;}
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
 #auth{display:flex;align-items:center;justify-content:center;min-height:100vh;min-height:100dvh;background:var(--bg);padding:0;}
@@ -745,8 +751,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
         <div class="settings-section">
           <div class="settings-title">Apparence</div>
           <div class="settings-row">
-            <div><div class="settings-label">Thème sombre</div><div class="settings-desc">Activé par défaut</div></div>
-            <span style="color:var(--green);font-size:13px;font-weight:600;">Activé</span>
+            <div><div class="settings-label">Thème</div><div class="settings-desc" id="theme-label">Sombre</div></div>
+            <button class="btn-save-s" id="theme-toggle" onclick="toggleTheme()" style="font-size:13px;padding:8px 14px;">☀️ Mode clair</button>
           </div>
         </div>
         <div class="settings-section">
@@ -1122,6 +1128,7 @@ function showApp(){
   loadSuggestions();
   loadTrending();
   loadStories();
+  initTheme();
   startNotifPolling();
   // Check DM badge every 15 seconds
   if(dmPollInterval)clearInterval(dmPollInterval);
@@ -2883,6 +2890,54 @@ function iac(){ins('@askClaude ');}
 function esc(t){return(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function ago(d){const s=(Date.now()-new Date(d))/1000;if(s<60)return'maintenant';if(s<3600)return Math.floor(s/60)+'m';if(s<86400)return Math.floor(s/3600)+'h';return Math.floor(s/86400)+'j';}
 function toast(m,t=''){const el=document.getElementById('toast');el.textContent=m;el.className=`toast ${t} show`;setTimeout(()=>el.className='toast',3200);}
+// ===== THEME =====
+function initTheme(){
+  const saved=localStorage.getItem('trebiq_theme');
+  if(saved==='light'){
+    document.body.classList.add('light');
+    updateThemeBtn(true);
+  }
+}
+function toggleTheme(){
+  const isLight=document.body.classList.toggle('light');
+  localStorage.setItem('trebiq_theme', isLight?'light':'dark');
+  updateThemeBtn(isLight);
+}
+function updateThemeBtn(isLight){
+  const btn=document.getElementById('theme-toggle');
+  const lbl=document.getElementById('theme-label');
+  if(btn)btn.textContent=isLight?'🌙 Mode sombre':'☀️ Mode clair';
+  if(lbl)lbl.textContent=isLight?'Clair (mes yeux 😵)':'Sombre';
+}
+
+// ===== THEME =====
+function initTheme(){
+  const saved=localStorage.getItem('trebiq_theme')||'dark';
+  applyTheme(saved);
+}
+
+function applyTheme(theme){
+  if(theme==='light'){
+    document.documentElement.setAttribute('data-theme','light');
+    const btn=document.getElementById('theme-toggle-btn');
+    const lbl=document.getElementById('theme-label');
+    if(btn)btn.textContent='🌙 Sombre';
+    if(lbl)lbl.textContent='Clair';
+  }else{
+    document.documentElement.removeAttribute('data-theme');
+    const btn=document.getElementById('theme-toggle-btn');
+    const lbl=document.getElementById('theme-label');
+    if(btn)btn.textContent='☀️ Clair';
+    if(lbl)lbl.textContent='Sombre';
+  }
+  localStorage.setItem('trebiq_theme',theme);
+}
+
+function toggleTheme(){
+  const current=localStorage.getItem('trebiq_theme')||'dark';
+  applyTheme(current==='dark'?'light':'dark');
+}
+
 // ===== DM SEARCH =====
 async function searchDMs(){
   const q=document.getElementById('dm-search')?.value.trim().toLowerCase();
@@ -3385,6 +3440,7 @@ window.addEventListener('appinstalled',()=>{
 });
 
 document.addEventListener('DOMContentLoaded',()=>{
+  initTheme();
   document.getElementById('ctxt').addEventListener('keydown',e=>{if(e.ctrlKey&&e.key==='Enter')pub();});
   // Infinite scroll
   window.addEventListener('scroll',()=>{
