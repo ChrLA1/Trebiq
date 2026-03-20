@@ -8,6 +8,11 @@
 <meta name="keywords" content="réseau social, IA, intelligence artificielle, Claude, Trebiq, social network">
 <meta name="robots" content="noindex,nofollow">
 <link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Trebiq">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#050508">
 <!-- Open Graph -->
 <meta property="og:type" content="website">
@@ -951,6 +956,15 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 </div>
 <button class="mfab" id="mob-fab" onclick="fc()">✏️</button>
 <div class="toast" id="toast"></div>
+<div id="pwa-banner" style="display:none;position:fixed;bottom:70px;left:12px;right:12px;background:var(--s1);border:1px solid var(--accent);border-radius:16px;padding:14px 16px;z-index:55;display:flex;align-items:center;gap:12px;box-shadow:0 4px 24px rgba(0,0,0,.5);">
+  <div style="font-size:28px;">📱</div>
+  <div style="flex:1;">
+    <div style="font-size:14px;font-weight:700;color:var(--white);">Installer Trebiq</div>
+    <div style="font-size:12px;color:var(--t2);">Ajouter à l'écran d'accueil</div>
+  </div>
+  <button onclick="installPWA()" style="background:var(--accent);border:none;border-radius:10px;padding:8px 14px;color:#fff;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Installer</button>
+  <button onclick="document.getElementById('pwa-banner').style.display='none'" style="background:none;border:none;color:var(--t3);font-size:20px;cursor:pointer;padding:4px;">×</button>
+</div>
 <div id="cookie-bar" style="display:none;position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:10px 16px;z-index:55;font-size:13px;color:var(--t2);display:flex;align-items:center;gap:12px;box-shadow:0 4px 20px rgba(0,0,0,.5);white-space:nowrap;pointer-events:auto;">
   🍪 Cookies essentiels utilisés. <a href="/legal" target="_blank" style="color:var(--accent2);text-decoration:none;">En savoir plus</a>
   <button onclick="document.getElementById('cookie-bar').style.display='none';localStorage.setItem('ck','1')" style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">OK</button>
@@ -1056,6 +1070,11 @@ function showApp(){
   document.getElementById('app').style.display='block';
   if(window.innerWidth<=580){document.getElementById('mob-nav').style.display='block';document.getElementById('mob-fab').style.display='flex';}
   setTimeout(registerPush, 2000);
+  // Show PWA install prompt if available
+  setTimeout(()=>{
+    if(deferredPrompt&&!localStorage.getItem('pwa_installed'))
+      document.getElementById('pwa-banner').style.display='flex';
+  },5000);
   updateNavAvatar();
   document.getElementById('nav-n').textContent=(myP?.is_premium?'⭐ ':'')+(myP?.is_verified?'✓ ':'')+( myP?.display_name||'Utilisateur');
   document.getElementById('nav-h').textContent='@'+(myP?.username||'...');
@@ -3211,6 +3230,35 @@ function urlBase64ToUint8Array(base64String){
 // ===== OFFLINE DETECTION =====
 window.addEventListener('online', ()=>toast('Connexion rétablie ✅','ok'));
 window.addEventListener('offline', ()=>toast('Pas de connexion internet 📵','err'));
+
+// ===== PWA =====
+let deferredPrompt=null;
+window.addEventListener('beforeinstallprompt',(e)=>{
+  e.preventDefault();
+  deferredPrompt=e;
+  // Show install banner after login
+  if(document.getElementById('app').style.display==='block'){
+    setTimeout(()=>{
+      if(!localStorage.getItem('pwa_installed'))
+        document.getElementById('pwa-banner').style.display='flex';
+    },3000);
+  }
+});
+async function installPWA(){
+  if(!deferredPrompt)return;
+  deferredPrompt.prompt();
+  const result=await deferredPrompt.userChoice;
+  if(result.outcome==='accepted'){
+    localStorage.setItem('pwa_installed','1');
+    toast('Trebiq installé ! 🎉','ok');
+  }
+  document.getElementById('pwa-banner').style.display='none';
+  deferredPrompt=null;
+}
+window.addEventListener('appinstalled',()=>{
+  localStorage.setItem('pwa_installed','1');
+  document.getElementById('pwa-banner').style.display='none';
+});
 
 document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('ctxt').addEventListener('keydown',e=>{if(e.ctrlKey&&e.key==='Enter')pub();});
