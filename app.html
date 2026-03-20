@@ -800,6 +800,22 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
   </div>
 </div>
 
+<!-- Edit post modal -->
+<div class="modal-bg" id="edit-post-modal">
+  <div class="modal" style="max-width:480px;">
+    <button class="modal-close" onclick="closeEditPost()">×</button>
+    <div class="modal-title">✏️ Modifier le post</div>
+    <div class="mfld">
+      <textarea id="edit-post-txt" rows="4" style="width:100%;background:var(--bg);border:1px solid var(--border2);border-radius:12px;padding:12px 16px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;outline:none;resize:none;line-height:1.6;" placeholder="Modifie ton post..."></textarea>
+      <div style="text-align:right;font-size:12px;color:var(--t3);margin-top:4px;" id="edit-post-count">280</div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeEditPost()">Annuler</button>
+      <button class="btn-save" onclick="saveEditPost()">Sauvegarder</button>
+    </div>
+  </div>
+</div>
+
 <!-- Delete account modal -->
 <div class="modal-bg" id="delete-account-modal">
   <div class="modal" style="max-width:400px;text-align:center;">
@@ -1357,7 +1373,7 @@ function rp(p,prof,liked,reposted){
   const imgHtml=p.image_url?`<div class="post-img" onclick="openLightbox('${p.image_url}')"><img src="${p.image_url}" alt="image" loading="lazy"></div>`:'';
   const pollHtml=p._poll?`<div id="poll-${p.id}">Chargement sondage...</div>`:'';
   const pinBtn=isOwn?`<button class="pa" onclick="togglePin('${p.id}')" title="Epingler">${p._pinned?'📌':'📍'}</button>`:'';
-  const delBtn=isOwn?`<button class="pa del" onclick="askDelete('${p.id}')">🗑️</button>`:'';
+  const delBtn=isOwn?`<button class="pa del" onclick="askDelete('${p.id}')">🗑️</button><button class="pa" onclick="openEditPost('${p.id}','${esc(p.content||'')}')" title="Modifier">✏️</button>`:'';
   const otherBtns=isOwn?'':`<button class="pa" onclick="translatePost('${p.id}','${esc(p.content||'')}')" title="Traduire">🌐</button><button class="pa" onclick="openReport('${p.id}')" title="Signaler">🚩</button><button class="pa" onclick="sharePost('${p.id}')" title="Partager">🔗</button>`;
   return`<div class="post" id="p-${p.id}"><div class="prow"><div class="pav" onclick="goUserProfile('${uid}')">${avContent}</div><div class="pb"><div class="pm"><span class="pname" onclick="goUserProfile('${uid}')">${esc(prof?.display_name||'Utilisateur')}${verified}${premium}</span><span class="phdl">@${esc(prof?.username||'...')}</span><span class="ptm">· ${ago(p.created_at)}</span></div><div class="ptxt">${txt}</div>${imgHtml}${pollHtml}${p.ai_reply?`<div class="airep"><div class="aih"><div class="aidot"></div><span class="ailbl">askClaude</span></div><div class="aitxt">${esc(p.ai_reply)}</div></div>`:''}<div class="pacts"><button class="pa ${liked?'lkd':''}" onclick="tl('${p.id}',${liked})">${liked?'❤️':'🤍'} <span id="lc-${p.id}">0</span></button><button class="pa" onclick="toggleReplies('${p.id}')">💬 <span id="rc-${p.id}">0</span></button><button class="pa ${reposted?'rptd':''}" onclick="tr2('${p.id}',${reposted})">🔁 <span id="rpc-${p.id}">0</span></button>${delBtn}${pinBtn}${otherBtns}</div><div id="replies-${p.id}" style="display:none"></div></div></div></div>`;
 }
@@ -2864,6 +2880,37 @@ function closeStory(){
   document.getElementById('story-viewer').classList.remove('on');
   if(storyTimer)clearTimeout(storyTimer);
   loadStories();
+}
+
+// ===== EDIT POST =====
+let editPostId=null;
+function openEditPost(pid, content){
+  editPostId=pid;
+  const txt=document.getElementById('edit-post-txt');
+  txt.value=content;
+  txt.oninput=()=>{
+    const r=280-txt.value.length;
+    document.getElementById('edit-post-count').textContent=r;
+    document.getElementById('edit-post-count').style.color=r<0?'var(--red)':r<30?'#f59e0b':'var(--t3)';
+  };
+  document.getElementById('edit-post-count').textContent=280-content.length;
+  document.getElementById('edit-post-modal').classList.add('on');
+  setTimeout(()=>txt.focus(),100);
+}
+function closeEditPost(){
+  document.getElementById('edit-post-modal').classList.remove('on');
+  editPostId=null;
+}
+async function saveEditPost(){
+  const txt=document.getElementById('edit-post-txt').value.trim();
+  if(!txt)return toast('Le post ne peut pas être vide','err');
+  if(txt.length>280)return toast('Post trop long (max 280 caractères)','err');
+  try{
+    await sb(`/posts?id=eq.${editPostId}`,{method:'PATCH',tok:me.tok,body:{content:txt}});
+    closeEditPost();
+    loadFeed();
+    toast('Post modifié ✅','ok');
+  }catch(e){toast('Erreur: '+e.message,'err');}
 }
 
 // ===== DELETE ACCOUNT =====
