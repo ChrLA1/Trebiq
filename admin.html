@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trebiq — Admin</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#050508;--s1:#0c0c12;--s2:#13131c;--border:#1f1f2e;--border2:#2a2a3d;--accent:#7c6af7;--ag:rgba(124,106,247,0.15);--accent2:#b8b0ff;--green:#34d399;--red:#f87171;--gold:#f59e0b;--text:#ddddf0;--t2:#9898b8;--t3:#5a5a78;--white:#fff;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-font-smoothing:antialiased;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
+.topbar{padding:14px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);background:var(--s1);}
+.brand{font-size:18px;font-weight:700;color:var(--white);}
+.brand span{color:var(--red);}
+.admin-badge{background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.3);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:700;color:var(--red);}
+.logout-btn{background:transparent;border:1px solid var(--border2);border-radius:8px;padding:6px 14px;color:var(--t2);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;}
+.logout-btn:hover{color:var(--white);}
+.container{max-width:1100px;margin:0 auto;padding:24px;}
+.tabs{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap;}
+.tab{padding:8px 18px;border-radius:10px;border:1px solid var(--border);color:var(--t2);font-size:14px;font-weight:500;cursor:pointer;transition:all .2s;background:transparent;}
+.tab.on{background:var(--accent);border-color:var(--accent);color:#fff;}
+.section{display:none;}
+.section.on{display:block;}
+.card{background:var(--s1);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:12px;}
+.card-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+.av{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:#fff;flex-shrink:0;overflow:hidden;}
+.av img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.user-name{font-size:15px;font-weight:700;color:var(--white);}
+.user-handle{font-size:13px;color:var(--t3);}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:700;}
+.badge.premium{background:rgba(245,158,11,0.1);color:var(--gold);border:1px solid rgba(245,158,11,0.3);}
+.badge.verified{background:rgba(29,155,240,0.1);color:#1d9bf0;border:1px solid rgba(29,155,240,0.3);}
+.badge.banned{background:rgba(248,113,113,0.1);color:var(--red);border:1px solid rgba(248,113,113,0.3);}
+.badge.admin{background:rgba(124,106,247,0.1);color:var(--accent2);border:1px solid rgba(124,106,247,0.3);}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
+.btn{padding:7px 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;border:1px solid;}
+.btn-verify{background:rgba(29,155,240,0.1);border-color:rgba(29,155,240,0.3);color:#1d9bf0;}
+.btn-verify:hover{background:rgba(29,155,240,0.2);}
+.btn-premium{background:rgba(245,158,11,0.1);border-color:rgba(245,158,11,0.3);color:var(--gold);}
+.btn-premium:hover{background:rgba(245,158,11,0.2);}
+.btn-ban{background:rgba(248,113,113,0.1);border-color:rgba(248,113,113,0.3);color:var(--red);}
+.btn-ban:hover{background:rgba(248,113,113,0.2);}
+.btn-admin{background:rgba(124,106,247,0.1);border-color:rgba(124,106,247,0.3);color:var(--accent2);}
+.btn-admin:hover{background:rgba(124,106,247,0.2);}
+.btn-neutral{background:var(--s2);border-color:var(--border2);color:var(--t2);}
+.report-reason{font-size:13px;color:var(--t2);padding:8px 12px;background:var(--s2);border-radius:8px;margin-bottom:8px;}
+.report-post{font-size:14px;color:var(--text);padding:10px 12px;background:var(--bg);border-radius:8px;border:1px solid var(--border);margin-bottom:8px;}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
+.stat-box{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:20px;text-align:center;}
+.stat-val{font-size:36px;font-weight:700;color:var(--white);font-family:'DM Mono',monospace;}
+.stat-lbl{font-size:13px;color:var(--t3);margin-top:4px;}
+.search-bar{margin-bottom:16px;}
+.search-input{width:100%;background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:10px 16px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;}
+.search-input:focus{border-color:var(--accent);}
+.search-input::placeholder{color:var(--t3);}
+.empty{text-align:center;padding:48px;color:var(--t3);}
+.spin{display:flex;justify-content:center;gap:8px;padding:48px;}
+.sd{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:tp 1s infinite;}
+.sd:nth-child(2){animation-delay:.15s;}.sd:nth-child(3){animation-delay:.3s;}
+@keyframes tp{0%,60%,100%{opacity:.25;transform:scale(1)}30%{opacity:1;transform:scale(1.3)}}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(16px);opacity:0;background:var(--s2);border:1px solid var(--border2);border-radius:12px;padding:10px 20px;font-size:14px;font-weight:500;transition:all .3s;z-index:100;pointer-events:none;}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+.toast.ok{border-color:var(--green);color:var(--green);}
+.toast.err{border-color:var(--red);color:var(--red);}
+#login-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:200;}
+.login-box{background:var(--s1);border:1px solid var(--border);border-radius:20px;padding:32px;width:100%;max-width:380px;text-align:center;}
+.login-title{font-size:20px;font-weight:700;color:var(--white);margin-bottom:6px;}
+.login-sub{font-size:14px;color:var(--t3);margin-bottom:24px;}
+.login-input{width:100%;background:var(--bg);border:1px solid var(--border2);border-radius:10px;padding:11px 16px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;outline:none;margin-bottom:10px;}
+.login-input:focus{border-color:var(--accent);}
+.login-btn{width:100%;background:linear-gradient(135deg,var(--accent),#9b87ff);border:none;border-radius:10px;padding:12px;color:#fff;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer;margin-top:4px;}
+.login-err{color:var(--red);font-size:13px;margin-top:8px;min-height:18px;}
+@media(max-width:768px){.stats-grid{grid-template-columns:repeat(2,1fr);}}
+</style>
+</head>
+<body>
+
+<!-- Login Screen -->
+<div id="login-screen">
+  <div class="login-box">
+    <div style="font-size:36px;margin-bottom:12px;">🛡️</div>
+    <div class="login-title">Trebiq Admin</div>
+    <div class="login-sub">Accès réservé aux administrateurs</div>
+    <input class="login-input" type="email" id="admin-email" placeholder="Email" onkeydown="if(event.key==='Enter')adminLogin()">
+    <input class="login-input" type="password" id="admin-pass" placeholder="Mot de passe" onkeydown="if(event.key==='Enter')adminLogin()">
+    <button class="login-btn" onclick="adminLogin()">Se connecter</button>
+    <div class="login-err" id="login-err"></div>
+  </div>
+</div>
+
+<!-- Admin Panel -->
+<div id="admin-panel" style="display:none;">
+  <div class="topbar">
+    <div class="brand">Tre<span>biq</span> <span class="admin-badge">⚙️ Admin</span></div>
+    <button class="logout-btn" onclick="adminLogout()">Déconnexion</button>
+  </div>
+
+  <div class="container">
+    <!-- Stats -->
+    <div class="stats-grid" id="admin-stats">
+      <div class="stat-box"><div class="stat-val" id="stat-users">-</div><div class="stat-lbl">Utilisateurs</div></div>
+      <div class="stat-box"><div class="stat-val" id="stat-posts">-</div><div class="stat-lbl">Posts</div></div>
+      <div class="stat-box"><div class="stat-val" id="stat-reports">-</div><div class="stat-lbl">Signalements</div></div>
+      <div class="stat-box"><div class="stat-val" id="stat-bans">-</div><div class="stat-lbl">Bans actifs</div></div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <div class="tab on" onclick="showTab(this,'reports')">🚩 Signalements</div>
+      <div class="tab" onclick="showTab(this,'users')">👥 Utilisateurs</div>
+      <div class="tab" onclick="showTab(this,'bans')">🔨 Bans</div>
+    </div>
+
+    <!-- Reports -->
+    <div class="section on" id="tab-reports">
+      <div id="reports-list"><div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div></div>
+    </div>
+
+    <!-- Users -->
+    <div class="section" id="tab-users">
+      <div class="search-bar">
+        <input class="search-input" id="user-search" placeholder="Rechercher un utilisateur..." oninput="searchUsers()">
+      </div>
+      <div id="users-list"><div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div></div>
+    </div>
+
+    <!-- Bans -->
+    <div class="section" id="tab-bans">
+      <div id="bans-list"><div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SU='https://rcqiioozqfbempxuyvzq.supabase.co';
+const SK='sb_publishable_Djp3G_plOEtDeDT1GwNMrg_QtS3TljZ';
+let adminTok=null, adminId=null;
+
+async function sb(path,o={}){
+  const r=await fetch(`${SU}/rest/v1${path}`,{headers:{'apikey':SK,'Authorization':`Bearer ${o.tok||adminTok||SK}`,'Content-Type':'application/json','Prefer':o.pref||'return=representation',...(o.h||{})},method:o.method||'GET',body:o.body?JSON.stringify(o.body):undefined});
+  if(r.status===204)return null;const d=await r.json();if(!r.ok)throw new Error(d.message||d.error||'Erreur');return d;
+}
+
+async function adminLogin(){
+  const email=document.getElementById('admin-email').value.trim();
+  const pass=document.getElementById('admin-pass').value;
+  const errEl=document.getElementById('login-err');
+  errEl.textContent='';
+  try{
+    const r=await fetch(`${SU}/auth/v1/token?grant_type=password`,{method:'POST',headers:{'apikey':SK,'Content-Type':'application/json'},body:JSON.stringify({email,password:pass})});
+    const d=await r.json();
+    if(!r.ok)throw new Error(d.error_description||'Identifiants incorrects');
+    adminTok=d.access_token;
+    adminId=d.user.id;
+    // Check if admin
+    const prof=await sb(`/profiles?id=eq.${adminId}&select=is_admin`);
+    if(!prof?.[0]?.is_admin){
+      adminTok=null;adminId=null;
+      throw new Error('Accès refusé — compte non administrateur');
+    }
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('admin-panel').style.display='block';
+    loadAdminStats();
+    loadReports();
+  }catch(e){errEl.textContent=e.message;}
+}
+
+function adminLogout(){
+  adminTok=null;adminId=null;
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('admin-panel').style.display='none';
+}
+
+function showTab(el,id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.getElementById('tab-'+id).classList.add('on');
+  el.classList.add('on');
+  if(id==='reports')loadReports();
+  else if(id==='users')loadUsers();
+  else if(id==='bans')loadBans();
+}
+
+async function loadAdminStats(){
+  try{
+    const [usersR,postsR,reportsR,bansR]=await Promise.all([
+      fetch(`${SU}/rest/v1/profiles?select=id`,{headers:{'apikey':SK,'Authorization':`Bearer ${adminTok}`,'Prefer':'count=exact'}}),
+      fetch(`${SU}/rest/v1/posts?select=id`,{headers:{'apikey':SK,'Authorization':`Bearer ${adminTok}`,'Prefer':'count=exact'}}),
+      fetch(`${SU}/rest/v1/reports?select=id`,{headers:{'apikey':SK,'Authorization':`Bearer ${adminTok}`,'Prefer':'count=exact'}}),
+      fetch(`${SU}/rest/v1/bans?select=id`,{headers:{'apikey':SK,'Authorization':`Bearer ${adminTok}`,'Prefer':'count=exact'}}),
+    ]);
+    document.getElementById('stat-users').textContent=usersR.headers.get('content-range')?.split('/')[1]||'0';
+    document.getElementById('stat-posts').textContent=postsR.headers.get('content-range')?.split('/')[1]||'0';
+    document.getElementById('stat-reports').textContent=reportsR.headers.get('content-range')?.split('/')[1]||'0';
+    document.getElementById('stat-bans').textContent=bansR.headers.get('content-range')?.split('/')[1]||'0';
+  }catch(e){}
+}
+
+async function loadReports(){
+  const c=document.getElementById('reports-list');
+  c.innerHTML='<div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div>';
+  try{
+    const reports=await sb(`/reports?order=created_at.desc&limit=50`);
+    if(!reports?.length){c.innerHTML='<div class="empty">✅ Aucun signalement en attente</div>';return;}
+    const postIds=[...new Set(reports.map(r=>r.post_id))];
+    const reporterIds=[...new Set(reports.map(r=>r.reporter_id))];
+    const [posts,reporters]=await Promise.all([
+      sb(`/posts?id=in.(${postIds.join(',')})&select=id,content,user_id`),
+      sb(`/profiles?id=in.(${reporterIds.join(',')})&select=id,username,display_name`),
+    ]);
+    const postMap={};(posts||[]).forEach(p=>postMap[p.id]=p);
+    const reporterMap={};(reporters||[]).forEach(u=>reporterMap[u.id]=u);
+    // Get post authors
+    const authorIds=[...new Set((posts||[]).map(p=>p.user_id))];
+    const authors=authorIds.length?await sb(`/profiles?id=in.(${authorIds.join(',')})&select=id,username,display_name,is_verified,is_premium,avatar_url`):[];
+    const authorMap={};(authors||[]).forEach(u=>authorMap[u.id]=u);
+    c.innerHTML=reports.map(r=>{
+      const post=postMap[r.post_id]||{};
+      const reporter=reporterMap[r.reporter_id]||{};
+      const author=authorMap[post.user_id]||{};
+      const ini=(author.display_name||'U')[0].toUpperCase();
+      const avC=author.avatar_url?`<img src="${author.avatar_url}" alt="">`:`${ini}`;
+      return`<div class="card">
+        <div class="card-header">
+          <div class="av">${avC}</div>
+          <div>
+            <div class="user-name">${esc(author.display_name||'?')} ${author.is_verified?'<span class="badge verified">✓ Vérifié</span>':''} ${author.is_premium?'<span class="badge premium">⭐ Premium</span>':''}</div>
+            <div class="user-handle">@${esc(author.username||'?')}</div>
+          </div>
+        </div>
+        <div class="report-reason">🚩 Signalé pour : <strong>${esc(r.reason)}</strong> — par @${esc(reporter.username||'?')}</div>
+        <div class="report-post">${esc(post.content?.slice(0,200)||'(post supprimé)')}</div>
+        <div class="actions">
+          <button class="btn btn-ban" onclick="banUser('${post.user_id}','${author.username||''}')">🔨 Bannir @${esc(author.username||'?')}</button>
+          <button class="btn btn-neutral" onclick="deleteReport('${r.id}')">✓ Ignorer le signalement</button>
+          <button class="btn btn-neutral" onclick="deletePost('${r.post_id}','${r.id}')">🗑️ Supprimer le post</button>
+        </div>
+      </div>`;
+    }).join('');
+  }catch(e){c.innerHTML=`<div class="empty">Erreur: ${e.message}</div>`;}
+}
+
+async function loadUsers(q=''){
+  const c=document.getElementById('users-list');
+  c.innerHTML='<div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div>';
+  try{
+    const users=q
+      ?await sb(`/profiles?or=(username.ilike.*${q}*,display_name.ilike.*${q}*)&limit=30&order=created_at.desc`)
+      :await sb(`/profiles?limit=30&order=created_at.desc`);
+    if(!users?.length){c.innerHTML='<div class="empty">Aucun utilisateur</div>';return;}
+    const userIds=users.map(u=>u.id);
+    const bans=await sb(`/bans?user_id=in.(${userIds.join(',')})`).catch(()=>[]);
+    const bannedIds=new Set((bans||[]).map(b=>b.user_id));
+    c.innerHTML=users.map(u=>{
+      const ini=(u.display_name||'U')[0].toUpperCase();
+      const avC=u.avatar_url?`<img src="${u.avatar_url}" alt="">`:`${ini}`;
+      const isBanned=bannedIds.has(u.id);
+      return`<div class="card">
+        <div class="card-header">
+          <div class="av">${avC}</div>
+          <div style="flex:1">
+            <div class="user-name">${esc(u.display_name||'?')}
+              ${u.is_admin?'<span class="badge admin">⚙️ Admin</span>':''}
+              ${u.is_verified?'<span class="badge verified">✓ Vérifié</span>':''}
+              ${u.is_premium?'<span class="badge premium">⭐ Premium</span>':''}
+              ${isBanned?'<span class="badge banned">🔨 Banni</span>':''}
+            </div>
+            <div class="user-handle">@${esc(u.username||'?')} · <span style="font-size:12px;color:var(--t3)">Inscrit ${new Date(u.created_at).toLocaleDateString('fr')}</span></div>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn ${u.is_verified?'btn-neutral':'btn-verify'}" onclick="toggleVerify('${u.id}',${u.is_verified})">${u.is_verified?'✗ Retirer vérifié':'✓ Vérifier'}</button>
+          <button class="btn ${u.is_premium?'btn-neutral':'btn-premium'}" onclick="togglePremium('${u.id}',${u.is_premium})">${u.is_premium?'✗ Retirer Premium':'⭐ Donner Premium'}</button>
+          ${isBanned
+            ?`<button class="btn btn-neutral" onclick="unbanUser('${u.id}')">✓ Débannir</button>`
+            :`<button class="btn btn-ban" onclick="banUser('${u.id}','${u.username||''}')">🔨 Bannir</button>`
+          }
+        </div>
+      </div>`;
+    }).join('');
+  }catch(e){c.innerHTML=`<div class="empty">Erreur: ${e.message}</div>`;}
+}
+
+async function loadBans(){
+  const c=document.getElementById('bans-list');
+  c.innerHTML='<div class="spin"><div class="sd"></div><div class="sd"></div><div class="sd"></div></div>';
+  try{
+    const bans=await sb(`/bans?order=created_at.desc`);
+    if(!bans?.length){c.innerHTML='<div class="empty">Aucun ban actif</div>';return;}
+    const userIds=bans.map(b=>b.user_id);
+    const users=await sb(`/profiles?id=in.(${userIds.join(',')})&select=id,username,display_name,avatar_url`);
+    const um={};(users||[]).forEach(u=>um[u.id]=u);
+    c.innerHTML=bans.map(b=>{
+      const u=um[b.user_id]||{};
+      const ini=(u.display_name||'U')[0].toUpperCase();
+      const avC=u.avatar_url?`<img src="${u.avatar_url}" alt="">`:`${ini}`;
+      return`<div class="card">
+        <div class="card-header">
+          <div class="av">${avC}</div>
+          <div>
+            <div class="user-name">${esc(u.display_name||'?')} <span class="badge banned">🔨 Banni</span></div>
+            <div class="user-handle">@${esc(u.username||'?')} · Banni le ${new Date(b.created_at).toLocaleDateString('fr')}</div>
+          </div>
+        </div>
+        ${b.reason?`<div class="report-reason">Raison : ${esc(b.reason)}</div>`:''}
+        <div class="actions">
+          <button class="btn btn-neutral" onclick="unbanUser('${b.user_id}')">✓ Débannir</button>
+        </div>
+      </div>`;
+    }).join('');
+  }catch(e){c.innerHTML=`<div class="empty">Erreur: ${e.message}</div>`;}
+}
+
+function searchUsers(){
+  clearTimeout(window._searchTimer);
+  window._searchTimer=setTimeout(()=>loadUsers(document.getElementById('user-search').value.trim()),400);
+}
+
+async function toggleVerify(userId,current){
+  try{
+    await sb(`/profiles?id=eq.${userId}`,{method:'PATCH',body:{is_verified:!current}});
+    toast(current?'Badge vérifié retiré':'Badge vérifié accordé ✓','ok');
+    loadUsers(document.getElementById('user-search').value.trim());
+  }catch(e){toast('Erreur: '+e.message,'err');}
+}
+
+async function togglePremium(userId,current){
+  try{
+    await sb(`/profiles?id=eq.${userId}`,{method:'PATCH',body:{is_premium:!current}});
+    toast(current?'Premium retiré':'Premium accordé ⭐','ok');
+    loadUsers(document.getElementById('user-search').value.trim());
+  }catch(e){toast('Erreur: '+e.message,'err');}
+}
+
+async function banUser(userId,username){
+  const reason=prompt(`Raison du ban pour @${username} (optionnel):`);
+  if(reason===null)return;
+  try{
+    await sb('/bans',{method:'POST',body:{user_id:userId,reason:reason||'Violation des CGU'}});
+    toast(`@${username} banni 🔨`,'ok');
+    loadAdminStats();
+    loadReports();
+  }catch(e){
+    if(e.message.includes('unique'))toast('Utilisateur déjà banni','err');
+    else toast('Erreur: '+e.message,'err');
+  }
+}
+
+async function unbanUser(userId){
+  try{
+    await sb(`/bans?user_id=eq.${userId}`,{method:'DELETE'});
+    toast('Utilisateur débanni ✓','ok');
+    loadAdminStats();
+    loadBans();
+    loadUsers(document.getElementById('user-search').value.trim());
+  }catch(e){toast('Erreur: '+e.message,'err');}
+}
+
+async function deleteReport(reportId){
+  try{
+    await sb(`/reports?id=eq.${reportId}`,{method:'DELETE'});
+    toast('Signalement ignoré','ok');
+    loadReports();loadAdminStats();
+  }catch(e){toast('Erreur','err');}
+}
+
+async function deletePost(postId,reportId){
+  if(!confirm('Supprimer ce post ?'))return;
+  try{
+    await sb(`/posts?id=eq.${postId}`,{method:'DELETE'});
+    await sb(`/reports?id=eq.${reportId}`,{method:'DELETE'});
+    toast('Post supprimé 🗑️','ok');
+    loadReports();loadAdminStats();
+  }catch(e){toast('Erreur: '+e.message,'err');}
+}
+
+function esc(t){return(t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function toast(m,t=''){const el=document.getElementById('toast');el.textContent=m;el.className=`toast ${t} show`;setTimeout(()=>el.className='toast',3000);}
+</script>
+</body>
+</html>
